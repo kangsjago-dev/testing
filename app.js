@@ -2494,7 +2494,7 @@ function applyEventToUI() {
     if (frameContainer) {
       frameContainer.classList.remove('hidden');
       frameContainer.innerHTML = availFrames.map(f => `
-        <button data-frame="${f.id}" class="frame-pill shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold ${targetFrame === f.id ? 'bg-brand-gold text-black border-brand-gold shadow-sm' : 'bg-white/5 text-zinc-300 border-white/10'} border transition">${f.name}</button>
+        <button data-frame="${f.id}" class="frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold ${targetFrame === f.id ? 'bg-brand-gold text-black border-brand-gold shadow-sm' : 'bg-white/5 text-zinc-300 border-white/10'} border transition">${f.name}</button>
       `).join('');
     }
   }
@@ -2511,15 +2511,15 @@ function applyEventToUI() {
     STATE.activeCategories = catsToRender;
 
     catContainer.innerHTML = `
-      <button data-cat="ALL" class="cat-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-semibold ${isAll ? 'bg-brand-gold text-black border-brand-gold shadow-sm' : 'bg-white/5 text-zinc-300 border-white/10 hover:border-brand-gold/50'} border transition cursor-pointer">Semua Foto</button>
-      <button data-cat="WINNERS" class="cat-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-semibold ${isWinners ? 'bg-brand-gold text-black border-brand-gold shadow-sm' : 'bg-white/5 text-zinc-300 border-white/10 hover:border-brand-gold/50'} border transition cursor-pointer flex items-center gap-1.5">🏆 Pemenang Voting</button>
+      <button data-cat="ALL" class="cat-tab shrink-0 px-3 py-1 rounded-full text-xs font-semibold ${isAll ? 'bg-brand-gold text-black border-brand-gold shadow-sm' : 'bg-white/5 text-zinc-300 border-white/10 hover:border-brand-gold/50'} border transition cursor-pointer">Semua Foto</button>
+      <button data-cat="WINNERS" class="cat-tab shrink-0 px-3 py-1 rounded-full text-xs font-semibold ${isWinners ? 'bg-brand-gold text-black border-brand-gold shadow-sm' : 'bg-white/5 text-zinc-300 border-white/10 hover:border-brand-gold/50'} border transition cursor-pointer flex items-center gap-1.5">🏆 Pemenang Voting</button>
     `;
 
     catsToRender.forEach(cat => {
       const isSelected = STATE.activeGalleryFilter === cat.idKategori;
       const btn = document.createElement('button');
       btn.setAttribute('data-cat', cat.idKategori);
-      btn.className = `cat-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-semibold ${isSelected ? 'bg-brand-gold text-black border-brand-gold shadow-sm' : 'bg-white/5 text-zinc-300 border-white/10 hover:border-brand-gold/50'} border transition cursor-pointer`;
+      btn.className = `cat-tab shrink-0 px-3 py-1 rounded-full text-xs font-semibold ${isSelected ? 'bg-brand-gold text-black border-brand-gold shadow-sm' : 'bg-white/5 text-zinc-300 border-white/10 hover:border-brand-gold/50'} border transition cursor-pointer`;
       btn.textContent = `👑 ${cat.namaKategori}`;
       catContainer.appendChild(btn);
     });
@@ -3260,7 +3260,7 @@ function renderReviewFramePills(activeFrame) {
   if (!container) return;
 
   container.innerHTML = frames.map(f => `
-    <button data-frame="${f.id}" class="rev-frame-pill shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold ${activeFrame === f.id ? 'bg-brand-gold text-black border-brand-gold shadow-sm' : 'bg-white/5 text-zinc-300 border-white/10 hover:border-brand-gold/50'} border transition">
+    <button data-frame="${f.id}" class="rev-frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold ${activeFrame === f.id ? 'bg-brand-gold text-black border-brand-gold shadow-sm' : 'bg-white/5 text-zinc-300 border-white/10 hover:border-brand-gold/50'} border transition">
       ${f.name}
     </button>
   `).join('');
@@ -6523,9 +6523,9 @@ function bindEvents() {
     applyActiveFrame(frameId);
     document.querySelectorAll('.frame-pill').forEach(p => {
       if (p.getAttribute('data-frame') === frameId) {
-        p.className = 'frame-pill shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-gold text-black border-brand-gold border transition shadow-sm';
+        p.className = 'frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-brand-gold text-black border-brand-gold border transition shadow-sm';
       } else {
-        p.className = 'frame-pill shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 text-zinc-300 border-white/10 border transition';
+        p.className = 'frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/5 text-zinc-300 border-white/10 border transition';
       }
     });
   });
