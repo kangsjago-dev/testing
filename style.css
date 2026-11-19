@@ -1,21 +1,21 @@
 /* ==============================================================================
- * SNAPEVENT: STYLE.CSS (v2.5.0 Wedknot Romantic Luxury Wedding Edition)
- * Light & Airy Alabaster Ivory, Rose Gold Blush, Pearl Glassmorphism, & Serif Calligraphy
+ * SNAPEVENT: STYLE.CSS (v2.6.0 OurDay Solid Flat Elegance)
+ * 100% Solid Colors, Zero Shadow, Zero Gradient, High-Contrast Crisp Wedding UI
  * ============================================================================== */
 
 :root {
-  --bg-deep: #FDFBF7;
+  --bg-deep: #F9F6F0;
   --bg-surface: #FFFFFF;
-  --bg-surface-elevated: #FFF9F5;
-  --rose-gold: #C97D76;
-  --rose-gold-light: #E8A598;
-  --rose-gold-dark: #A95A54;
-  --text-primary: #2C2523;
-  --text-secondary: #7D6F6B;
-  --text-muted: #A39691;
-  --border-subtle: #F0E6E1;
-  --border-rose: rgba(201, 125, 118, 0.25);
-  --gold-primary: #C97D76; /* alias for compatibility */
+  --bg-surface-elevated: #F4EFEB;
+  --color-olive: #485A44;
+  --color-olive-dark: #3A4A36;
+  --color-charcoal: #222222;
+  --text-primary: #1F1E1D;
+  --text-secondary: #6E6862;
+  --text-muted: #8E8780;
+  --border-subtle: #E5DFD5;
+  --border-olive: #485A44;
+  --gold-primary: #485A44; /* alias for compatibility */
 }
 
 /* Custom Minimalist Scrollbar */
@@ -29,12 +29,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(201, 125, 118, 0.25);
+  background: #D5CFC5;
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--rose-gold);
+  background: var(--color-olive);
 }
 
 /* Utility to hide scrollbars cleanly */
@@ -48,63 +48,78 @@
   scrollbar-width: none !important;
 }
 
-/* Romantic Calligraphy Typography */
-.font-script {
-  font-family: 'Great Vibes', 'Caveat', cursive;
-}
-
-/* Rose Gold & Champagne Blush Text & Surface Accents */
+/* Solid Flat Colors (Zero Gradient) */
 .rose-gradient-text,
 .gold-gradient-text {
-  background: linear-gradient(135deg, #B85D55 0%, #C97D76 50%, #E8A598 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #485A44 !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: #485A44 !important;
 }
 
 .rose-gradient-bg,
-.gold-gradient-bg {
-  background: linear-gradient(135deg, #E8A598 0%, #C97D76 55%, #B85D55 100%);
+.gold-gradient-bg,
+.btn-solid-olive {
+  background: #485A44 !important;
   color: #FFFFFF !important;
+  box-shadow: none !important;
+}
+
+.btn-solid-dark {
+  background: #222222 !important;
+  color: #FFFFFF !important;
+  box-shadow: none !important;
 }
 
 .gold-pill-active {
-  background: linear-gradient(135deg, #E8A598 0%, #C97D76 100%) !important;
+  background: #485A44 !important;
   color: #FFFFFF !important;
-  font-weight: 700 !important;
-  box-shadow: 0 4px 15px rgba(201, 125, 118, 0.3) !important;
+  box-shadow: none !important;
+  border-color: #485A44 !important;
 }
 
-/* Wedding Soft Shadows */
-.wedding-card-shadow {
-  box-shadow: 0 10px 30px -5px rgba(60, 35, 30, 0.06), 0 0 1px rgba(60, 35, 30, 0.08);
+/* Zero Shadow & Zero Blur Flat Utilities */
+*, *::before, *::after {
+  --tw-shadow: 0 0 #0000 !important;
+  --tw-shadow-colored: 0 0 #0000 !important;
+  --tw-drop-shadow: none !important;
 }
 
-.wedding-card-shadow-lg {
-  box-shadow: 0 20px 45px -10px rgba(60, 35, 30, 0.09), 0 0 1px rgba(60, 35, 30, 0.1);
+[class*="shadow"] {
+  box-shadow: none !important;
+  filter: none !important;
 }
 
-/* Glassmorphism Surface Utilities */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border-subtle);
+[class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.wedding-card-shadow,
+.wedding-card-shadow-lg,
+.glass-panel,
+.glass-capsule,
+.floating-bottom-dock,
+.custom-shutter-btn,
+.custom-shutter-core,
+.podium-card-gold,
+.podium-card-silver,
+.podium-card-bronze {
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Solid Floating Bottom Navigation Dock */
+.floating-bottom-dock {
+  background: #FFFFFF !important;
+  border: 1px solid #E5DFD5 !important;
+  box-shadow: none !important;
 }
 
 .glass-capsule {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(201, 125, 118, 0.2);
-}
-
-/* Floating Bottom Navigation Dock (Pearl Glassmorphism) */
-.floating-bottom-dock {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(201, 125, 118, 0.22);
-  box-shadow: 0 12px 35px rgba(60, 35, 30, 0.08), 0 0 1px rgba(255, 255, 255, 0.8);
+  background: #FFFFFF !important;
+  border: 1px solid #E5DFD5 !important;
 }
 
 /* 1 Halaman Utuh (Zero-Scroll Mobile Layout Fit & Anti-Overlap Safe Padding) */
@@ -189,67 +204,61 @@ body.camera-lock-scroll #viewCamera:not(.hidden) {
   pointer-events: auto !important;
 }
 
-/* Live Camera Filters (CSS Real-time Video Stream Preview) */
+/* Live Camera Filters */
 .filter-live-raw {
   filter: none;
-  transition: filter 0.3s ease;
+  transition: filter 0.2s ease;
 }
 
 .filter-live-800t {
   filter: contrast(1.1) saturate(1.2) sepia(0.2) hue-rotate(-6deg);
-  transition: filter 0.3s ease;
+  transition: filter 0.2s ease;
 }
 
 .filter-live-warm {
   filter: sepia(0.35) saturate(1.3) brightness(1.04) contrast(1.05);
-  transition: filter 0.3s ease;
+  transition: filter 0.2s ease;
 }
 
 .filter-live-bw {
   filter: grayscale(1) contrast(1.3) brightness(0.95);
-  transition: filter 0.3s ease;
+  transition: filter 0.2s ease;
 }
 
-/* Tactile Rose Gold Shutter Button */
+/* Solid Tactile Shutter Button (OurDay Olive Shutter Ring) */
 .custom-shutter-btn {
   width: 74px;
   height: 74px;
   border-radius: 50%;
-  border: 3.5px solid rgba(201, 125, 118, 0.9);
+  border: 3.5px solid #485A44;
   padding: 4px;
-  background: rgba(255, 255, 255, 0.9);
+  background: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 20px rgba(201, 125, 118, 0.35), inset 0 0 10px rgba(201, 125, 118, 0.15);
-  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+  box-shadow: none !important;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   outline: none;
-}
-
-.custom-shutter-btn:hover {
-  border-color: #C97D76;
-  box-shadow: 0 0 26px rgba(201, 125, 118, 0.5), inset 0 0 14px rgba(201, 125, 118, 0.25);
+  transition: transform 0.15s ease;
 }
 
 .custom-shutter-btn:active {
-  transform: scale(0.91);
-  box-shadow: 0 0 14px rgba(201, 125, 118, 0.6);
+  transform: scale(0.92);
 }
 
 .custom-shutter-core {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: radial-gradient(circle at 38% 34%, #FCE8E6 0%, #C97D76 52%, #9B4F48 100%);
-  box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.8), inset 0 -2px 4px rgba(60, 35, 30, 0.3), 0 4px 12px rgba(201, 125, 118, 0.35);
-  transition: transform 0.12s ease, filter 0.15s ease;
+  background: #485A44;
+  box-shadow: none !important;
+  transition: transform 0.1s ease, background-color 0.1s ease;
 }
 
 .custom-shutter-btn:active .custom-shutter-core {
   transform: scale(0.94);
-  filter: brightness(0.9);
+  background: #3A4A36;
 }
 
 /* Camera Blitz Flash Effect */
@@ -287,37 +296,36 @@ body.camera-lock-scroll #viewCamera:not(.hidden) {
   animation: kenBurns 7s ease-in-out infinite alternate;
 }
 
-/* Podium Cards */
+/* Solid Flat Podium Cards */
 .podium-card-gold {
-  background: linear-gradient(145deg, rgba(201, 125, 118, 0.12) 0%, rgba(255, 255, 255, 0.95) 100%);
-  border: 1.5px solid rgba(201, 125, 118, 0.65);
-  box-shadow: 0 10px 30px rgba(60, 35, 30, 0.08), 0 0 20px rgba(201, 125, 118, 0.2);
+  background: #FFFFFF !important;
+  border: 2px solid #485A44 !important;
+  box-shadow: none !important;
 }
 
 .podium-card-silver {
-  background: linear-gradient(145deg, rgba(200, 205, 215, 0.1) 0%, rgba(255, 255, 255, 0.95) 100%);
-  border: 1.5px solid rgba(200, 205, 215, 0.45);
-  box-shadow: 0 10px 25px rgba(60, 35, 30, 0.08), 0 0 16px rgba(200, 205, 215, 0.12);
+  background: #FFFFFF !important;
+  border: 1.5px solid #8E8780 !important;
+  box-shadow: none !important;
 }
 
 .podium-card-bronze {
-  background: linear-gradient(145deg, rgba(205, 135, 75, 0.1) 0%, rgba(255, 255, 255, 0.95) 100%);
-  border: 1.5px solid rgba(205, 135, 75, 0.45);
-  box-shadow: 0 10px 25px rgba(60, 35, 30, 0.08), 0 0 16px rgba(205, 135, 75, 0.12);
+  background: #FFFFFF !important;
+  border: 1.5px solid #B58463 !important;
+  box-shadow: none !important;
 }
 
 .podium-card-gold, .podium-card-silver, .podium-card-bronze {
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+  transition: transform 0.15s ease;
 }
 
 .podium-card-gold:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 35px rgba(60, 35, 30, 0.12), 0 0 28px rgba(201, 125, 118, 0.3);
+  transform: translateY(-2px);
 }
 
 /* Micro-Interactions */
 .tap-highlight {
-  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.15s ease;
+  transition: transform 0.15s ease, opacity 0.15s ease;
 }
 .tap-highlight:active {
   transform: scale(0.96);

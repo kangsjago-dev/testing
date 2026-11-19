@@ -2494,7 +2494,7 @@ function applyEventToUI() {
     if (frameContainer) {
       frameContainer.classList.remove('hidden');
       frameContainer.innerHTML = availFrames.map(f => `
-        <button data-frame="${f.id}" class="frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold ${targetFrame === f.id ? 'bg-brand-gold text-black border-brand-gold shadow-sm' : 'bg-white/5 text-zinc-300 border-white/10'} border transition">${f.name}</button>
+        <button data-frame="${f.id}" class="frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold ${targetFrame === f.id ? 'bg-[#485A44] text-white border-[#485A44]' : 'bg-white text-[#6E6862] border-[#E5DFD5]'} border transition">${f.name}</button>
       `).join('');
     }
   }
@@ -2511,15 +2511,15 @@ function applyEventToUI() {
     STATE.activeCategories = catsToRender;
 
     catContainer.innerHTML = `
-      <button data-cat="ALL" class="cat-tab shrink-0 px-3 py-1 rounded-full text-xs font-semibold ${isAll ? 'bg-brand-gold text-black border-brand-gold shadow-sm' : 'bg-white/5 text-zinc-300 border-white/10 hover:border-brand-gold/50'} border transition cursor-pointer">Semua Foto</button>
-      <button data-cat="WINNERS" class="cat-tab shrink-0 px-3 py-1 rounded-full text-xs font-semibold ${isWinners ? 'bg-brand-gold text-black border-brand-gold shadow-sm' : 'bg-white/5 text-zinc-300 border-white/10 hover:border-brand-gold/50'} border transition cursor-pointer flex items-center gap-1.5">🏆 Pemenang Voting</button>
+      <button data-cat="ALL" class="cat-tab shrink-0 px-3 py-1 rounded-full text-xs font-semibold ${isAll ? 'bg-[#485A44] text-white border-[#485A44]' : 'bg-white text-[#6E6862] border-[#E5DFD5] hover:border-[#485A44]/50'} border transition cursor-pointer">Semua Foto</button>
+      <button data-cat="WINNERS" class="cat-tab shrink-0 px-3 py-1 rounded-full text-xs font-semibold ${isWinners ? 'bg-[#485A44] text-white border-[#485A44]' : 'bg-white text-[#6E6862] border-[#E5DFD5] hover:border-[#485A44]/50'} border transition cursor-pointer flex items-center gap-1.5">🏆 Pemenang Voting</button>
     `;
 
     catsToRender.forEach(cat => {
       const isSelected = STATE.activeGalleryFilter === cat.idKategori;
       const btn = document.createElement('button');
       btn.setAttribute('data-cat', cat.idKategori);
-      btn.className = `cat-tab shrink-0 px-3 py-1 rounded-full text-xs font-semibold ${isSelected ? 'bg-brand-gold text-black border-brand-gold shadow-sm' : 'bg-white/5 text-zinc-300 border-white/10 hover:border-brand-gold/50'} border transition cursor-pointer`;
+      btn.className = `cat-tab shrink-0 px-3 py-1 rounded-full text-xs font-semibold ${isSelected ? 'bg-[#485A44] text-white border-[#485A44]' : 'bg-white text-[#6E6862] border-[#E5DFD5] hover:border-[#485A44]/50'} border transition cursor-pointer`;
       btn.textContent = `👑 ${cat.namaKategori}`;
       catContainer.appendChild(btn);
     });
@@ -2612,12 +2612,12 @@ function renderStagePhotos(photos) {
 
   if (empty) empty.classList.add('hidden');
   grid.innerHTML = photos.map(photo => `
-    <div class="stage-photo-card group relative aspect-[4/5] rounded-xl overflow-hidden bg-zinc-900 border border-white/10 hover:border-brand-gold/60 transition cursor-pointer shadow-lg" data-url="${photo.viewUrl || photo.thumbnailUrl}" data-name="${photo.name || 'Foto Panggung'}">
+    <div class="stage-photo-card group relative aspect-[4/5] rounded-xl overflow-hidden bg-white border border-[#E5DFD5] hover:border-[#485A44] transition cursor-pointer" data-url="${photo.viewUrl || photo.thumbnailUrl}" data-name="${photo.name || 'Foto Panggung'}">
       <img src="${photo.thumbnailUrl || photo.viewUrl}" alt="${photo.name || 'Foto Panggung'}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
-      <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2.5">
-        <span class="text-[11px] font-medium text-white truncate drop-shadow">${photo.name || 'Foto Panggung'}</span>
+      <div class="absolute inset-x-0 bottom-0 bg-[#1F1E1D]/90 p-2.5 flex items-center opacity-0 group-hover:opacity-100 transition">
+        <span class="text-[11px] font-semibold text-white truncate">${photo.name || 'Foto Panggung'}</span>
       </div>
-      <div class="absolute top-2 right-2 bg-black/60 backdrop-blur-md rounded-full p-1.5 text-zinc-300 group-hover:text-brand-gold transition">
+      <div class="absolute top-2 right-2 bg-white border border-[#E5DFD5] rounded-full p-1.5 text-[#485A44] transition">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
       </div>
     </div>
@@ -2944,11 +2944,11 @@ function setCameraZoom(zoomLevel) {
   document.querySelectorAll('.btn-cam-zoom').forEach(btn => {
     const bz = parseFloat(btn.getAttribute('data-zoom')) || 1.0;
     if (Math.abs(bz - z) < 0.2) {
-      btn.classList.add('bg-brand-gold', 'text-black', 'shadow-sm');
-      btn.classList.remove('text-white/70');
+      btn.classList.add('bg-[#485A44]', 'text-white');
+      btn.classList.remove('text-[#6E6862]', 'text-white/70');
     } else {
-      btn.classList.remove('bg-brand-gold', 'text-black', 'shadow-sm');
-      btn.classList.add('text-white/70');
+      btn.classList.remove('bg-[#485A44]', 'text-white', 'shadow-sm', 'bg-brand-gold', 'text-black');
+      btn.classList.add('text-[#6E6862]');
     }
   });
 
@@ -3260,7 +3260,7 @@ function renderReviewFramePills(activeFrame) {
   if (!container) return;
 
   container.innerHTML = frames.map(f => `
-    <button data-frame="${f.id}" class="rev-frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold ${activeFrame === f.id ? 'bg-brand-gold text-black border-brand-gold shadow-sm' : 'bg-white/5 text-zinc-300 border-white/10 hover:border-brand-gold/50'} border transition">
+    <button data-frame="${f.id}" class="rev-frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold ${activeFrame === f.id ? 'bg-[#485A44] text-white border-[#485A44]' : 'bg-white text-[#6E6862] border-[#E5DFD5] hover:text-[#1F1E1D] hover:border-[#485A44]/50'} border transition">
       ${f.name}
     </button>
   `).join('');
@@ -3949,19 +3949,19 @@ function renderGallery() {
     if (topVoted && (topVoted.totalLikes || 0) > 0) {
       spotlightContainer.classList.remove('hidden');
       spotlightContainer.innerHTML = `
-        <div class="p-3 rounded-2xl bg-gradient-to-r from-amber-500/20 via-brand-gold/15 to-[#1A1A24] border border-amber-500/40 flex items-center justify-between cursor-pointer shadow-lg hover:border-brand-gold transition duration-200">
+        <div class="p-3.5 rounded-2xl bg-white border border-[#485A44] flex items-center justify-between cursor-pointer hover:bg-[#F4EFEB] transition duration-200">
           <div class="flex items-center gap-3 min-w-0">
-            <span class="text-2xl animate-bounce shrink-0">🏆</span>
+            <span class="text-2xl shrink-0">🏆</span>
             <div class="truncate">
-              <div class="text-xs font-bold text-amber-300 flex items-center gap-1.5 flex-wrap">
+              <div class="text-xs font-bold text-[#485A44] flex items-center gap-1.5 flex-wrap">
                 <span>Hasil Voting Terkini:</span>
-                <span class="text-white font-extrabold truncate">${topVoted.guestNama || 'Tamu'}</span>
-                <span class="text-[10px] text-brand-gold bg-brand-gold/20 px-2 py-0.5 rounded-full border border-brand-gold/30 font-bold">${topVoted.totalLikes} Suara</span>
+                <span class="text-[#1F1E1D] font-extrabold truncate">${topVoted.guestNama || 'Tamu'}</span>
+                <span class="text-[10px] text-[#485A44] bg-[#F4EFEB] px-2 py-0.5 rounded-full border border-[#485A44]/30 font-bold">${topVoted.totalLikes} Suara</span>
               </div>
-              <p class="text-[11px] text-zinc-400 truncate">Klik untuk melihat podium pemenang & juara per kategori</p>
+              <p class="text-[11px] text-[#6E6862] truncate">Klik untuk melihat podium pemenang & juara per kategori</p>
             </div>
           </div>
-          <button type="button" class="shrink-0 ml-2 px-3 py-1.5 rounded-xl bg-brand-gold text-black text-xs font-bold shadow hover:brightness-110 active:scale-95 transition">
+          <button type="button" class="shrink-0 ml-2 px-3 py-1.5 rounded-xl bg-[#485A44] text-white text-xs font-bold hover:bg-[#3A4A36] active:scale-95 transition">
             Lihat ➔
           </button>
         </div>
@@ -3970,11 +3970,9 @@ function renderGallery() {
         STATE.activeGalleryFilter = 'WINNERS';
         document.querySelectorAll('.cat-tab').forEach(t => {
           if (t.getAttribute('data-cat') === 'WINNERS') {
-            t.classList.remove('bg-white/5', 'text-zinc-300');
-            t.classList.add('bg-brand-gold', 'text-black');
+            t.className = 'cat-tab shrink-0 px-3 py-1 rounded-full text-xs font-semibold bg-[#485A44] text-white border border-[#485A44] transition cursor-pointer flex items-center gap-1.5';
           } else {
-            t.classList.remove('bg-brand-gold', 'text-black');
-            t.classList.add('bg-white/5', 'text-zinc-300');
+            t.className = 'cat-tab shrink-0 px-3 py-1 rounded-full text-xs font-semibold bg-white text-[#6E6862] border border-[#E5DFD5] hover:border-[#485A44]/50 transition cursor-pointer';
           }
         });
         renderGallery();
@@ -3991,12 +3989,12 @@ function renderGallery() {
         const catDisplayName = activeCatObj?.namaKategori || 'Kategori Ini';
         grid.innerHTML = `
           <div class="col-span-2 sm:col-span-3 md:col-span-4 py-12 px-4 text-center">
-            <div class="w-14 h-14 rounded-2xl bg-brand-gold/10 border border-brand-gold/30 flex items-center justify-center mx-auto mb-3 shadow-lg">
+            <div class="w-14 h-14 rounded-2xl bg-white border border-[#E5DFD5] flex items-center justify-center mx-auto mb-3">
               <span class="text-2xl">👑</span>
             </div>
-            <h3 class="font-serif text-lg font-bold text-white mb-1">Belum Ada Foto di Kategori "${catDisplayName}"</h3>
-            <p class="text-xs text-zinc-400 max-w-sm mx-auto mb-4">Belum ada foto yang mendapatkan suara untuk kategori ini. Buka foto di galeri dan berikan voting Anda!</p>
-            <button type="button" id="btnResetGalleryCategory" class="px-4 py-2 rounded-xl bg-brand-gold text-black text-xs font-bold shadow hover:brightness-110 active:scale-95 transition cursor-pointer">
+            <h3 class="font-serif text-lg font-bold text-[#1F1E1D] mb-1">Belum Ada Foto di Kategori "${catDisplayName}"</h3>
+            <p class="text-xs text-[#6E6862] max-w-sm mx-auto mb-4">Belum ada foto yang mendapatkan suara untuk kategori ini. Buka foto di galeri dan berikan voting Anda!</p>
+            <button type="button" id="btnResetGalleryCategory" class="px-4 py-2 rounded-xl bg-[#485A44] text-white text-xs font-bold hover:bg-[#3A4A36] active:scale-95 transition cursor-pointer">
               ← Kembali ke Semua Foto
             </button>
           </div>
@@ -4034,13 +4032,13 @@ function renderGallery() {
 
         const likeBtn = card.querySelector('.btn-like-photo');
         if (likeBtn) {
-          likeBtn.className = `btn-like-photo flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${isVoted ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-white/5 text-zinc-300 hover:text-white border border-white/10'} transition active:scale-90`;
+          likeBtn.className = `btn-like-photo flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${isVoted ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-[#F4EFEB] text-[#6E6862] hover:text-[#1F1E1D] border border-[#E5DFD5]'} transition active:scale-90`;
           likeBtn.innerHTML = `<span>${isVoted ? '❤️' : '🤍'}</span><span>${photo.totalLikes || 0}</span>`;
         }
 
         const infoEl = card.querySelector('.text-\\[9px\\].text-zinc-400');
         if (infoEl) {
-          infoEl.innerHTML = `<span>${photo.cameraStyle || '800T'}</span>${photo.namaKategori ? `<span class="text-[9px] text-amber-300 font-semibold truncate max-w-[120px]">👑 ${photo.namaKategori}</span>` : ''}`;
+          infoEl.innerHTML = `<span>${photo.cameraStyle || '800T'}</span>${photo.namaKategori ? `<span class="text-[9px] text-[#485A44] font-semibold truncate max-w-[120px]">👑 ${photo.namaKategori}</span>` : ''}`;
         }
 
         const uploadingOverlay = card.querySelector('.uploading-overlay');
@@ -4053,7 +4051,7 @@ function renderGallery() {
         // Foto baru yang belum ada di grid: buat kartu
         const isHidden = (photo.isVisible === false || photo.photoStatus === 'SEMBUNYI');
         card = document.createElement('div');
-        card.className = `group relative bg-brand-surfaceLight border ${isHidden ? 'border-amber-500/50' : 'border-brand-surfaceBorder'} rounded-xl overflow-hidden shadow-md flex flex-col justify-between`;
+        card.className = `group relative bg-white border ${isHidden ? 'border-amber-500' : 'border-[#E5DFD5]'} rounded-xl overflow-hidden flex flex-col justify-between`;
         card.setAttribute('data-id', photo.idFoto);
 
         const urls = getDriveImageUrls(photo.gdriveViewUrl);
@@ -4062,50 +4060,50 @@ function renderGallery() {
         const tertiaryUrl = urls[2] || '';
 
         card.innerHTML = `
-          <div class="relative w-full aspect-[4/5] bg-zinc-900 flex items-center justify-center overflow-hidden cursor-pointer img-click-zone ${isHidden ? 'opacity-70' : ''}">
-            <div class="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-900 flex flex-col items-center justify-center text-zinc-500 gap-1 pointer-events-none transition-opacity duration-300">
-              <svg class="w-6 h-6 opacity-30 animate-pulse text-brand-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <div class="relative w-full aspect-[4/5] bg-[#F4EFEB] flex items-center justify-center overflow-hidden cursor-pointer img-click-zone ${isHidden ? 'opacity-70' : ''}">
+            <div class="absolute inset-0 bg-[#F4EFEB] flex flex-col items-center justify-center text-[#6E6862] gap-1 pointer-events-none transition-opacity duration-300">
+              <svg class="w-6 h-6 opacity-40 animate-pulse text-[#485A44]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <rect width="18" height="18" x="3" y="3" rx="3.5" ry="3.5"/>
                 <circle cx="8.5" cy="8.5" r="1.5"/>
                 <polyline points="21 15 16 10 5 21"/>
               </svg>
-              <span class="text-[9px] font-mono text-zinc-500">Memuat...</span>
+              <span class="text-[9px] font-mono text-[#8E8780]">Memuat...</span>
             </div>
             <img src="${primaryUrl}" data-secondary="${secondaryUrl}" data-tertiary="${tertiaryUrl}" data-step="0" alt="${photo.guestNama || 'Foto'}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300 opacity-0 relative z-10" onload="this.classList.remove('opacity-0'); this.previousElementSibling?.remove();" onerror="handleGalleryImgError(this);" />
             ${isUploading ? `
-              <div class="uploading-overlay absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center p-3 text-center z-20">
-                <div class="w-6 h-6 border-2 border-brand-gold border-t-transparent rounded-full animate-spin mb-2"></div>
-                <span class="text-[10px] text-amber-300 font-bold">Mengunggah ke Drive...</span>
+              <div class="uploading-overlay absolute inset-0 bg-white/90 flex flex-col items-center justify-center p-3 text-center z-20">
+                <div class="w-6 h-6 border-2 border-[#485A44] border-t-transparent rounded-full animate-spin mb-2"></div>
+                <span class="text-[10px] text-[#485A44] font-bold">Mengunggah ke Drive...</span>
               </div>
             ` : ''}
             ${isAdmin ? `
               <div class="absolute top-2 right-2 z-20 flex items-center gap-1">
-                <button type="button" class="btn-card-toggle-vis p-1.5 rounded-lg bg-black/80 hover:bg-amber-500 text-amber-300 hover:text-black transition shadow cursor-pointer text-xs" title="${isHidden ? 'Tampilkan ke Publik' : 'Sembunyikan dari Publik'}">
+                <button type="button" class="btn-card-toggle-vis p-1.5 rounded-lg bg-white border border-[#E5DFD5] hover:bg-amber-50 text-amber-700 transition cursor-pointer text-xs" title="${isHidden ? 'Tampilkan ke Publik' : 'Sembunyikan dari Publik'}">
                   ${isHidden ? '👁️' : '🙈'}
                 </button>
-                <button type="button" class="btn-card-delete-photo p-1.5 rounded-lg bg-black/80 hover:bg-rose-600 text-rose-300 hover:text-white transition shadow cursor-pointer text-xs" title="Hapus Foto">
+                <button type="button" class="btn-card-delete-photo p-1.5 rounded-lg bg-white border border-[#E5DFD5] hover:bg-red-50 text-red-600 transition cursor-pointer text-xs" title="Hapus Foto">
                   🗑️
                 </button>
               </div>
               ${isHidden ? `
-                <div class="absolute top-2 left-2 z-20 bg-amber-500 text-black text-[9px] font-extrabold px-2 py-0.5 rounded-full shadow">
+                <div class="absolute top-2 left-2 z-20 bg-amber-500 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full">
                   Disembunyikan
                 </div>
               ` : ''}
             ` : ''}
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition flex items-end p-2.5 z-10">
-              <span class="text-[11px] text-zinc-300 truncate">${photo.caption || photo.guestNama || ''}</span>
+            <div class="absolute inset-x-0 bottom-0 bg-[#1F1E1D]/90 p-2 text-left opacity-0 group-hover:opacity-100 transition z-10">
+              <span class="text-[11px] text-white truncate block">${photo.caption || photo.guestNama || ''}</span>
             </div>
           </div>
-          <div class="p-2.5 flex items-center justify-between bg-brand-surfaceLight border-t border-white/5">
+          <div class="p-2.5 flex items-center justify-between bg-white border-t border-[#E5DFD5]">
             <div class="truncate pr-1">
-              <div class="text-[11px] font-bold text-white truncate">${photo.guestNama || 'Tamu'}</div>
-              <div class="text-[9px] text-zinc-400 uppercase flex items-center gap-1.5 flex-wrap">
+              <div class="text-[11px] font-bold text-[#1F1E1D] truncate">${photo.guestNama || 'Tamu'}</div>
+              <div class="text-[9px] text-[#6E6862] uppercase flex items-center gap-1.5 flex-wrap">
                 <span>${photo.cameraStyle || '800T'}</span>
-                ${photo.namaKategori ? `<span class="text-[9px] text-amber-300 font-semibold truncate max-w-[120px]">👑 ${photo.namaKategori}</span>` : ''}
+                ${photo.namaKategori ? `<span class="text-[9px] text-[#485A44] font-semibold truncate max-w-[120px]">👑 ${photo.namaKategori}</span>` : ''}
               </div>
             </div>
-            <button class="btn-like-photo flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${isVoted ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-white/5 text-zinc-300 hover:text-white border border-white/10'} transition active:scale-90" data-id="${photo.idFoto}">
+            <button class="btn-like-photo flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${isVoted ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-[#F4EFEB] text-[#6E6862] hover:text-[#1F1E1D] border border-[#E5DFD5]'} transition active:scale-90" data-id="${photo.idFoto}">
               <span>${isVoted ? '❤️' : '🤍'}</span>
               <span>${photo.totalLikes || 0}</span>
             </button>
@@ -4196,50 +4194,50 @@ function renderVotingWinners() {
     podiumHtml += `
       <div class="mb-4">
         <div class="flex items-center gap-2 mb-3">
-          <span class="text-sm font-extrabold text-amber-300 uppercase tracking-wider">⭐ Podium Juara Umum Pesta</span>
+          <span class="text-sm font-bold text-[#485A44] uppercase tracking-wider">⭐ Podium Juara Umum Pesta</span>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <!-- Juara 1 -->
-          <div class="podium-card-gold winner-podium-card rounded-2xl p-4 text-center flex flex-col items-center cursor-pointer select-none" data-idx="0" title="Klik untuk memperbesar foto Juara 1">
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-gold text-black text-xs font-bold uppercase tracking-wider mb-2 shadow-md">
+          <div class="podium-card-gold winner-podium-card rounded-2xl p-4 text-center flex flex-col items-center cursor-pointer select-none bg-white border-2 border-[#485A44]" data-idx="0" title="Klik untuk memperbesar foto Juara 1">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#485A44] text-white text-xs font-bold uppercase tracking-wider mb-2">
               <span>${p1Title}</span>
             </div>
-            <div class="w-36 h-44 rounded-xl overflow-hidden bg-[#161622] mb-2.5 border-2 border-brand-gold/70 shadow-xl flex items-center justify-center relative">
-              <div class="absolute inset-0 flex items-center justify-center text-zinc-600 pointer-events-none">
-                <span class="text-[10px] text-zinc-500 font-medium">Memuat foto...</span>
+            <div class="w-36 h-44 rounded-xl overflow-hidden bg-[#F4EFEB] mb-2.5 border border-[#E5DFD5] flex items-center justify-center relative">
+              <div class="absolute inset-0 flex items-center justify-center text-[#8E8780] pointer-events-none">
+                <span class="text-[10px] text-[#8E8780] font-medium">Memuat foto...</span>
               </div>
               <img src="${p1Urls[0] || p1.gdriveViewUrl}" data-secondary="${p1Urls[1] || ''}" data-tertiary="${p1Urls[2] || ''}" data-step="0" alt="${p1.guestNama}" class="w-full h-full object-cover hover:scale-105 transition duration-300 opacity-0 relative z-10" onload="this.classList.remove('opacity-0'); this.previousElementSibling?.remove();" onerror="handlePodiumImgError(this);" />
             </div>
-            <h4 class="font-bold text-sm text-white">${p1.guestNama}</h4>
-            <p class="text-xs text-zinc-300 italic truncate max-w-[220px] mb-2">"${p1.caption || 'Momen seru!'}"</p>
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-gold/20 text-brand-gold text-xs font-bold border border-brand-gold/40">
+            <h4 class="font-bold text-sm text-[#1F1E1D]">${p1.guestNama}</h4>
+            <p class="text-xs text-[#6E6862] italic truncate max-w-[220px] mb-2">"${p1.caption || 'Momen seru!'}"</p>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F4EFEB] text-[#485A44] text-xs font-bold border border-[#485A44]/30">
               <span>❤️</span>
               <span>${p1.totalLikes || 0} Suka Total</span>
             </div>
-            <span class="text-[10px] text-brand-gold/70 mt-1.5 font-medium">🔍 Klik untuk perbesar</span>
+            <span class="text-[10px] text-[#485A44] mt-1.5 font-medium">🔍 Klik untuk perbesar</span>
           </div>
     `;
 
     if (p2) {
       podiumHtml += `
           <!-- Juara 2 -->
-          <div class="podium-card-silver winner-podium-card rounded-2xl p-4 text-center flex flex-col items-center cursor-pointer select-none" data-idx="1" title="Klik untuk memperbesar foto Juara 2">
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-300 text-black text-xs font-bold uppercase tracking-wider mb-2 shadow-md">
+          <div class="podium-card-silver winner-podium-card rounded-2xl p-4 text-center flex flex-col items-center cursor-pointer select-none bg-white border border-[#8E8780]" data-idx="1" title="Klik untuk memperbesar foto Juara 2">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#222222] text-white text-xs font-bold uppercase tracking-wider mb-2">
               <span>${p2Title}</span>
             </div>
-            <div class="w-32 h-40 rounded-xl overflow-hidden bg-[#161622] mb-2.5 border-2 border-zinc-300/70 shadow-lg flex items-center justify-center relative">
-              <div class="absolute inset-0 flex items-center justify-center text-zinc-600 pointer-events-none">
-                <span class="text-[10px] text-zinc-500 font-medium">Memuat foto...</span>
+            <div class="w-32 h-40 rounded-xl overflow-hidden bg-[#F4EFEB] mb-2.5 border border-[#E5DFD5] flex items-center justify-center relative">
+              <div class="absolute inset-0 flex items-center justify-center text-[#8E8780] pointer-events-none">
+                <span class="text-[10px] text-[#8E8780] font-medium">Memuat foto...</span>
               </div>
               <img src="${p2Urls[0] || p2.gdriveViewUrl}" data-secondary="${p2Urls[1] || ''}" data-tertiary="${p2Urls[2] || ''}" data-step="0" alt="${p2.guestNama}" class="w-full h-full object-cover hover:scale-105 transition duration-300 opacity-0 relative z-10" onload="this.classList.remove('opacity-0'); this.previousElementSibling?.remove();" onerror="handlePodiumImgError(this);" />
             </div>
-            <h4 class="font-bold text-sm text-white">${p2.guestNama}</h4>
-            <p class="text-xs text-zinc-300 italic truncate max-w-[200px] mb-2">"${p2.caption || 'Momen seru!'}"</p>
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-zinc-200 text-xs font-bold border border-white/20">
+            <h4 class="font-bold text-sm text-[#1F1E1D]">${p2.guestNama}</h4>
+            <p class="text-xs text-[#6E6862] italic truncate max-w-[200px] mb-2">"${p2.caption || 'Momen seru!'}"</p>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F4EFEB] text-[#222222] text-xs font-bold border border-[#8E8780]/30">
               <span>❤️</span>
               <span>${p2.totalLikes || 0} Suka Total</span>
             </div>
-            <span class="text-[10px] text-zinc-400 mt-1.5 font-medium">🔍 Klik untuk perbesar</span>
+            <span class="text-[10px] text-[#6E6862] mt-1.5 font-medium">🔍 Klik untuk perbesar</span>
           </div>
       `;
     }
@@ -4247,23 +4245,23 @@ function renderVotingWinners() {
     if (p3) {
       podiumHtml += `
           <!-- Juara 3 -->
-          <div class="podium-card-bronze winner-podium-card rounded-2xl p-4 text-center flex flex-col items-center cursor-pointer select-none" data-idx="2" title="Klik untuk memperbesar foto Juara 3">
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-700 text-white text-xs font-bold uppercase tracking-wider mb-2 shadow-md">
+          <div class="podium-card-bronze winner-podium-card rounded-2xl p-4 text-center flex flex-col items-center cursor-pointer select-none bg-white border border-[#B58463]" data-idx="2" title="Klik untuk memperbesar foto Juara 3">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#8E8780] text-white text-xs font-bold uppercase tracking-wider mb-2">
               <span>${p3Title}</span>
             </div>
-            <div class="w-32 h-40 rounded-xl overflow-hidden bg-[#161622] mb-2.5 border-2 border-amber-600/70 shadow-lg flex items-center justify-center relative">
-              <div class="absolute inset-0 flex items-center justify-center text-zinc-600 pointer-events-none">
-                <span class="text-[10px] text-zinc-500 font-medium">Memuat foto...</span>
+            <div class="w-32 h-40 rounded-xl overflow-hidden bg-[#F4EFEB] mb-2.5 border border-[#E5DFD5] flex items-center justify-center relative">
+              <div class="absolute inset-0 flex items-center justify-center text-[#8E8780] pointer-events-none">
+                <span class="text-[10px] text-[#8E8780] font-medium">Memuat foto...</span>
               </div>
               <img src="${p3Urls[0] || p3.gdriveViewUrl}" data-secondary="${p3Urls[1] || ''}" data-tertiary="${p3Urls[2] || ''}" data-step="0" alt="${p3.guestNama}" class="w-full h-full object-cover hover:scale-105 transition duration-300 opacity-0 relative z-10" onload="this.classList.remove('opacity-0'); this.previousElementSibling?.remove();" onerror="handlePodiumImgError(this);" />
             </div>
-            <h4 class="font-bold text-sm text-white">${p3.guestNama}</h4>
-            <p class="text-xs text-zinc-300 italic truncate max-w-[200px] mb-2">"${p3.caption || 'Momen seru!'}"</p>
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-600/20 text-amber-300 text-xs font-bold border border-amber-600/40">
+            <h4 class="font-bold text-sm text-[#1F1E1D]">${p3.guestNama}</h4>
+            <p class="text-xs text-[#6E6862] italic truncate max-w-[200px] mb-2">"${p3.caption || 'Momen seru!'}"</p>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F4EFEB] text-[#B58463] text-xs font-bold border border-[#B58463]/30">
               <span>❤️</span>
               <span>${p3.totalLikes || 0} Suka Total</span>
             </div>
-            <span class="text-[10px] text-amber-300/70 mt-1.5 font-medium">🔍 Klik untuk perbesar</span>
+            <span class="text-[10px] text-[#6E6862] mt-1.5 font-medium">🔍 Klik untuk perbesar</span>
           </div>
       `;
     }
@@ -4303,20 +4301,20 @@ function renderVotingWinners() {
         const winnerLikes = getVotes(winner);
         const winUrls = getDriveImageUrls(winner.gdriveViewUrl);
         catWinnerCards += `
-          <div class="bg-brand-surfaceLight border border-brand-surfaceBorder rounded-2xl p-3.5 flex items-center gap-3.5 shadow-md">
-            <div class="w-20 h-24 rounded-xl overflow-hidden bg-[#161622] shrink-0 border border-white/10 flex items-center justify-center relative">
-              <div class="absolute inset-0 flex items-center justify-center text-zinc-600 pointer-events-none">
-                <span class="text-[9px] text-zinc-500 font-medium">Memuat...</span>
+          <div class="bg-white border border-[#E5DFD5] rounded-2xl p-3.5 flex items-center gap-3.5">
+            <div class="w-20 h-24 rounded-xl overflow-hidden bg-[#F4EFEB] shrink-0 border border-[#E5DFD5] flex items-center justify-center relative">
+              <div class="absolute inset-0 flex items-center justify-center text-[#8E8780] pointer-events-none">
+                <span class="text-[9px] text-[#8E8780] font-medium">Memuat...</span>
               </div>
               <img src="${winUrls[0] || winner.gdriveViewUrl}" data-secondary="${winUrls[1] || ''}" data-tertiary="${winUrls[2] || ''}" data-step="0" alt="${winner.guestNama}" class="w-full h-full object-cover opacity-0 relative z-10" onload="this.classList.remove('opacity-0'); this.previousElementSibling?.remove();" onerror="handlePodiumImgError(this);" />
             </div>
             <div class="flex-1 min-w-0">
-              <div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold border border-amber-500/30 mb-1">
+              <div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#F4EFEB] text-[#485A44] text-[10px] font-bold border border-[#485A44]/30 mb-1">
                 <span>👑 ${cat.namaKategori}</span>
               </div>
-              <h4 class="font-bold text-sm text-white truncate">${winner.guestNama}</h4>
-              <p class="text-xs text-zinc-400 italic truncate mb-2">"${winner.caption || 'Momen seru!'}"</p>
-              <div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-brand-gold/15 text-brand-gold text-[11px] font-extrabold border border-brand-gold/30">
+              <h4 class="font-bold text-sm text-[#1F1E1D] truncate">${winner.guestNama}</h4>
+              <p class="text-xs text-[#6E6862] italic truncate mb-2">"${winner.caption || 'Momen seru!'}"</p>
+              <div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#F4EFEB] text-[#485A44] text-[11px] font-extrabold border border-[#485A44]/30">
                 <span>❤️</span>
                 <span>${winnerLikes} Suara</span>
               </div>
@@ -4330,7 +4328,7 @@ function renderVotingWinners() {
       podiumHtml += `
         <div class="mt-5">
           <div class="flex items-center gap-2 mb-3">
-            <span class="text-sm font-extrabold text-amber-300 uppercase tracking-wider">👑 Pemenang Per Kategori Voting</span>
+            <span class="text-sm font-bold text-[#485A44] uppercase tracking-wider">👑 Pemenang Per Kategori Voting</span>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             ${catWinnerCards}
@@ -4907,26 +4905,26 @@ function renderSingleLockCustomFrameList(candidateFrames, currentLockedId) {
     const card = document.createElement('div');
     card.className = `single-lock-card flex items-center justify-between p-2.5 rounded-xl border cursor-pointer transition select-none ${
       isLocked 
-        ? 'bg-brand-gold/15 border-brand-gold shadow-md shadow-brand-gold/10' 
-        : 'bg-[#0D0D12] border-white/10 hover:border-brand-gold/50 hover:bg-white/[0.03]'
+        ? 'bg-[#F4EFEB] border-[#485A44]' 
+        : 'bg-white border-[#E5DFD5] hover:border-[#485A44]'
     }`;
     card.setAttribute('data-frame-id', f.id);
 
     const thumbHtml = f.dataUrl 
-      ? `<img src="${f.dataUrl}" class="w-8 h-10 object-contain rounded bg-zinc-900 border border-white/10 shrink-0" alt="" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'32\\' height=\\'40\\' viewBox=\\'0 0 32 40\\'><rect width=\\'32\\' height=\\'40\\' fill=\\'%2318181b\\' rx=\\'4\\'/><text x=\\'50%25\\' y=\\'55%25\\' font-size=\\'14\\' text-anchor=\\'middle\\' dominant-baseline=\\'middle\\'>🖼️</text></svg>';" />`
-      : `<span class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-base shrink-0">${f.icon || '🖼️'}</span>`;
+      ? `<img src="${f.dataUrl}" class="w-8 h-10 object-contain rounded bg-[#F4EFEB] border border-[#E5DFD5] shrink-0" alt="" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'32\\' height=\\'40\\' viewBox=\\'0 0 32 40\\'><rect width=\\'32\\' height=\\'40\\' fill=\\'%23F4EFEB\\' rx=\\'4\\'/><text x=\\'50%25\\' y=\\'55%25\\' font-size=\\'14\\' text-anchor=\\'middle\\' dominant-baseline=\\'middle\\'>🖼️</text></svg>';" />`
+      : `<span class="w-8 h-8 rounded-lg bg-[#F4EFEB] border border-[#E5DFD5] flex items-center justify-center text-base shrink-0">${f.icon || '🖼️'}</span>`;
 
     const statusBadge = isLocked 
-      ? `<span class="text-[10px] px-2 py-0.5 rounded-full bg-brand-gold text-black font-bold shrink-0">✓ TERKUNCI</span>`
-      : `<span class="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-zinc-400 group-hover:text-white shrink-0">Pilih</span>`;
+      ? `<span class="text-[10px] px-2 py-0.5 rounded-full bg-[#485A44] text-white font-bold shrink-0">✓ TERKUNCI</span>`
+      : `<span class="text-[10px] px-2 py-0.5 rounded-full bg-[#F4EFEB] text-[#6E6862] hover:text-[#1F1E1D] shrink-0">Pilih</span>`;
 
     card.innerHTML = `
       <div class="flex items-center gap-2.5 overflow-hidden flex-1 mr-2">
-        <input type="radio" name="singleLockRadioSelect" value="${f.id}" class="text-brand-gold w-4 h-4 shrink-0 cursor-pointer" ${isLocked ? 'checked' : ''} />
+        <input type="radio" name="singleLockRadioSelect" value="${f.id}" class="accent-[#485A44] w-4 h-4 shrink-0 cursor-pointer" ${isLocked ? 'checked' : ''} />
         ${thumbHtml}
         <div class="truncate">
-          <div class="text-xs font-semibold ${isLocked ? 'text-brand-gold' : 'text-zinc-200'} truncate">${f.name}</div>
-          <span class="text-[9px] text-zinc-400 font-mono">${f.type === 'custom' ? (f.scope === 'global' ? 'Kustom (Global)' : 'Kustom (Acara)') : 'Bawaan Standar'}</span>
+          <div class="text-xs font-semibold ${isLocked ? 'text-[#485A44]' : 'text-[#1F1E1D]'} truncate">${f.name}</div>
+          <span class="text-[9px] text-[#6E6862] font-mono">${f.type === 'custom' ? (f.scope === 'global' ? 'Kustom (Global)' : 'Kustom (Acara)') : 'Bawaan Standar'}</span>
         </div>
       </div>
       <div>${statusBadge}</div>
@@ -5239,41 +5237,41 @@ function renderAdminDashboard() {
         const isActive = ev.idEvent === STATE.activeEventId;
 
         const card = document.createElement('div');
-        card.className = `bg-brand-surfaceLight border ${isActive ? 'border-brand-gold/60 ring-1 ring-brand-gold/30' : 'border-brand-surfaceBorder'} rounded-2xl p-4 transition shadow-md`;
+        card.className = `bg-white border ${isActive ? 'border-2 border-[#485A44]' : 'border border-[#E5DFD5]'} rounded-2xl p-4 transition`;
         card.innerHTML = `
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
-              <span class="text-[10px] font-bold text-brand-gold uppercase tracking-widest">${ev.idEvent}</span>
+              <span class="text-[10px] font-bold text-[#485A44] uppercase tracking-widest">${ev.idEvent}</span>
               ${isActive 
-                ? '<span class="text-[9px] bg-brand-gold text-black font-extrabold px-2.5 py-0.5 rounded-full shadow-sm flex items-center gap-1">🌟 Sedang Berlangsung (Aktif)</span>' 
-                : `<button class="btn-activate-event text-[9px] bg-brand-gold/15 hover:bg-brand-gold text-brand-gold hover:text-black font-bold px-2.5 py-0.5 rounded-full border border-brand-gold/50 transition flex items-center gap-1">⭐ Aktifkan Event Ini</button>`
+                ? '<span class="text-[9px] bg-[#485A44] text-white font-extrabold px-2.5 py-0.5 rounded-full flex items-center gap-1">🌟 Sedang Berlangsung (Aktif)</span>' 
+                : `<button class="btn-activate-event text-[9px] bg-[#F4EFEB] hover:bg-[#485A44] text-[#485A44] hover:text-white font-bold px-2.5 py-0.5 rounded-full border border-[#485A44]/30 transition flex items-center gap-1">⭐ Aktifkan Event Ini</button>`
               }
             </div>
-            <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${ev.isRevealed ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}">
+            <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${ev.isRevealed ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-amber-50 text-amber-800 border border-amber-200'}">
               ${ev.isRevealed ? 'Galeri Terbuka' : 'Galeri Ditahan'}
             </span>
           </div>
-          <h4 class="font-serif text-base font-bold text-white mb-1">${ev.namaEvent}</h4>
-          <p class="text-xs text-zinc-400 mb-2">${ev.hashtagEvent || '#SnapEvent'} • Kuota: ${ev.maxFotoPerGuest || 10} Foto / Tamu</p>
-          <div class="flex items-center gap-2 text-[11px] text-zinc-400 mb-3 flex-wrap">
-            <span class="px-2 py-0.5 rounded bg-white/5 border border-white/10">${driveFolderText}</span>
-            <span class="px-2 py-0.5 rounded bg-brand-gold/10 text-brand-gold border border-brand-gold/20">${frameText}</span>
+          <h4 class="font-serif text-base font-bold text-[#1F1E1D] mb-1">${ev.namaEvent}</h4>
+          <p class="text-xs text-[#6E6862] mb-2">${ev.hashtagEvent || '#SnapEvent'} • Kuota: ${ev.maxFotoPerGuest || 10} Foto / Tamu</p>
+          <div class="flex items-center gap-2 text-[11px] text-[#6E6862] mb-3 flex-wrap">
+            <span class="px-2 py-0.5 rounded bg-[#F4EFEB] text-[#6E6862] border border-[#E5DFD5]">${driveFolderText}</span>
+            <span class="px-2 py-0.5 rounded bg-[#F4EFEB] text-[#485A44] border border-[#485A44]/30">${frameText}</span>
           </div>
           
-          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-2 border-t border-white/5">
-            <button class="btn-edit-event py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-300 text-xs font-semibold text-center transition cursor-pointer">
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-2 border-t border-[#E5DFD5]">
+            <button class="btn-edit-event py-2 px-3 rounded-xl bg-[#F4EFEB] hover:bg-white text-[#1F1E1D] border border-[#E5DFD5] text-xs font-semibold text-center transition cursor-pointer">
               ✏️ Edit Acara
             </button>
-            <button class="btn-toggle-reveal py-2 px-3 rounded-xl ${ev.isRevealed ? 'bg-amber-500/20 text-amber-300' : 'bg-emerald-500/20 text-emerald-300'} text-xs font-semibold text-center transition cursor-pointer">
+            <button class="btn-toggle-reveal py-2 px-3 rounded-xl ${ev.isRevealed ? 'bg-amber-50 text-amber-800 border border-amber-200' : 'bg-emerald-50 text-emerald-800 border border-emerald-200'} text-xs font-semibold text-center transition cursor-pointer">
               ${ev.isRevealed ? '🔒 Kunci' : '🔓 Buka'}
             </button>
-            <button class="btn-open-slideshow py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-300 text-xs font-semibold text-center transition cursor-pointer">
+            <button class="btn-open-slideshow py-2 px-3 rounded-xl bg-[#F4EFEB] hover:bg-white text-[#1F1E1D] border border-[#E5DFD5] text-xs font-semibold text-center transition cursor-pointer">
               📺 Proyektor
             </button>
-            <button class="btn-share-qr py-2 px-3 rounded-xl gold-gradient-bg text-black text-xs font-bold text-center transition cursor-pointer">
+            <button class="btn-share-qr py-2 px-3 rounded-xl bg-[#485A44] text-white text-xs font-bold text-center transition cursor-pointer">
               📲 Link & QR
             </button>
-            <button class="btn-delete-event col-span-2 sm:col-span-1 py-2 px-3 rounded-xl bg-rose-500/15 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/20 text-xs font-semibold text-center transition flex items-center justify-center gap-1 cursor-pointer" title="Hapus Acara">
+            <button class="btn-delete-event col-span-2 sm:col-span-1 py-2 px-3 rounded-xl bg-red-50 hover:bg-red-600 text-red-700 hover:text-white border border-red-200 text-xs font-semibold text-center transition flex items-center justify-center gap-1 cursor-pointer" title="Hapus Acara">
               🗑️ Hapus
             </button>
           </div>
@@ -5689,38 +5687,38 @@ function renderAdminGallery() {
     const isHidden = (photo.isVisible === false || photo.photoStatus === 'SEMBUNYI');
 
     const card = document.createElement('div');
-    card.className = `admin-photo-card group relative bg-black/40 border ${isHidden ? 'border-amber-500/40 opacity-75' : 'border-white/10'} rounded-xl overflow-hidden flex flex-col justify-between transition hover:border-brand-gold/50 shadow-sm`;
+    card.className = `admin-photo-card group relative bg-white border ${isHidden ? 'border-amber-500 opacity-75' : 'border-[#E5DFD5]'} rounded-xl overflow-hidden flex flex-col justify-between transition hover:border-[#485A44]`;
     card.innerHTML = `
-      <div class="relative w-full aspect-[4/5] bg-zinc-900 overflow-hidden cursor-pointer img-preview-zone">
+      <div class="relative w-full aspect-[4/5] bg-[#F4EFEB] overflow-hidden cursor-pointer img-preview-zone">
         <img src="${primaryUrl}" alt="${photo.guestNama || 'Foto'}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="handleGalleryImgError(this);" />
         <div class="absolute top-2 left-2 z-10">
-          <span class="text-[9px] font-bold px-2 py-0.5 rounded-full ${isHidden ? 'bg-amber-500/90 text-black' : 'bg-emerald-500/90 text-white'} shadow">
+          <span class="text-[9px] font-bold px-2 py-0.5 rounded-full ${isHidden ? 'bg-amber-500 text-white' : 'bg-[#485A44] text-white'}">
             ${isHidden ? '🔒 Disembunyikan' : '🟢 Tampil Publik'}
           </span>
         </div>
         <div class="absolute top-2 right-2 z-10 flex items-center gap-1">
-          <span class="text-[9px] bg-black/70 text-brand-gold font-bold px-2 py-0.5 rounded-full border border-brand-gold/30">
+          <span class="text-[9px] bg-white text-[#485A44] font-bold px-2 py-0.5 rounded-full border border-[#E5DFD5]">
             ❤️ ${photo.totalLikes || 0}
           </span>
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition flex items-end p-2 z-10">
-          <span class="text-[10px] text-zinc-300 truncate">${photo.caption || ''}</span>
+        <div class="absolute inset-x-0 bottom-0 bg-[#1F1E1D]/90 p-2 z-10 opacity-0 group-hover:opacity-100 transition">
+          <span class="text-[10px] text-white truncate block">${photo.caption || ''}</span>
         </div>
       </div>
-      <div class="p-2.5 bg-[#111116] border-t border-white/5 space-y-2">
+      <div class="p-2.5 bg-white border-t border-[#E5DFD5] space-y-2">
         <div class="truncate">
-          <div class="text-xs font-bold text-white truncate">${photo.guestNama || 'Tamu'}</div>
-          <div class="text-[9px] text-zinc-400 font-mono flex items-center justify-between">
+          <div class="text-xs font-bold text-[#1F1E1D] truncate">${photo.guestNama || 'Tamu'}</div>
+          <div class="text-[9px] text-[#6E6862] font-mono flex items-center justify-between">
             <span>${photo.cameraStyle || 'RAW'}</span>
             <span>${photo.createdAt ? String(photo.createdAt).split(' ')[0] : ''}</span>
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-1.5 pt-1 border-t border-white/5">
-          <button type="button" class="btn-adm-vis py-1.5 px-2 rounded-lg ${isHidden ? 'bg-amber-500/20 text-amber-300 hover:bg-amber-500 hover:text-black' : 'bg-white/5 text-zinc-300 hover:bg-white/10'} text-[11px] font-semibold transition text-center cursor-pointer flex items-center justify-center gap-1">
+        <div class="grid grid-cols-2 gap-1.5 pt-1 border-t border-[#E5DFD5]">
+          <button type="button" class="btn-adm-vis py-1.5 px-2 rounded-lg ${isHidden ? 'bg-amber-50 text-amber-800 border border-amber-200' : 'bg-[#F4EFEB] text-[#1F1E1D] border border-[#E5DFD5]'} text-[11px] font-semibold transition text-center cursor-pointer flex items-center justify-center gap-1">
             <span>${isHidden ? '👁️' : '🙈'}</span>
             <span>${isHidden ? 'Tampilkan' : 'Sembunyikan'}</span>
           </button>
-          <button type="button" class="btn-adm-del py-1.5 px-2 rounded-lg bg-rose-500/15 hover:bg-rose-600 text-rose-300 hover:text-white text-[11px] font-semibold transition text-center cursor-pointer flex items-center justify-center gap-1">
+          <button type="button" class="btn-adm-del py-1.5 px-2 rounded-lg bg-red-50 hover:bg-red-600 text-red-700 hover:text-white border border-red-200 text-[11px] font-semibold transition text-center cursor-pointer flex items-center justify-center gap-1">
             <span>🗑️</span>
             <span>Hapus</span>
           </button>
@@ -6523,9 +6521,9 @@ function bindEvents() {
     applyActiveFrame(frameId);
     document.querySelectorAll('.frame-pill').forEach(p => {
       if (p.getAttribute('data-frame') === frameId) {
-        p.className = 'frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-brand-gold text-black border-brand-gold border transition shadow-sm';
+        p.className = 'frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#485A44] text-white border-[#485A44] border transition';
       } else {
-        p.className = 'frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/5 text-zinc-300 border-white/10 border transition';
+        p.className = 'frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white text-[#6E6862] border-[#E5DFD5] border transition';
       }
     });
   });
@@ -7220,13 +7218,13 @@ function showToast(message, type = 'info') {
   const toast = document.createElement('div');
 
   const colors = {
-    success: 'bg-emerald-950/90 border-emerald-500/40 text-emerald-200',
-    error: 'bg-red-950/90 border-red-500/40 text-red-200',
-    warning: 'bg-amber-950/90 border-amber-500/40 text-amber-200',
-    info: 'bg-brand-surfaceLight/95 border-brand-surfaceBorder text-zinc-100'
+    success: 'bg-white border-emerald-600 text-emerald-800',
+    error: 'bg-white border-red-600 text-red-800',
+    warning: 'bg-white border-amber-600 text-amber-800',
+    info: 'bg-white border-[#485A44] text-[#1F1E1D]'
   };
 
-  toast.className = `flex items-center gap-2.5 px-4 py-3 rounded-2xl border text-xs font-medium shadow-2xl backdrop-blur-md transition-all duration-300 transform -translate-y-2 opacity-0 ${colors[type] || colors.info}`;
+  toast.className = `flex items-center gap-2.5 px-4 py-3 rounded-2xl border text-xs font-semibold transition-all duration-300 transform -translate-y-2 opacity-0 ${colors[type] || colors.info}`;
   toast.innerHTML = `
     <span>${type === 'success' ? '✓' : type === 'warning' ? '⚠️' : type === 'error' ? '✕' : 'ℹ️'}</span>
     <span>${message}</span>

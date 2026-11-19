@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>SnapEvent - Disposable Event Camera & Live Wedding Gallery</title>
 
-  <!-- Google Fonts: Plus Jakarta Sans, Playfair Display, Great Vibes untuk Romantic Luxury Wedding Aesthetic -->
+  <!-- Google Fonts: Plus Jakarta Sans & Playfair Display untuk OurDay Wedding Aesthetic -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Caveat:wght@600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Caveat:wght@600&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -18,19 +18,18 @@
         extend: {
           colors: {
             brand: {
-              gold: '#C97D76',
-              goldLight: '#E8A598',
-              goldDark: '#A95A54',
+              gold: '#485A44',
+              goldLight: '#5D7058',
+              goldDark: '#3A4A36',
               surface: '#FFFFFF',
-              surfaceLight: '#FFF9F5',
-              surfaceBorder: '#F0E6E1',
-              dark: '#2C2523'
+              surfaceLight: '#F4EFEB',
+              surfaceBorder: '#E5DFD5',
+              dark: '#1F1E1D'
             }
           },
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'sans-serif'],
             serif: ['"Playfair Display"', 'serif'],
-            script: ['"Great Vibes"', 'cursive'],
             hand: ['"Caveat"', 'cursive']
           }
         }
@@ -49,13 +48,13 @@
     })();
   </script>
 
-  <!-- Modular Stylesheet (Wedknot Romantic Luxury Wedding Aesthetic) -->
-  <link rel="stylesheet" href="style.css?v=2.5.0" onerror="if(!this.dataset.retried){this.dataset.retried='1';this.href=(window.location.pathname.indexOf('/cam')!==-1?'/cam/':'/')+'style.css?v=2.5.0';}" />
+  <!-- Modular Stylesheet (OurDay Solid Flat Elegance) -->
+  <link rel="stylesheet" href="style.css?v=2.6.0" onerror="if(!this.dataset.retried){this.dataset.retried='1';this.href=(window.location.pathname.indexOf('/cam')!==-1?'/cam/':'/')+'style.css?v=2.6.0';}" />
 
   <!-- Modular JavaScript Engine (Clean, Robust & GitHub Ready) -->
-  <script src="app.js?v=2.5.0" defer onerror="if(!this.dataset.retried){this.dataset.retried='1';var s=document.createElement('script');s.src=(window.location.pathname.indexOf('/cam')!==-1?'/cam/':'/')+'app.js?v=2.5.0';s.defer=true;document.head.appendChild(s);}"></script>
+  <script src="app.js?v=2.6.0" defer onerror="if(!this.dataset.retried){this.dataset.retried='1';var s=document.createElement('script');s.src=(window.location.pathname.indexOf('/cam')!==-1?'/cam/':'/')+'app.js?v=2.6.0';s.defer=true;document.head.appendChild(s);}"></script>
 </head>
-<body class="bg-[#FDFBF7] text-[#2C2523] font-sans antialiased min-h-screen flex flex-col selection:bg-brand-goldLight selection:text-[#2C2523]">
+<body class="bg-[#F9F6F0] text-[#1F1E1D] font-sans antialiased min-h-screen flex flex-col selection:bg-[#485A44] selection:text-white">
 
   <!-- FLASH OVERLAY EFFECT (Camera Shutter Flash) -->
   <div id="flashOverlay" class="pointer-events-none fixed inset-0 z-50 opacity-0 bg-white"></div>
@@ -63,10 +62,10 @@
   <!-- TOAST NOTIFICATION SYSTEM -->
   <div id="toastContainer" class="fixed top-5 left-1/2 -translate-x-1/2 z-[100] flex flex-col items-center gap-2 pointer-events-none w-11/12 max-w-sm"></div>
 
-  <!-- TOP HEADER / APP BAR (Alabaster Ivory Frosted Header) -->
-  <header class="sticky top-0 z-40 bg-[#FDFBF7]/90 backdrop-blur-xl border-b border-[#F0E6E1] px-4 py-2.5 flex items-center justify-between shadow-xs">
+  <!-- TOP HEADER / APP BAR (Solid Clean White Header) -->
+  <header class="sticky top-0 z-40 bg-white border-b border-[#E5DFD5] px-4 py-2.5 flex items-center justify-between">
     <div class="flex items-center gap-3">
-      <div id="headerLogoContainer" class="w-8 h-8 rounded-xl overflow-hidden bg-gradient-to-br from-[#E8A598] via-[#C97D76] to-[#A95A54] flex items-center justify-center text-white font-bold shadow-md shadow-[#C97D76]/20 shrink-0 ring-1 ring-white/60">
+      <div id="headerLogoContainer" class="w-8 h-8 rounded-xl bg-[#485A44] flex items-center justify-center text-white font-bold shrink-0 border border-[#3A4A36]">
         <svg id="headerDefaultLogoIcon" class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
           <circle cx="12" cy="13" r="3"/>
@@ -74,28 +73,28 @@
         <img id="headerCustomLogoImg" src="" alt="Logo" class="hidden w-full h-full object-cover" />
       </div>
       <div>
-        <h1 class="text-sm font-semibold tracking-tight text-[#2C2523] flex items-center gap-1.5 font-serif">
+        <h1 class="text-sm font-semibold tracking-tight text-[#1F1E1D] flex items-center gap-1.5 font-serif">
           <span id="headerAppTitle">SnapEvent</span>
         </h1>
-        <p id="headerEventHashtag" class="text-[11px] text-[#7D6F6B] font-medium tracking-wide">#SarahKevinEverAfter</p>
+        <p id="headerEventHashtag" class="text-[11px] text-[#6E6862] font-medium tracking-wide">#SarahKevinEverAfter</p>
       </div>
     </div>
 
     <!-- Right Quick Actions: Kontak, Slideshow Proyektor & Admin -->
     <div class="flex items-center gap-2">
-      <button id="btnHeaderContact" title="Kontak / WhatsApp" class="hidden p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 transition active:scale-95">
+      <button id="btnHeaderContact" title="Kontak / WhatsApp" class="hidden p-2 rounded-xl bg-[#EBECE8] hover:bg-[#E0E2DC] text-[#485A44] border border-[#D5D8CF] transition active:scale-95">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
         </svg>
       </button>
 
-      <button id="btnOpenSlideshow" title="Layar Proyektor Panggung" class="p-2 rounded-xl bg-white hover:bg-[#FFF9F5] text-[#7D6F6B] hover:text-[#C97D76] border border-[#F0E6E1] transition active:scale-95 shadow-xs">
+      <button id="btnOpenSlideshow" title="Layar Proyektor Panggung" class="p-2 rounded-xl bg-white hover:bg-[#F4EFEB] text-[#6E6862] hover:text-[#1F1E1D] border border-[#E5DFD5] transition active:scale-95">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect width="18" height="12" x="3" y="4" rx="2"/><line x1="8" x2="16" y1="20" y2="20"/><line x1="12" x2="12" y1="16" y2="20"/>
         </svg>
       </button>
 
-      <button id="btnOpenAdmin" title="Menu Admin & Pengaturan" class="p-2 rounded-xl bg-white hover:bg-[#FFF9F5] text-[#7D6F6B] hover:text-[#C97D76] border border-[#F0E6E1] transition active:scale-95 shadow-xs flex items-center gap-1">
+      <button id="btnOpenAdmin" title="Menu Admin & Pengaturan" class="p-2 rounded-xl bg-white hover:bg-[#F4EFEB] text-[#6E6862] hover:text-[#485A44] border border-[#E5DFD5] transition active:scale-95 flex items-center gap-1">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
         </svg>
@@ -106,102 +105,101 @@
   <!-- MAIN CONTAINER (VIEW ROUTER) -->
   <main class="flex-1 flex flex-col max-w-md w-full mx-auto md:max-w-xl lg:max-w-4xl relative overflow-hidden">
 
-    <!-- VIEW 1: WELCOME & GUEST IDENTITY (Wedknot Romantic Wedding Invitation Style) -->
+    <!-- VIEW 1: WELCOME & GUEST IDENTITY (OurDay Solid Wedding Invitation Style) -->
     <section id="viewWelcome" class="hidden flex-1 flex flex-col items-center justify-center p-5 pb-24 text-center overflow-y-auto">
       
-      <!-- Romantic Invitation Header Motif -->
-      <div class="mb-3 flex items-center justify-center gap-2 text-[#C97D76]">
-        <span class="w-8 h-[1px] bg-[#E8A598]"></span>
-        <span class="text-xs font-script text-xl tracking-wider text-[#C97D76]">With Love</span>
-        <span class="w-8 h-[1px] bg-[#E8A598]"></span>
+      <!-- Solid Badge "YOU'RE INVITED" -->
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EBE5DC] text-[#485A44] text-[10px] font-bold tracking-widest uppercase mb-3 border border-[#D5CFC5]">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#485A44]"></span>
+        YOU'RE INVITED
       </div>
 
-      <!-- Monogram Luxury Hero Badge -->
-      <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-[#A95A54] via-[#C97D76] to-[#E8A598] flex items-center justify-center text-white mb-4 shadow-lg shadow-[#C97D76]/20 ring-4 ring-white">
+      <!-- Solid Couple Monogram Circle -->
+      <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#485A44] flex items-center justify-center text-white mb-4 border-2 border-white ring-2 ring-[#485A44]">
         <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
           <circle cx="12" cy="13" r="3"/>
         </svg>
       </div>
 
-      <h2 id="welcomeEventTitle" class="font-serif text-2xl sm:text-3xl font-bold text-[#2C2523] mb-1 tracking-tight">The Wedding of Sarah & Kevin</h2>
-      <p id="welcomeEventDesc" class="text-[#7D6F6B] text-xs sm:text-sm max-w-xs mb-5 font-normal">We are very pleased to invite you to celebrate & capture our wedding moments.</p>
+      <h2 id="welcomeEventTitle" class="font-serif text-2xl sm:text-3xl font-bold text-[#1F1E1D] mb-1 tracking-tight">The Wedding of Sarah & Kevin</h2>
+      <p id="welcomeEventDesc" class="text-[#6E6862] text-xs sm:text-sm max-w-xs mb-5 font-normal">Together with our families, we invite you to celebrate & capture our wedding.</p>
 
       <!-- Status Nama Tamu Aktif & Tombol Reset Identitas -->
-      <div id="activeGuestInfoBox" class="hidden w-full max-w-xs bg-white border border-[#E8A598] rounded-2xl p-3.5 mb-4 text-left wedding-card-shadow">
+      <div id="activeGuestInfoBox" class="hidden w-full max-w-xs bg-white border border-[#E5DFD5] rounded-2xl p-3.5 mb-4 text-left">
         <div class="flex items-center justify-between mb-1.5">
-          <span class="text-[10px] uppercase tracking-wider text-[#C97D76] font-bold flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-[10px] uppercase tracking-wider text-[#485A44] font-bold flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-[#485A44]"></span>
             Identitas Tamu Aktif
           </span>
-          <span class="text-[10px] text-[#7D6F6B]">Siap Memotret</span>
+          <span class="text-[10px] text-[#6E6862]">Siap Memotret</span>
         </div>
-        <p class="text-sm font-bold text-[#2C2523] mb-2 font-serif">
+        <p class="text-sm font-bold text-[#1F1E1D] mb-2 font-serif">
           👤 <span id="activeGuestNameText">Tamu</span>
         </p>
-        <button id="btnResetGuestName" type="button" class="w-full py-1.5 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-[#C97D76] border border-[#E8A598]/60 text-xs font-semibold transition flex items-center justify-center gap-1.5 active:scale-95">
+        <button id="btnResetGuestName" type="button" class="w-full py-1.5 px-3 rounded-xl bg-[#F9F6F0] hover:bg-[#EBE5DC] text-[#485A44] border border-[#E5DFD5] text-xs font-semibold transition flex items-center justify-center gap-1.5 active:scale-95">
           <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
           <span>Ganti / Reset Nama Tamu</span>
         </button>
       </div>
 
-      <!-- KARTU QR CODE DI SCREEN (Wedding Invitation Card Look) -->
-      <div id="welcomeQrCard" class="w-full max-w-xs sm:max-w-sm bg-white border border-[#F0E6E1] rounded-3xl p-4 sm:p-5 mb-5 wedding-card-shadow-lg">
+      <!-- KARTU QR CODE DI SCREEN (Solid Flat Wedding Card) -->
+      <div id="welcomeQrCard" class="w-full max-w-xs sm:max-w-sm bg-white border border-[#E5DFD5] rounded-3xl p-4 sm:p-5 mb-5">
         <div class="flex items-center justify-between mb-3 px-1">
           <div class="flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-[#C97D76] animate-pulse"></span>
-            <span class="text-[10px] font-bold text-[#C97D76] uppercase tracking-wider">KODE QR RESMI ACARA</span>
+            <span class="w-2 h-2 rounded-full bg-[#485A44]"></span>
+            <span class="text-[10px] font-bold text-[#485A44] uppercase tracking-wider">KODE QR RESMI ACARA</span>
           </div>
-          <span class="text-[10px] text-[#7D6F6B] bg-[#FFF9F5] border border-[#F0E6E1] px-2.5 py-0.5 rounded-full">Scan di HP Tamu</span>
+          <span class="text-[10px] text-[#6E6862] bg-[#F9F6F0] border border-[#E5DFD5] px-2.5 py-0.5 rounded-full font-medium">Buka di HP Tamu</span>
         </div>
         
         <div class="flex items-center justify-center gap-3.5 mb-3">
           <!-- QR Code Image Box -->
-          <div class="w-36 h-36 sm:w-40 sm:h-40 bg-[#FFF9F5] rounded-2xl p-2 shrink-0 shadow-md flex items-center justify-center cursor-pointer hover:scale-[1.02] transition-transform duration-300 ring-2 ring-[#C97D76]/25 border border-[#F0E6E1] relative" id="welcomeQrClickBox" title="Klik untuk perbesar QR Code di layar penuh">
+          <div class="w-36 h-36 sm:w-40 sm:h-40 bg-white rounded-2xl p-2 shrink-0 border-2 border-[#E5DFD5] flex items-center justify-center cursor-pointer hover:border-[#485A44] transition relative" id="welcomeQrClickBox" title="Klik untuk perbesar QR Code di layar penuh">
             <img id="welcomeQrImg" src="" alt="QR Code Acara" class="w-full h-full object-contain" />
           </div>
 
-          <!-- VIP Action Dock: 3 Tombol Aksi Logo Saja yang Presisi -->
-          <div class="flex flex-col items-center justify-between h-36 sm:h-40 p-1.5 rounded-2xl bg-[#FFF9F5] border border-[#F0E6E1] shrink-0">
-            <!-- 1. Bagikan Link Acara -->
-            <button id="btnWelcomeShareLink" type="button" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl rose-gradient-bg text-white hover:brightness-105 active:scale-95 transition-all duration-200 flex items-center justify-center shadow-md shadow-[#C97D76]/25 cursor-pointer group" title="Bagikan Link Acara" aria-label="Bagikan Link Acara">
-              <svg class="w-4 h-4 text-white shrink-0 transition-transform group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          <!-- VIP Action Dock: 3 Tombol Aksi Logo Saja (Solid Flat) -->
+          <div class="flex flex-col items-center justify-between h-36 sm:h-40 p-1.5 rounded-2xl bg-[#F9F6F0] border border-[#E5DFD5] shrink-0">
+            <!-- 1. Bagikan Link Acara (Solid Olive) -->
+            <button id="btnWelcomeShareLink" type="button" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#485A44] text-white hover:bg-[#3A4A36] active:scale-95 transition flex items-center justify-center cursor-pointer group" title="Bagikan Link Acara" aria-label="Bagikan Link Acara">
+              <svg class="w-4 h-4 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
             </button>
 
-            <!-- 2. Unduh QR Meja HD -->
-            <button id="btnWelcomeDownloadQr" type="button" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white hover:bg-[#FCEEE9] text-[#C97D76] border border-[#F0E6E1] hover:border-[#C97D76] active:scale-95 transition-all duration-200 flex flex-col items-center justify-center shadow-xs cursor-pointer group" title="Unduh QR Meja HD" aria-label="Unduh QR Meja HD">
-              <svg class="w-3.5 h-3.5 text-[#C97D76] shrink-0 transition-transform group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              <span class="text-[7px] font-mono font-black text-[#C97D76] tracking-tight leading-none mt-0.5">HD</span>
+            <!-- 2. Unduh QR Meja HD (Solid Dark Charcoal) -->
+            <button id="btnWelcomeDownloadQr" type="button" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#222222] hover:bg-[#111111] text-white active:scale-95 transition flex flex-col items-center justify-center cursor-pointer group" title="Unduh QR Meja HD" aria-label="Unduh QR Meja HD">
+              <svg class="w-3.5 h-3.5 text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span class="text-[7px] font-mono font-black text-white tracking-tight leading-none mt-0.5">HD</span>
             </button>
 
-            <!-- 3. Salin Link QR Acara -->
-            <button id="btnWelcomeCopyQrLink" type="button" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white hover:bg-[#FCEEE9] text-[#C97D76] border border-[#F0E6E1] hover:border-[#C97D76] active:scale-95 transition-all duration-200 flex items-center justify-center shadow-xs cursor-pointer group" title="Salin Link Acara" aria-label="Salin Link Acara">
-              <svg class="w-4 h-4 text-[#C97D76] shrink-0 transition-transform group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            <!-- 3. Salin Link QR Acara (Solid White with Border) -->
+            <button id="btnWelcomeCopyQrLink" type="button" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white hover:bg-[#EBE5DC] text-[#1F1E1D] border border-[#E5DFD5] active:scale-95 transition flex items-center justify-center cursor-pointer group" title="Salin Link Acara" aria-label="Salin Link Acara">
+              <svg class="w-4 h-4 text-[#1F1E1D] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
             </button>
           </div>
         </div>
 
-        <p class="text-[10px] text-[#7D6F6B] text-center flex items-center justify-center gap-1.5">
+        <p class="text-[10px] text-[#6E6862] text-center flex items-center justify-center gap-1.5 font-medium">
           <span>📷</span> Arahkan kamera HP ke QR di atas untuk membuka disposable camera pesta.
         </p>
       </div>
 
-      <!-- FORM NAMA PANGGILAN TAMU (Minimalist Clean Input) -->
-      <div class="w-full max-w-xs bg-white border border-[#F0E6E1] rounded-2xl p-4 mb-4 text-left wedding-card-shadow">
-        <label class="block text-[11px] font-semibold text-[#7D6F6B] uppercase tracking-wider mb-2">Nama Panggilan Kamu <span class="text-rose-400 font-bold">*</span></label>
-        <input type="text" id="inputGuestName" placeholder="Contoh: Sarah / Budi" required class="w-full bg-[#FFFBF8] border border-[#F0E6E1] focus:border-[#C97D76] focus:ring-2 focus:ring-[#C97D76]/15 rounded-xl px-3.5 py-2.5 text-xs text-[#2C2523] placeholder-[#A39691] outline-none transition mb-1.5" />
-        <p id="guestNameWarning" class="hidden text-[11px] text-rose-500 font-medium mb-1 flex items-center gap-1">⚠️ Masukkan nama panggilanmu agar foto tersimpan dengan namamu!</p>
-        <p class="text-[10px] text-[#7D6F6B]">Nama akan dicetak di hasil foto dan voting terfavorit.</p>
+      <!-- FORM NAMA PANGGILAN TAMU (Solid White Card with Crisp Input) -->
+      <div class="w-full max-w-xs bg-white border border-[#E5DFD5] rounded-2xl p-4 mb-4 text-left">
+        <label class="block text-[11px] font-semibold text-[#1F1E1D] uppercase tracking-wider mb-2">Nama Panggilan Kamu <span class="text-rose-600 font-bold">*</span></label>
+        <input type="text" id="inputGuestName" placeholder="Contoh: Sarah / Budi" required class="w-full bg-white border-2 border-[#D5CFC5] focus:border-[#485A44] rounded-xl px-3.5 py-2.5 text-xs text-[#1F1E1D] placeholder-[#8E8780] outline-none transition mb-1.5 font-medium" />
+        <p id="guestNameWarning" class="hidden text-[11px] text-rose-600 font-semibold mb-1 flex items-center gap-1">⚠️ Masukkan nama panggilanmu agar foto tersimpan dengan namamu!</p>
+        <p class="text-[10px] text-[#6E6862]">Nama akan dicetak di hasil foto dan voting terfavorit.</p>
       </div>
 
-      <button id="btnStartCamera" class="w-full max-w-xs py-3 px-5 rounded-xl rose-gradient-bg text-white font-bold text-xs sm:text-sm shadow-md shadow-[#C97D76]/25 hover:brightness-105 active:scale-95 transition flex items-center justify-center gap-2">
+      <button id="btnStartCamera" class="w-full max-w-xs py-3 px-5 rounded-xl bg-[#485A44] text-white hover:bg-[#3A4A36] font-bold text-xs sm:text-sm active:scale-95 transition flex items-center justify-center gap-2 border border-[#3A4A36]">
         <span>Buka Kamera Acara</span>
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
       </button>
 
       <!-- Akses Cepat ke Galeri & Voting -->
       <div class="mt-3.5 flex items-center justify-center gap-3">
-        <button id="btnWelcomeGoGallery" type="button" class="text-xs text-[#7D6F6B] hover:text-[#C97D76] font-medium flex items-center gap-1.5 transition py-1.5 px-3 rounded-xl bg-white hover:bg-[#FFF9F5] border border-[#F0E6E1] shadow-xs">
+        <button id="btnWelcomeGoGallery" type="button" class="text-xs text-[#1F1E1D] hover:text-[#485A44] font-semibold flex items-center gap-1.5 transition py-1.5 px-3 rounded-xl bg-white hover:bg-[#F4EFEB] border border-[#E5DFD5]">
           <span>🖼️ Lihat Galeri & Voting Acara</span>
           <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
         </button>
@@ -210,44 +208,44 @@
 
     <!-- VIEW: EVENT CLOSED / INACTIVE GATE -->
     <section id="viewEventClosed" class="hidden flex-1 flex flex-col items-center justify-center p-6 pb-24 text-center max-w-md mx-auto overflow-y-auto">
-      <div class="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 mb-5 shadow-sm">
+      <div class="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-300 flex items-center justify-center text-amber-700 mb-5">
         <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/>
         </svg>
       </div>
-      <h2 id="closedEventTitle" class="font-serif text-2xl font-bold text-[#2C2523] mb-2">Acara Ini Sedang Tidak Aktif</h2>
-      <p id="closedEventDesc" class="text-[#7D6F6B] text-xs sm:text-sm max-w-xs mb-6">Tautan acara ini telah selesai atau belum dimulai. Hanya acara yang berstatus aktif yang dapat diakses oleh tamu.</p>
-      <button id="btnGoActiveEvent" class="w-full max-w-xs py-3 px-5 rounded-xl rose-gradient-bg text-white font-semibold text-xs shadow-md shadow-[#C97D76]/25 hover:brightness-105 active:scale-95 transition flex items-center justify-center gap-2">
+      <h2 id="closedEventTitle" class="font-serif text-2xl font-bold text-[#1F1E1D] mb-2">Acara Ini Sedang Tidak Aktif</h2>
+      <p id="closedEventDesc" class="text-[#6E6862] text-xs sm:text-sm max-w-xs mb-6">Tautan acara ini telah selesai atau belum dimulai. Hanya acara yang berstatus aktif yang dapat diakses oleh tamu.</p>
+      <button id="btnGoActiveEvent" class="w-full max-w-xs py-3 px-5 rounded-xl bg-[#485A44] text-white hover:bg-[#3A4A36] font-semibold text-xs active:scale-95 transition flex items-center justify-center gap-2 border border-[#3A4A36]">
         <span>Buka Acara yang Sedang Berlangsung</span>
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
       </button>
     </section>
 
-    <!-- VIEW 2: DISPOSABLE CAMERA VIEWFINDER (Wedknot Wedding Edition Camera) -->
+    <!-- VIEW 2: DISPOSABLE CAMERA VIEWFINDER (OurDay Solid Edition Camera) -->
     <section id="viewCamera" class="hidden flex-1 camera-page-container px-3 py-1.5 max-w-md mx-auto w-full">
       
-      <!-- Top HUD: Minimalist Film Roll Capsule -->
-      <div class="flex items-center justify-between glass-capsule px-3.5 py-1.5 rounded-full shrink-0 gap-2 mb-1 shadow-xs bg-white/95 border border-[#F0E6E1]">
+      <!-- Top HUD: Solid Film Roll Capsule -->
+      <div class="flex items-center justify-between px-3.5 py-1.5 rounded-full shrink-0 gap-2 mb-1 bg-white border border-[#E5DFD5]">
         <div class="flex items-center gap-2 min-w-0">
           <span class="text-xs">🎞️</span>
           <div class="truncate">
-            <span id="camRemainingPhotosText" class="text-[11px] font-bold text-[#2C2523] tracking-wide">10 / 10 Foto Tersisa</span>
+            <span id="camRemainingPhotosText" class="text-[11px] font-bold text-[#1F1E1D] tracking-wide">10 / 10 Foto Tersisa</span>
           </div>
         </div>
         <div class="flex items-center gap-1.5 shrink-0">
-          <button id="btnCamChangeGuest" type="button" title="Ganti / Reset Nama Tamu" class="flex items-center gap-1 text-[10px] font-medium text-[#C97D76] bg-[#FFF5F3] hover:bg-[#FCEEE9] px-2 py-0.5 rounded-full border border-[#F0E6E1] transition active:scale-95">
+          <button id="btnCamChangeGuest" type="button" title="Ganti / Reset Nama Tamu" class="flex items-center gap-1 text-[10px] font-medium text-[#485A44] bg-[#F4EFEB] hover:bg-[#EBE5DC] px-2 py-0.5 rounded-full border border-[#E5DFD5] transition active:scale-95">
             <span>👤</span>
             <span id="camGuestNameDisplay" class="max-w-[70px] truncate font-semibold">Tamu</span>
-            <span class="text-[8px] text-[#7D6F6B]">↻</span>
+            <span class="text-[8px] text-[#6E6862]">↻</span>
           </button>
-          <div id="camEventBadge" class="hidden sm:inline-block text-[10px] font-medium text-[#C97D76] bg-[#FFF5F3] px-2 py-0.5 rounded-full border border-[#F0E6E1]">
+          <div id="camEventBadge" class="hidden sm:inline-block text-[10px] font-semibold text-[#485A44] bg-[#F4EFEB] px-2.5 py-0.5 rounded-full border border-[#E5DFD5]">
             #SarahKevinEverAfter
           </div>
         </div>
       </div>
 
       <!-- CAMERA VIEWFINDER FRAME (4:5 Screen Fit with Edge Curves) -->
-      <div id="viewfinderViewport" class="relative w-full flex-1 min-h-0 my-0.5 bg-black rounded-3xl overflow-hidden border-2 border-[#F0E6E1] shadow-xl flex items-center justify-center select-none p-0.5">
+      <div id="viewfinderViewport" class="relative w-full flex-1 min-h-0 my-0.5 bg-black rounded-3xl overflow-hidden border-2 border-[#E5DFD5] flex items-center justify-center select-none p-0.5">
         <!-- Frame Container dengan Aspect Ratio Proporsional Sesuai Bingkai Asli -->
         <div id="viewfinderFrameContainer" class="relative w-full h-full max-h-full max-w-full aspect-[4/5] mx-auto overflow-hidden flex items-center justify-center rounded-[22px] bg-black">
           <!-- Live Video Element with Realtime CSS Filter Effect & Autoplay -->
@@ -258,57 +256,57 @@
 
           <!-- Live Frame Overlay Preview (Built-in) -->
           <div id="viewfinderFrameOverlay" class="pointer-events-none absolute inset-0 flex flex-col justify-between p-3.5 z-10">
-            <div class="flex justify-between items-center text-[9px] font-medium text-amber-100 tracking-widest uppercase drop-shadow">
-              <span id="vfFrameTopLeft">SNAPEVENT 800T</span>
-              <span id="vfFrameDate">20.11.2026</span>
+            <div class="flex justify-between items-center text-[9px] font-bold text-white tracking-widest uppercase">
+              <span id="vfFrameTopLeft" class="bg-black/60 px-1.5 py-0.5 rounded">SNAPEVENT 800T</span>
+              <span id="vfFrameDate" class="bg-black/60 px-1.5 py-0.5 rounded">20.11.2026</span>
             </div>
 
             <!-- Viewfinder Center Target Reticle -->
-            <div class="w-16 h-16 border border-white/30 rounded-full mx-auto pointer-events-none flex items-center justify-center">
-              <div class="w-1.5 h-1.5 bg-[#C97D76] rounded-full animate-pulse shadow-xs"></div>
+            <div class="w-16 h-16 border-2 border-white/60 rounded-full mx-auto pointer-events-none flex items-center justify-center">
+              <div class="w-2 h-2 bg-[#485A44] rounded-full border border-white"></div>
             </div>
 
             <div class="text-center pb-12 pointer-events-none select-none">
-              <p id="vfFrameBottomTitle" class="font-serif italic text-xs text-amber-100 drop-shadow">The Wedding of Sarah & Kevin</p>
-              <p id="vfFrameBottomHashtag" class="text-[9px] text-white/90 font-hand tracking-wider">#SarahKevinEverAfter</p>
+              <p id="vfFrameBottomTitle" class="font-serif italic text-xs text-white font-bold bg-black/60 inline-block px-2 py-0.5 rounded">The Wedding of Sarah & Kevin</p>
+              <p id="vfFrameBottomHashtag" class="text-[9px] text-white font-mono mt-0.5">#SarahKevinEverAfter</p>
             </div>
           </div>
         </div>
 
         <!-- Floating Camera Zoom Selector Capsule (1x, 2x, 3x) di Sudut Atas Kanan -->
-        <div id="cameraZoomControls" class="absolute top-2.5 right-2.5 z-20 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-white/80 backdrop-blur-md border border-[#F0E6E1] shadow-md select-none">
-          <button type="button" class="btn-cam-zoom px-2 py-0.5 rounded-full text-[9px] font-bold transition-all bg-[#C97D76] text-white shadow-xs cursor-pointer" data-zoom="1">1x</button>
-          <button type="button" class="btn-cam-zoom px-2 py-0.5 rounded-full text-[9px] font-bold transition-all text-[#7D6F6B] hover:text-[#2C2523] cursor-pointer" data-zoom="2">2x</button>
-          <button type="button" class="btn-cam-zoom px-2 py-0.5 rounded-full text-[9px] font-bold transition-all text-[#7D6F6B] hover:text-[#2C2523] cursor-pointer" data-zoom="3">3x</button>
+        <div id="cameraZoomControls" class="absolute top-2.5 right-2.5 z-20 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-white border border-[#E5DFD5] select-none">
+          <button type="button" class="btn-cam-zoom px-2 py-0.5 rounded-full text-[9px] font-bold transition-all bg-[#485A44] text-white cursor-pointer" data-zoom="1">1x</button>
+          <button type="button" class="btn-cam-zoom px-2 py-0.5 rounded-full text-[9px] font-bold transition-all text-[#6E6862] hover:text-[#1F1E1D] cursor-pointer" data-zoom="2">2x</button>
+          <button type="button" class="btn-cam-zoom px-2 py-0.5 rounded-full text-[9px] font-bold transition-all text-[#6E6862] hover:text-[#1F1E1D] cursor-pointer" data-zoom="3">3x</button>
         </div>
 
         <!-- Floating Filter Selector Pills Capsule di Sudut Atas Kiri -->
-        <div class="absolute top-2.5 left-2.5 z-20 max-w-[62%] w-auto flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-white/80 backdrop-blur-md border border-[#F0E6E1] shadow-md overflow-x-auto no-scrollbar" id="filterListContainer">
-          <button data-filter="RAW" class="filter-pill shrink-0 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-white text-[#7D6F6B] border border-[#F0E6E1] hover:border-[#C97D76] transition cursor-pointer">
+        <div class="absolute top-2.5 left-2.5 z-20 max-w-[62%] w-auto flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-white border border-[#E5DFD5] overflow-x-auto no-scrollbar" id="filterListContainer">
+          <button data-filter="RAW" class="filter-pill shrink-0 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-white text-[#6E6862] border border-[#E5DFD5] hover:border-[#485A44] transition cursor-pointer">
             RAW
           </button>
-          <button data-filter="800T" class="filter-pill shrink-0 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-[#C97D76] text-white border border-[#C97D76] transition shadow-xs cursor-pointer">
+          <button data-filter="800T" class="filter-pill shrink-0 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-[#485A44] text-white border border-[#485A44] transition cursor-pointer">
             800T
           </button>
-          <button data-filter="WARM" class="filter-pill shrink-0 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-white text-[#7D6F6B] border border-[#F0E6E1] hover:border-[#C97D76] transition cursor-pointer">
+          <button data-filter="WARM" class="filter-pill shrink-0 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-white text-[#6E6862] border border-[#E5DFD5] hover:border-[#485A44] transition cursor-pointer">
             Warm
           </button>
-          <button data-filter="BW" class="filter-pill shrink-0 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-white text-[#7D6F6B] border border-[#F0E6E1] hover:border-[#C97D76] transition cursor-pointer">
+          <button data-filter="BW" class="filter-pill shrink-0 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-white text-[#6E6862] border border-[#E5DFD5] hover:border-[#485A44] transition cursor-pointer">
             B&W
           </button>
         </div>
 
         <!-- Standby Notice if camera fails or waiting -->
-        <div id="cameraStandbyNotice" class="hidden absolute inset-0 bg-[#FDFBF7] flex flex-col items-center justify-center p-6 text-center z-20">
-          <div class="w-12 h-12 rounded-full bg-[#FFF5F3] border border-[#F0E6E1] flex items-center justify-center text-[#C97D76] mb-2.5 shadow-sm">
+        <div id="cameraStandbyNotice" class="hidden absolute inset-0 bg-[#F9F6F0] flex flex-col items-center justify-center p-6 text-center z-20">
+          <div class="w-12 h-12 rounded-full bg-white border-2 border-[#E5DFD5] flex items-center justify-center text-[#485A44] mb-2.5">
             <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
               <circle cx="12" cy="13" r="3"/>
             </svg>
           </div>
-          <p class="text-xs font-semibold text-[#2C2523] mb-1">Membuka Kamera HP...</p>
-          <p class="text-[10px] text-[#7D6F6B] max-w-xs mb-3">Izinkan akses kamera di browsermu atau gunakan foto dari galeri.</p>
-          <button id="btnInitStream" class="text-xs py-1.5 px-3 rounded-lg bg-white border border-[#F0E6E1] hover:bg-[#FFF9F5] text-[#2C2523] transition shadow-xs">
+          <p class="text-xs font-semibold text-[#1F1E1D] mb-1">Membuka Kamera HP...</p>
+          <p class="text-[10px] text-[#6E6862] max-w-xs mb-3">Izinkan akses kamera di browsermu atau gunakan foto dari galeri.</p>
+          <button id="btnInitStream" class="text-xs py-1.5 px-3 rounded-lg bg-white border border-[#E5DFD5] hover:bg-[#F4EFEB] text-[#1F1E1D] font-medium transition">
             Coba Nyalakan Lagi
           </button>
         </div>
@@ -317,14 +315,14 @@
         <input type="file" id="nativeCameraInput" accept="image/*" capture="environment" class="hidden" />
       </div>
 
-      <!-- Frame Selector Pill Bar (Sleek Minimalist Dock) -->
+      <!-- Frame Selector Pill Bar (Solid Clean Dock) -->
       <div class="shrink-0 w-full py-1 flex items-center justify-between gap-1.5 z-20">
-        <div class="text-[9px] font-bold text-[#7D6F6B] uppercase tracking-wider flex items-center gap-1 shrink-0">
+        <div class="text-[9px] font-bold text-[#6E6862] uppercase tracking-wider flex items-center gap-1 shrink-0">
           <span>🖼️ Bingkai:</span>
         </div>
         
         <!-- Badge untuk Single Locked Frame -->
-        <div id="camSingleFrameBadge" class="hidden flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#FFF5F3] text-[#C97D76] border border-[#F0E6E1] text-[11px] font-bold">
+        <div id="camSingleFrameBadge" class="hidden flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#EBECE8] text-[#485A44] border border-[#D5D8CF] text-[11px] font-bold">
           <span>🔒</span>
           <span id="camSingleFrameName">Bingkai Resmi Acara</span>
         </div>
@@ -340,10 +338,10 @@
       <div id="activeFrameName" class="hidden">GOLD ART DECO</div>
       <div id="vfActiveFrameBadge" class="hidden"></div>
 
-      <!-- CAMERA CONTROLS: TACTILE ROSE GOLD SHUTTER & SWITCH BUTTONS -->
+      <!-- CAMERA CONTROLS: SOLID TACTILE SHUTTER & SWITCH BUTTONS -->
       <div class="shrink-0 flex items-center justify-around py-1.5 z-20">
         <!-- Switch Camera Button -->
-        <button id="btnSwitchCamera" class="w-11 h-11 rounded-full bg-white hover:bg-[#FFF9F5] border border-[#F0E6E1] flex items-center justify-center text-[#7D6F6B] hover:text-[#C97D76] active:scale-90 transition shadow-md" title="Putar Kamera Depan/Belakang">
+        <button id="btnSwitchCamera" class="w-11 h-11 rounded-full bg-white hover:bg-[#F4EFEB] border-2 border-[#E5DFD5] flex items-center justify-center text-[#1F1E1D] hover:text-[#485A44] active:scale-90 transition" title="Putar Kamera Depan/Belakang">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
             <path d="M3 3v5h5"/>
@@ -352,13 +350,13 @@
           </svg>
         </button>
 
-        <!-- Tactile Rose Gold Shutter Button -->
+        <!-- Tactile Solid Shutter Button -->
         <button id="btnShutter" class="custom-shutter-btn flex items-center justify-center select-none" title="Jepret Foto">
           <div class="custom-shutter-core"></div>
         </button>
 
         <!-- Gallery Upload Button -->
-        <button id="btnOpenGalleryUpload" class="w-11 h-11 rounded-full bg-white hover:bg-[#FFF9F5] border border-[#F0E6E1] flex items-center justify-center text-[#7D6F6B] hover:text-[#C97D76] active:scale-90 transition shadow-md" title="Unggah Foto dari Galeri HP">
+        <button id="btnOpenGalleryUpload" class="w-11 h-11 rounded-full bg-white hover:bg-[#F4EFEB] border-2 border-[#E5DFD5] flex items-center justify-center text-[#1F1E1D] hover:text-[#485A44] active:scale-90 transition" title="Unggah Foto dari Galeri HP">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect width="18" height="18" x="3" y="3" rx="3.5" ry="3.5"/>
             <circle cx="8.5" cy="8.5" r="1.5"/>
@@ -372,50 +370,50 @@
       </div>
     </section>
 
-    <!-- VIEW 3: EVENT GALLERY & POLING/VOTING (Wedknot Editorial Wedding Album) -->
+    <!-- VIEW 3: EVENT GALLERY & POLING/VOTING (OurDay Solid Gallery Grid) -->
     <section id="viewGallery" class="hidden flex-1 flex flex-col p-4 pb-24 overflow-y-auto">
       
       <!-- Gallery Header Banner -->
-      <div class="bg-gradient-to-r from-white via-[#FFF9F5] to-white border border-[#F0E6E1] rounded-2xl p-4 mb-4 wedding-card-shadow">
+      <div class="bg-white border border-[#E5DFD5] rounded-2xl p-4 mb-4">
         <div class="flex items-center justify-between mb-1">
-          <span class="text-[10px] font-bold text-[#C97D76] uppercase tracking-widest flex items-center gap-1">
-            <span>✨</span> Album Foto Bersama
+          <span class="text-[10px] font-bold text-[#485A44] uppercase tracking-widest flex items-center gap-1">
+            <span>📷</span> Album Foto Bersama
           </span>
-          <span id="galleryPhotoCountBadge" class="text-[11px] bg-[#FFF5F3] px-2.5 py-0.5 rounded-full text-[#C97D76] font-semibold border border-[#F0E6E1]">0 Foto</span>
+          <span id="galleryPhotoCountBadge" class="text-[11px] bg-[#EBECE8] px-2.5 py-0.5 rounded-full text-[#485A44] font-bold border border-[#D5D8CF]">0 Foto</span>
         </div>
-        <h2 id="galleryEventTitle" class="font-serif text-lg sm:text-xl font-bold text-[#2C2523] mb-0.5">The Wedding of Sarah & Kevin</h2>
-        <p id="galleryEventHashtag" class="text-[11px] text-[#7D6F6B]">Semua foto yang dijepret tamu akan berkumpul di sini.</p>
+        <h2 id="galleryEventTitle" class="font-serif text-lg sm:text-xl font-bold text-[#1F1E1D] mb-0.5">The Wedding of Sarah & Kevin</h2>
+        <p id="galleryEventHashtag" class="text-[11px] text-[#6E6862]">Semua foto yang dijepret tamu akan berkumpul di sini.</p>
       </div>
 
       <!-- STAGE PHOTOS BANNER SHORTCUT -->
-      <div id="galleryStagePhotosBanner" class="hidden w-full mb-3.5 p-3 rounded-2xl bg-gradient-to-r from-[#FFF5F3] to-[#FCEEE9] border border-[#F0E6E1] flex items-center justify-between cursor-pointer hover:border-[#C97D76] transition shadow-xs group">
+      <div id="galleryStagePhotosBanner" class="hidden w-full mb-3.5 p-3 rounded-2xl bg-white border border-[#E5DFD5] flex items-center justify-between cursor-pointer hover:border-[#485A44] transition group">
         <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-xl bg-white text-[#C97D76] flex items-center justify-center text-base border border-[#F0E6E1] shrink-0 group-hover:scale-105 transition shadow-xs">
+          <div class="w-8 h-8 rounded-xl bg-[#EBECE8] text-[#485A44] flex items-center justify-center text-base border border-[#D5D8CF] shrink-0 group-hover:scale-105 transition">
             🎪
           </div>
           <div>
-            <div id="galleryStageBannerTitle" class="text-xs font-bold text-[#2C2523] flex items-center gap-1.5 font-serif">
+            <div id="galleryStageBannerTitle" class="text-xs font-bold text-[#1F1E1D] flex items-center gap-1.5 font-serif">
               <span>Foto Panggung</span>
-              <span class="text-[8px] bg-[#FFF5F3] text-[#C97D76] px-1.5 py-0.2 rounded font-mono font-bold">OFFICIAL</span>
+              <span class="text-[8px] bg-[#EBECE8] text-[#485A44] px-1.5 py-0.2 rounded font-mono font-bold">OFFICIAL</span>
             </div>
-            <div class="text-[10px] text-[#7D6F6B]">Dokumentasi resmi panggung & vendor dari Google Drive</div>
+            <div class="text-[10px] text-[#6E6862]">Dokumentasi resmi panggung & vendor dari Google Drive</div>
           </div>
         </div>
-        <div class="px-2.5 py-1 rounded-xl rose-gradient-bg text-white text-[11px] font-bold shadow-xs flex items-center gap-1 shrink-0 group-hover:brightness-105 transition">
+        <div class="px-2.5 py-1 rounded-xl bg-[#485A44] text-white text-[11px] font-bold flex items-center gap-1 shrink-0 group-hover:bg-[#3A4A36] transition">
           <span>Buka →</span>
         </div>
       </div>
 
       <!-- Voting Category Tabs -->
       <div class="mb-4">
-        <div class="flex items-center justify-between text-xs font-semibold text-[#7D6F6B] mb-2">
+        <div class="flex items-center justify-between text-xs font-semibold text-[#6E6862] mb-2">
           <span>Kategori Voting</span>
-          <button id="btnSyncGalleryManual" type="button" class="text-[10px] text-[#C97D76] hover:text-[#A95A54] flex items-center gap-1 bg-white hover:bg-[#FFF9F5] px-2 py-0.5 rounded-lg border border-[#F0E6E1] transition shadow-xs" title="Sinkronkan galeri dengan Google Drive">
+          <button id="btnSyncGalleryManual" type="button" class="text-[10px] text-[#485A44] hover:text-[#3A4A36] flex items-center gap-1 bg-white hover:bg-[#F4EFEB] px-2 py-0.5 rounded-lg border border-[#E5DFD5] transition font-bold" title="Sinkronkan galeri dengan Google Drive">
             <span>🔄 Sync</span>
           </button>
         </div>
         <div class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar" id="galleryCategoryTabs">
-          <button data-cat="ALL" class="cat-tab shrink-0 px-3 py-1 rounded-full text-xs font-semibold rose-gradient-bg text-white border border-[#C97D76] transition shadow-xs">
+          <button data-cat="ALL" class="cat-tab shrink-0 px-3 py-1 rounded-full text-xs font-semibold bg-[#485A44] text-white border border-[#485A44] transition">
             Semua Foto
           </button>
         </div>
@@ -424,47 +422,47 @@
       <!-- SPOTLIGHT HASIL VOTING TERKINI (Highlight Banner) -->
       <div id="galleryWinnerSpotlight" class="hidden mb-4"></div>
 
-      <!-- WINNERS SHOWCASE PODIUM (Minimalist Hall of Fame) -->
+      <!-- WINNERS SHOWCASE PODIUM (Solid Hall of Fame) -->
       <div id="galleryWinnersContainer" class="hidden mb-6 space-y-3.5">
         <div class="flex items-center justify-between mb-1 px-1">
-          <button type="button" id="btnBackToGalleryFromWinners" class="text-xs text-[#C97D76] hover:underline flex items-center gap-1 font-semibold cursor-pointer">
+          <button type="button" id="btnBackToGalleryFromWinners" class="text-xs text-[#485A44] hover:underline flex items-center gap-1 font-bold cursor-pointer">
             ← Kembali ke Galeri Foto
           </button>
         </div>
-        <div class="text-center bg-gradient-to-b from-[#FFF5F3] to-white border border-[#F0E6E1] rounded-2xl p-4 wedding-card-shadow">
-          <span class="text-[9px] font-bold text-[#C97D76] uppercase tracking-widest bg-white px-2.5 py-0.5 rounded-full border border-[#F0E6E1]">Hall of Fame</span>
-          <h3 class="font-serif text-lg font-bold text-[#2C2523] mt-1">🏆 Pemenang Foto Terfavorit</h3>
-          <p class="text-[11px] text-[#7D6F6B] mt-0.5">Karya foto dengan like terbanyak dari seluruh tamu</p>
+        <div class="text-center bg-white border border-[#E5DFD5] rounded-2xl p-4">
+          <span class="text-[9px] font-bold text-[#485A44] uppercase tracking-widest bg-[#EBECE8] px-2.5 py-0.5 rounded-full border border-[#D5D8CF]">Hall of Fame</span>
+          <h3 class="font-serif text-lg font-bold text-[#1F1E1D] mt-1">🏆 Pemenang Foto Terfavorit</h3>
+          <p class="text-[11px] text-[#6E6862] mt-0.5">Karya foto dengan like terbanyak dari seluruh tamu</p>
         </div>
         <div id="galleryWinnersPodium" class="space-y-2.5"></div>
       </div>
 
       <!-- REVEAL LOCK NOTICE (Mode 'Setelah Acara') -->
-      <div id="galleryLockedNotice" class="hidden bg-white border border-[#E8A598] rounded-2xl p-7 text-center my-6 wedding-card-shadow">
-        <div class="w-14 h-14 rounded-full bg-[#FFF5F3] text-[#C97D76] flex items-center justify-center mx-auto mb-3 text-2xl border border-[#F0E6E1]">
+      <div id="galleryLockedNotice" class="hidden bg-white border-2 border-[#E5DFD5] rounded-2xl p-7 text-center my-6">
+        <div class="w-14 h-14 rounded-full bg-[#EBECE8] text-[#485A44] flex items-center justify-center mx-auto mb-3 text-2xl border border-[#D5D8CF]">
           🔒
         </div>
-        <h3 class="font-serif text-base font-bold text-[#2C2523] mb-1.5">Foto Sedang Dirol Rahasia!</h3>
-        <p class="text-xs text-[#7D6F6B] max-w-sm mx-auto leading-relaxed mb-3">
+        <h3 class="font-serif text-base font-bold text-[#1F1E1D] mb-1.5">Foto Sedang Dirol Rahasia!</h3>
+        <p class="text-xs text-[#6E6862] max-w-sm mx-auto leading-relaxed mb-3">
           Seperti kamera analog asli, foto-foto yang kamu dan tamu lain jepret akan diungkapkan secara serentak setelah pesta selesai.
         </p>
-        <span class="inline-block text-[10px] font-semibold text-[#C97D76] bg-[#FFF5F3] px-3 py-1 rounded-full border border-[#F0E6E1]">
+        <span class="inline-block text-[10px] font-bold text-[#485A44] bg-[#EBECE8] px-3 py-1 rounded-full border border-[#D5D8CF]">
           Nantikan Pengungkapan Galeri!
         </span>
       </div>
 
       <!-- EMPTY STATE GALLERY -->
       <div id="galleryEmptyNotice" class="hidden text-center py-12">
-        <div class="w-12 h-12 rounded-full bg-white border border-[#F0E6E1] text-[#7D6F6B] flex items-center justify-center mx-auto mb-3 shadow-xs">
+        <div class="w-12 h-12 rounded-full bg-white border border-[#E5DFD5] text-[#6E6862] flex items-center justify-center mx-auto mb-3">
           <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
             <circle cx="9" cy="9" r="2"/>
             <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
           </svg>
         </div>
-        <p class="text-xs font-semibold text-[#2C2523] mb-1">Belum Ada Foto Terbit</p>
-        <p class="text-[11px] text-[#7D6F6B] mb-4">Jadilah orang pertama yang mengabadikan momen malam ini!</p>
-        <button id="btnEmptyGoCamera" class="py-2 px-4 rounded-xl rose-gradient-bg text-white font-semibold text-xs shadow-xs">
+        <p class="text-xs font-semibold text-[#1F1E1D] mb-1">Belum Ada Foto Terbit</p>
+        <p class="text-[11px] text-[#6E6862] mb-4">Jadilah orang pertama yang mengabadikan momen malam ini!</p>
+        <button id="btnEmptyGoCamera" class="py-2 px-4 rounded-xl bg-[#485A44] text-white font-bold text-xs hover:bg-[#3A4A36] transition">
           Mulai Jepret Sekarang
         </button>
       </div>
@@ -475,26 +473,26 @@
 
     <!-- VIEW 6: FOTO PANGGUNG (OFFICIAL STAGE & VENDOR GALLERY DARI GOOGLE DRIVE) -->
     <section id="viewStagePhotos" class="hidden flex-1 flex flex-col p-4 pb-24 overflow-y-auto">
-      <div class="bg-gradient-to-r from-white via-[#FFF9F5] to-white border border-[#F0E6E1] rounded-2xl p-4 mb-4 wedding-card-shadow">
+      <div class="bg-white border border-[#E5DFD5] rounded-2xl p-4 mb-4">
         <div class="flex items-center justify-between mb-1">
-          <span class="text-[10px] font-bold text-[#C97D76] uppercase tracking-widest flex items-center gap-1.5">
+          <span class="text-[10px] font-bold text-[#485A44] uppercase tracking-widest flex items-center gap-1.5">
             <span>🎪</span> Dokumentasi Resmi Panggung
           </span>
-          <span id="stagePhotoCountBadge" class="text-[11px] bg-[#FFF5F3] px-2.5 py-0.5 rounded-full text-[#C97D76] font-semibold border border-[#F0E6E1]">0 Foto</span>
+          <span id="stagePhotoCountBadge" class="text-[11px] bg-[#EBECE8] px-2.5 py-0.5 rounded-full text-[#485A44] font-bold border border-[#D5D8CF]">0 Foto</span>
         </div>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
           <div>
-            <h2 id="stagePhotosHeaderTitle" class="font-serif text-lg font-bold text-[#2C2523] mb-0.5 flex items-center gap-2">
+            <h2 id="stagePhotosHeaderTitle" class="font-serif text-lg font-bold text-[#1F1E1D] mb-0.5 flex items-center gap-2">
               <span>🎪</span>
               <span id="stagePhotosTitleText">Foto Panggung</span>
             </h2>
-            <p class="text-xs text-[#7D6F6B]">Galeri foto panggung & vendor yang disinkronkan langsung dari Google Drive.</p>
+            <p class="text-xs text-[#6E6862]">Galeri foto panggung & vendor yang disinkronkan langsung dari Google Drive.</p>
           </div>
           <div class="flex items-center gap-2 pt-1 sm:pt-0 shrink-0">
-            <button id="btnRefreshStagePhotos" type="button" class="py-1 px-3 rounded-xl bg-white hover:bg-[#FFF9F5] text-[#2C2523] text-xs font-semibold border border-[#F0E6E1] flex items-center gap-1.5 transition active:scale-95 cursor-pointer shadow-xs">
+            <button id="btnRefreshStagePhotos" type="button" class="py-1 px-3 rounded-xl bg-white hover:bg-[#F4EFEB] text-[#1F1E1D] text-xs font-semibold border border-[#E5DFD5] flex items-center gap-1.5 transition active:scale-95 cursor-pointer">
               <span>🔄</span> Sinkron
             </button>
-            <a id="btnStagePhotosOpenDrive" href="#" target="_blank" rel="noopener" class="py-1 px-3 rounded-xl rose-gradient-bg text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition hover:brightness-105 active:scale-95">
+            <a id="btnStagePhotosOpenDrive" href="#" target="_blank" rel="noopener" class="py-1 px-3 rounded-xl bg-[#485A44] hover:bg-[#3A4A36] text-white text-xs font-bold flex items-center gap-1.5 transition active:scale-95">
               <span>📂</span> Buka Drive ↗
             </a>
           </div>
@@ -505,12 +503,12 @@
       <div id="stagePhotosGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-3"></div>
 
       <!-- EMPTY STATE STAGE PHOTOS -->
-      <div id="stagePhotosEmptyNotice" class="hidden text-center py-14 px-4 bg-white border border-[#F0E6E1] rounded-2xl my-4 wedding-card-shadow">
-        <div class="w-12 h-12 rounded-full bg-[#FFF5F3] text-[#C97D76] flex items-center justify-center mx-auto mb-3 text-xl border border-[#F0E6E1]">
+      <div id="stagePhotosEmptyNotice" class="hidden text-center py-14 px-4 bg-white border border-[#E5DFD5] rounded-2xl my-4">
+        <div class="w-12 h-12 rounded-full bg-[#EBECE8] text-[#485A44] flex items-center justify-center mx-auto mb-3 text-xl border border-[#D5D8CF]">
           🎪
         </div>
-        <h4 class="text-xs font-bold text-[#2C2523] mb-1 font-serif">Belum Ada Foto Panggung</h4>
-        <p class="text-[11px] text-[#7D6F6B] max-w-sm mx-auto leading-relaxed">
+        <h4 class="text-xs font-bold text-[#1F1E1D] mb-1 font-serif">Belum Ada Foto Panggung</h4>
+        <p class="text-[11px] text-[#6E6862] max-w-sm mx-auto leading-relaxed">
           Foto panggung yang diunggah ke folder Google Drive resmi akan otomatis tersinkron dan tampil di album ini.
         </p>
       </div>
@@ -520,27 +518,27 @@
     <section id="viewAdmin" class="hidden flex-1 flex flex-col p-4 pb-24 overflow-y-auto">
       
       <!-- Admin Top Navigation Tabs -->
-      <div class="flex items-center justify-between border-b border-[#F0E6E1] pb-3 mb-4">
+      <div class="flex items-center justify-between border-b border-[#E5DFD5] pb-3 mb-4">
         <div>
-          <h2 class="text-sm sm:text-base font-bold text-[#2C2523] flex items-center gap-2 font-serif">
+          <h2 class="text-sm sm:text-base font-bold text-[#1F1E1D] flex items-center gap-2 font-serif">
             <span>Panel Pengelola Acara</span>
-            <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-semibold border border-emerald-200">Admin</span>
+            <span class="text-[9px] px-2 py-0.5 rounded-full bg-[#EBECE8] text-[#485A44] font-bold border border-[#D5D8CF]">Admin</span>
           </h2>
-          <p class="text-[11px] text-[#7D6F6B]">Atur event, kuota kamera, dan kontrol galeri Drive.</p>
+          <p class="text-[11px] text-[#6E6862]">Atur event, kuota kamera, dan kontrol galeri Drive.</p>
         </div>
         <div class="flex items-center gap-1.5 flex-wrap">
-          <button id="btnAdminGoCamera" type="button" class="text-xs text-[#C97D76] hover:text-[#A95A54] py-1 px-2.5 rounded-lg bg-[#FFF5F3] hover:bg-[#FCEEE9] border border-[#F0E6E1] transition flex items-center gap-1 font-semibold cursor-pointer shadow-xs" title="Lihat Live Kamera Acara">
+          <button id="btnAdminGoCamera" type="button" class="text-xs text-[#485A44] hover:text-[#3A4A36] py-1 px-2.5 rounded-lg bg-[#EBECE8] hover:bg-[#E0E2DC] border border-[#D5D8CF] transition flex items-center gap-1 font-bold cursor-pointer" title="Lihat Live Kamera Acara">
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
             <span class="hidden sm:inline">Lihat</span> Cam
           </button>
-          <button id="btnAdminGoGallery" type="button" class="text-xs text-[#7D6F6B] hover:text-[#2C2523] py-1 px-2.5 rounded-lg bg-white hover:bg-[#FFF9F5] border border-[#F0E6E1] transition flex items-center gap-1 font-semibold cursor-pointer shadow-xs" title="Buka Galeri Tamu">
+          <button id="btnAdminGoGallery" type="button" class="text-xs text-[#1F1E1D] hover:text-[#485A44] py-1 px-2.5 rounded-lg bg-white hover:bg-[#F4EFEB] border border-[#E5DFD5] transition flex items-center gap-1 font-semibold cursor-pointer" title="Buka Galeri Tamu">
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
             <span class="hidden sm:inline">Buka</span> Galeri
           </button>
-          <button id="btnOpenChangePassword" type="button" class="text-xs text-[#C97D76] hover:underline py-1 px-2 rounded-lg bg-white hover:bg-[#FFF9F5] border border-[#F0E6E1] transition flex items-center gap-1 cursor-pointer shadow-xs" title="Ganti Password Akun">
+          <button id="btnOpenChangePassword" type="button" class="text-xs text-[#485A44] hover:underline py-1 px-2 rounded-lg bg-white hover:bg-[#F4EFEB] border border-[#E5DFD5] transition flex items-center gap-1 cursor-pointer" title="Ganti Password Akun">
             <span>🔑</span>
           </button>
-          <button id="btnAdminLogout" type="button" class="text-xs text-[#7D6F6B] hover:text-red-500 py-1 px-2 rounded-lg bg-white hover:bg-red-50 border border-[#F0E6E1] transition font-semibold cursor-pointer shadow-xs">
+          <button id="btnAdminLogout" type="button" class="text-xs text-[#6E6862] hover:text-red-600 py-1 px-2 rounded-lg bg-white hover:bg-red-50 border border-[#E5DFD5] transition font-semibold cursor-pointer">
             Keluar
           </button>
         </div>
@@ -548,16 +546,16 @@
 
       <!-- Admin Tab Switcher -->
       <div class="flex items-center gap-2 overflow-x-auto pb-2 mb-4 text-xs font-semibold no-scrollbar" id="adminTabsContainer">
-        <button data-admintab="events" class="adm-tab px-3 py-1.5 rounded-lg rose-gradient-bg text-white transition shrink-0 cursor-pointer shadow-xs">
+        <button data-admintab="events" class="adm-tab px-3 py-1.5 rounded-lg bg-[#485A44] text-white transition shrink-0 cursor-pointer">
           Daftar Event
         </button>
-        <button data-admintab="gallery" class="adm-tab px-3 py-1.5 rounded-lg bg-white text-[#7D6F6B] border border-[#F0E6E1] hover:border-[#C97D76] transition shrink-0 flex items-center gap-1.5 cursor-pointer shadow-xs">
+        <button data-admintab="gallery" class="adm-tab px-3 py-1.5 rounded-lg bg-white text-[#6E6862] border border-[#E5DFD5] hover:border-[#485A44] transition shrink-0 flex items-center gap-1.5 cursor-pointer">
           🖼️ Kelola Galeri
         </button>
-        <button data-admintab="leaderboard" class="adm-tab px-3 py-1.5 rounded-lg bg-white text-[#7D6F6B] border border-[#F0E6E1] hover:border-[#C97D76] transition shrink-0 cursor-pointer shadow-xs">
+        <button data-admintab="leaderboard" class="adm-tab px-3 py-1.5 rounded-lg bg-white text-[#6E6862] border border-[#E5DFD5] hover:border-[#485A44] transition shrink-0 cursor-pointer">
           Pemenang Voting
         </button>
-        <button data-admintab="settings" class="adm-tab px-3 py-1.5 rounded-lg bg-white text-[#7D6F6B] border border-[#F0E6E1] hover:border-[#C97D76] transition shrink-0 cursor-pointer shadow-xs">
+        <button data-admintab="settings" class="adm-tab px-3 py-1.5 rounded-lg bg-white text-[#6E6862] border border-[#E5DFD5] hover:border-[#485A44] transition shrink-0 cursor-pointer">
           Pengaturan Global
         </button>
       </div>
@@ -565,31 +563,31 @@
       <!-- TAB 1: LIST EVENTS & METRICS -->
       <div id="adminTabEvents" class="space-y-4">
         <div class="grid grid-cols-3 gap-2.5">
-          <div class="bg-white border border-[#F0E6E1] p-3 rounded-xl text-center wedding-card-shadow">
-            <div class="text-[9px] uppercase font-bold text-[#7D6F6B] mb-0.5">Total Event</div>
-            <div id="admMetricEvents" class="text-base sm:text-lg font-bold text-[#2C2523]">-</div>
+          <div class="bg-white border border-[#E5DFD5] p-3 rounded-xl text-center">
+            <div class="text-[9px] uppercase font-bold text-[#6E6862] mb-0.5">Total Event</div>
+            <div id="admMetricEvents" class="text-base sm:text-lg font-bold text-[#1F1E1D]">-</div>
           </div>
-          <div class="bg-white border border-[#F0E6E1] p-3 rounded-xl text-center wedding-card-shadow">
-            <div class="text-[9px] uppercase font-bold text-[#7D6F6B] mb-0.5">Total Foto</div>
-            <div id="admMetricPhotos" class="text-base sm:text-lg font-bold text-[#C97D76]">-</div>
+          <div class="bg-white border border-[#E5DFD5] p-3 rounded-xl text-center">
+            <div class="text-[9px] uppercase font-bold text-[#6E6862] mb-0.5">Total Foto</div>
+            <div id="admMetricPhotos" class="text-base sm:text-lg font-bold text-[#485A44]">-</div>
           </div>
-          <div class="bg-white border border-[#F0E6E1] p-3 rounded-xl text-center wedding-card-shadow">
-            <div class="text-[9px] uppercase font-bold text-[#7D6F6B] mb-0.5">Total Suara</div>
-            <div id="admMetricVotes" class="text-base sm:text-lg font-bold text-emerald-600">-</div>
+          <div class="bg-white border border-[#E5DFD5] p-3 rounded-xl text-center">
+            <div class="text-[9px] uppercase font-bold text-[#6E6862] mb-0.5">Total Suara</div>
+            <div id="admMetricVotes" class="text-base sm:text-lg font-bold text-[#1F1E1D]">-</div>
           </div>
         </div>
 
         <!-- Bar Header & Tombol Sinkronisasi Data GAS -->
         <div class="flex items-center justify-between gap-2 pt-1 pb-0.5">
           <div class="flex items-center gap-1.5">
-            <span class="text-xs font-bold text-[#2C2523] uppercase tracking-wider font-serif">Daftar Acara</span>
-            <span id="admSyncStatusBadge" class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-semibold border border-emerald-200">Tersinkron Cloud</span>
+            <span class="text-xs font-bold text-[#1F1E1D] uppercase tracking-wider font-serif">Daftar Acara</span>
+            <span id="admSyncStatusBadge" class="text-[9px] px-2 py-0.5 rounded-full bg-[#EBECE8] text-[#485A44] font-bold border border-[#D5D8CF]">Tersinkron Cloud</span>
           </div>
           <div class="flex items-center gap-2">
-            <button id="btnAddNewEventTop" type="button" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl rose-gradient-bg text-white text-xs font-bold transition shadow-xs hover:brightness-105 active:scale-95 cursor-pointer">
+            <button id="btnAddNewEventTop" type="button" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-[#485A44] hover:bg-[#3A4A36] text-white text-xs font-bold transition active:scale-95 cursor-pointer">
               <span>➕ Buat Acara</span>
             </button>
-            <button id="btnSyncEventsBackend" type="button" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-[#FFF9F5] text-[#C97D76] border border-[#F0E6E1] text-xs font-semibold transition active:scale-95 cursor-pointer shadow-xs">
+            <button id="btnSyncEventsBackend" type="button" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-[#F4EFEB] text-[#485A44] border border-[#E5DFD5] text-xs font-bold transition active:scale-95 cursor-pointer">
               <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
               <span id="btnSyncEventsText">Sync GAS</span>
             </button>
@@ -597,7 +595,7 @@
         </div>
 
         <div class="space-y-3" id="adminEventListContainer">
-          <div class="p-4 rounded-xl border border-[#F0E6E1] bg-white text-center text-xs text-[#7D6F6B] animate-pulse wedding-card-shadow">
+          <div class="p-4 rounded-xl border border-[#E5DFD5] bg-white text-center text-xs text-[#6E6862] animate-pulse">
             Menyiapkan daftar acara...
           </div>
         </div>
@@ -605,8 +603,8 @@
 
       <!-- TAB 2: WIZARD FORM BUAT / EDIT EVENT -->
       <div id="adminTabCreate" class="hidden space-y-4">
-        <div class="bg-white border border-[#F0E6E1] rounded-2xl p-4 sm:p-5 wedding-card-shadow">
-          <h3 id="formEventTitle" class="font-serif text-base sm:text-lg font-bold text-[#2C2523] mb-4">Pengaturan Acara Baru</h3>
+        <div class="bg-white border border-[#E5DFD5] rounded-2xl p-4 sm:p-5">
+          <h3 id="formEventTitle" class="font-serif text-base sm:text-lg font-bold text-[#1F1E1D] mb-4">Pengaturan Acara Baru</h3>
 
           <form id="formSaveEvent" class="space-y-4">
             <input type="hidden" id="formEventId" value="" />
@@ -614,72 +612,72 @@
             <!-- Nama & Slug Event -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label class="block text-xs font-semibold text-[#7D6F6B] mb-1">Nama Acara</label>
-                <input type="text" id="formEventNama" required placeholder="Contoh: The Wedding of Sarah & Kevin" class="w-full bg-[#FFFBF8] border border-[#F0E6E1] rounded-xl px-3.5 py-2.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
+                <label class="block text-xs font-semibold text-[#6E6862] mb-1">Nama Acara</label>
+                <input type="text" id="formEventNama" required placeholder="Contoh: The Wedding of Sarah & Kevin" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-3.5 py-2.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
               </div>
               <div>
-                <label class="block text-xs font-semibold text-[#7D6F6B] mb-1">Tanda Pagar Acara (#Hashtag)</label>
-                <input type="text" id="formEventHashtag" placeholder="#SarahKevinEverAfter" class="w-full bg-[#FFFBF8] border border-[#F0E6E1] rounded-xl px-3.5 py-2.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
+                <label class="block text-xs font-semibold text-[#6E6862] mb-1">Tanda Pagar Acara (#Hashtag)</label>
+                <input type="text" id="formEventHashtag" placeholder="#SarahKevinEverAfter" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-3.5 py-2.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
               </div>
             </div>
 
             <!-- Tanggal & Kuota -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label class="block text-xs font-semibold text-[#7D6F6B] mb-1">Tanggal Acara</label>
-                <input type="date" id="formEventTanggal" value="2026-11-15" class="w-full bg-[#FFFBF8] border border-[#F0E6E1] rounded-xl px-3.5 py-2.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
+                <label class="block text-xs font-semibold text-[#6E6862] mb-1">Tanggal Acara</label>
+                <input type="date" id="formEventTanggal" value="2026-11-15" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-3.5 py-2.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
               </div>
               <div>
-                <label class="block text-xs font-semibold text-[#7D6F6B] mb-1">Maks. Foto per Tamu</label>
-                <input type="number" id="formEventMaxFoto" min="1" max="100" value="10" class="w-full bg-[#FFFBF8] border border-[#F0E6E1] rounded-xl px-3.5 py-2.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
+                <label class="block text-xs font-semibold text-[#6E6862] mb-1">Maks. Foto per Tamu</label>
+                <input type="number" id="formEventMaxFoto" min="1" max="100" value="10" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-3.5 py-2.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
               </div>
               <div>
-                <label class="block text-xs font-semibold text-[#7D6F6B] mb-1">Maks. Vote per Tamu</label>
-                <input type="number" id="formEventMaxVote" min="1" max="20" value="1" class="w-full bg-[#FFFBF8] border border-[#F0E6E1] rounded-xl px-3.5 py-2.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
+                <label class="block text-xs font-semibold text-[#6E6862] mb-1">Maks. Vote per Tamu</label>
+                <input type="number" id="formEventMaxVote" min="1" max="20" value="1" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-3.5 py-2.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
               </div>
             </div>
 
             <!-- Mode Waktu Pengungkapan Foto -->
-            <div class="border border-[#F0E6E1] rounded-xl p-3 bg-[#FFFBF8]">
-              <label class="block text-xs font-semibold text-[#2C2523] mb-1">Kapan foto-foto diungkapkan?</label>
-              <p class="text-[10px] text-[#7D6F6B] mb-2">Pilih kapan para tamu undangan boleh melihat hasil jepretan.</p>
+            <div class="border border-[#E5DFD5] rounded-xl p-3 bg-[#F9F6F0]">
+              <label class="block text-xs font-semibold text-[#1F1E1D] mb-1">Kapan foto-foto diungkapkan?</label>
+              <p class="text-[10px] text-[#6E6862] mb-2">Pilih kapan para tamu undangan boleh melihat hasil jepretan.</p>
               <div class="grid grid-cols-2 gap-2">
-                <label class="cursor-pointer border border-[#F0E6E1] has-[:checked]:border-[#C97D76] has-[:checked]:bg-[#FFF5F3] rounded-xl p-2.5 flex flex-col items-center text-center transition bg-white">
+                <label class="cursor-pointer border border-[#E5DFD5] has-[:checked]:border-[#485A44] has-[:checked]:bg-[#EBECE8] rounded-xl p-2.5 flex flex-col items-center text-center transition bg-white">
                   <input type="radio" name="revealModeRadio" value="SEGERA" checked class="hidden" />
-                  <span class="text-xs font-bold text-[#2C2523] mb-0.5">⏱️ Selama Acara</span>
-                  <span class="text-[9px] text-[#7D6F6B]">Terungkap langsung saat dijepret</span>
+                  <span class="text-xs font-bold text-[#1F1E1D] mb-0.5">⏱️ Selama Acara</span>
+                  <span class="text-[9px] text-[#6E6862]">Terungkap langsung saat dijepret</span>
                 </label>
-                <label class="cursor-pointer border border-[#F0E6E1] has-[:checked]:border-[#C97D76] has-[:checked]:bg-[#FFF5F3] rounded-xl p-2.5 flex flex-col items-center text-center transition bg-white">
+                <label class="cursor-pointer border border-[#E5DFD5] has-[:checked]:border-[#485A44] has-[:checked]:bg-[#EBECE8] rounded-xl p-2.5 flex flex-col items-center text-center transition bg-white">
                   <input type="radio" name="revealModeRadio" value="SETELAH" class="hidden" />
-                  <span class="text-xs font-bold text-[#2C2523] mb-0.5">🔒 Setelah Acara</span>
-                  <span class="text-[9px] text-[#7D6F6B]">Ditahan sampai acara selesai</span>
+                  <span class="text-xs font-bold text-[#1F1E1D] mb-0.5">🔒 Setelah Acara</span>
+                  <span class="text-[9px] text-[#6E6862]">Ditahan sampai acara selesai</span>
                 </label>
               </div>
             </div>
 
             <!-- Toggle Izin & Fitur Like -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div class="flex items-center justify-between border border-[#F0E6E1] rounded-xl p-3 bg-[#FFFBF8]">
+              <div class="flex items-center justify-between border border-[#E5DFD5] rounded-xl p-3 bg-[#F9F6F0]">
                 <div>
-                  <div class="text-xs font-semibold text-[#2C2523]">Like Foto & Poling</div>
-                  <div class="text-[10px] text-[#7D6F6B]">Tamu dapat menyukai foto favorit</div>
+                  <div class="text-xs font-semibold text-[#1F1E1D]">Like Foto & Poling</div>
+                  <div class="text-[10px] text-[#6E6862]">Tamu dapat menyukai foto favorit</div>
                 </div>
-                <input type="checkbox" id="formCheckLike" checked class="w-4 h-4 accent-[#C97D76] rounded cursor-pointer" />
+                <input type="checkbox" id="formCheckLike" checked class="w-4 h-4 accent-[#485A44] rounded cursor-pointer" />
               </div>
-              <div class="flex items-center justify-between border border-[#F0E6E1] rounded-xl p-3 bg-[#FFFBF8]">
+              <div class="flex items-center justify-between border border-[#E5DFD5] rounded-xl p-3 bg-[#F9F6F0]">
                 <div>
-                  <div class="text-xs font-semibold text-[#2C2523]">Izin Visibilitas Galeri</div>
-                  <div class="text-[10px] text-[#7D6F6B]">Semua yang punya link dapat lihat</div>
+                  <div class="text-xs font-semibold text-[#1F1E1D]">Izin Visibilitas Galeri</div>
+                  <div class="text-[10px] text-[#6E6862]">Semua yang punya link dapat lihat</div>
                 </div>
-                <input type="checkbox" id="formCheckVisibility" checked class="w-4 h-4 accent-[#C97D76] rounded cursor-pointer" />
+                <input type="checkbox" id="formCheckVisibility" checked class="w-4 h-4 accent-[#485A44] rounded cursor-pointer" />
               </div>
             </div>
 
             <!-- Kategori Voting Dinamis -->
             <div>
               <div class="flex items-center justify-between mb-1.5">
-                <label class="text-xs font-semibold text-[#7D6F6B]">Kategori Poling / Voting</label>
-                <button type="button" id="btnAddCategoryRow" class="text-[11px] font-bold text-[#C97D76] hover:underline">
+                <label class="text-xs font-semibold text-[#6E6862]">Kategori Poling / Voting</label>
+                <button type="button" id="btnAddCategoryRow" class="text-[11px] font-bold text-[#485A44] hover:underline">
                   + Tambah Kategori
                 </button>
               </div>
@@ -687,48 +685,48 @@
             </div>
 
             <!-- Pengaturan Kebijakan Bingkai Acara -->
-            <div class="border border-[#F0E6E1] rounded-xl p-3.5 bg-[#FFFBF8] space-y-3">
+            <div class="border border-[#E5DFD5] rounded-xl p-3.5 bg-[#F9F6F0] space-y-3">
               <div class="flex items-center justify-between">
                 <div>
-                  <h4 class="text-xs font-bold text-[#C97D76] uppercase tracking-wider flex items-center gap-1.5 font-serif">
+                  <h4 class="text-xs font-bold text-[#485A44] uppercase tracking-wider flex items-center gap-1.5 font-serif">
                     <span>🖼️</span> Pengaturan Bingkai Foto Acara
                   </h4>
-                  <p class="text-[10px] text-[#7D6F6B]">Atur bingkai yang dapat digunakan tamu atau kunci 1 bingkai seragam.</p>
+                  <p class="text-[10px] text-[#6E6862]">Atur bingkai yang dapat digunakan tamu atau kunci 1 bingkai seragam.</p>
                 </div>
               </div>
 
               <!-- Pilihan Mode Bingkai -->
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                <label class="flex items-center gap-2 p-2 rounded-xl border border-[#F0E6E1] bg-white cursor-pointer hover:border-[#C97D76] transition shadow-xs">
-                  <input type="radio" name="frameLockModeRadio" value="multi" checked class="text-[#C97D76] focus:ring-[#C97D76]" />
+                <label class="flex items-center gap-2 p-2 rounded-xl border border-[#E5DFD5] bg-white cursor-pointer hover:border-[#485A44] transition">
+                  <input type="radio" name="frameLockModeRadio" value="multi" checked class="text-[#485A44] focus:ring-[#485A44]" />
                   <div>
-                    <span class="font-semibold text-[#2C2523] block">Bebas Pilih (Multi-Frame)</span>
-                    <span class="text-[9px] text-[#7D6F6B] block">Tamu bebas memilih bingkai aktif</span>
+                    <span class="font-semibold text-[#1F1E1D] block">Bebas Pilih (Multi-Frame)</span>
+                    <span class="text-[9px] text-[#6E6862] block">Tamu bebas memilih bingkai aktif</span>
                   </div>
                 </label>
-                <label class="flex items-center gap-2 p-2 rounded-xl border border-[#F0E6E1] bg-white cursor-pointer hover:border-[#C97D76] transition shadow-xs">
-                  <input type="radio" name="frameLockModeRadio" value="single" class="text-[#C97D76] focus:ring-[#C97D76]" />
+                <label class="flex items-center gap-2 p-2 rounded-xl border border-[#E5DFD5] bg-white cursor-pointer hover:border-[#485A44] transition">
+                  <input type="radio" name="frameLockModeRadio" value="single" class="text-[#485A44] focus:ring-[#485A44]" />
                   <div>
-                    <span class="font-semibold text-[#2C2523] block">Kunci 1 Bingkai (Single Lock)</span>
-                    <span class="text-[9px] text-[#7D6F6B] block">1 bingkai seragam untuk seluruh tamu</span>
+                    <span class="font-semibold text-[#1F1E1D] block">Kunci 1 Bingkai (Single Lock)</span>
+                    <span class="text-[9px] text-[#6E6862] block">1 bingkai seragam untuk seluruh tamu</span>
                   </div>
                 </label>
               </div>
 
               <!-- Opsi 1: Pilihan 1 Bingkai Terkunci -->
-              <div id="containerSingleFrameLock" class="hidden bg-white border border-[#E8A598] rounded-xl p-3 space-y-2.5">
+              <div id="containerSingleFrameLock" class="hidden bg-white border border-[#D5CFC5] rounded-xl p-3 space-y-2.5">
                 <div>
-                  <label class="block text-[10px] font-semibold text-[#C97D76] mb-1">Pilih 1 Bingkai Wajib Acara:</label>
-                  <select id="formEventSingleFrameSelect" class="w-full bg-[#FFFBF8] border border-[#F0E6E1] rounded-lg px-3 py-2 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none">
+                  <label class="block text-[10px] font-semibold text-[#485A44] mb-1">Pilih 1 Bingkai Wajib Acara:</label>
+                  <select id="formEventSingleFrameSelect" class="w-full bg-[#F9F6F0] border border-[#E5DFD5] rounded-lg px-3 py-2 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none">
                     <option value="GOLD_DECO">✨ Gold Art Deco (Mewah & Elegan)</option>
                     <option value="POLAROID">📷 Classic Polaroid (Vintage Putih)</option>
                     <option value="MINIMAL">▪️ Minimalist Clean (Garis Halus Modern)</option>
                     <option value="NONE">Tanpa Bingkai (Foto Asli Polos)</option>
                   </select>
                 </div>
-                <div class="pt-2 border-t border-[#F0E6E1]">
+                <div class="pt-2 border-t border-[#E5DFD5]">
                   <div class="flex items-center justify-between mb-2">
-                    <label class="text-[10px] font-semibold text-[#C97D76]">Daftar Pilihan Bingkai (Klik untuk Mengunci):</label>
+                    <label class="text-[10px] font-semibold text-[#485A44]">Daftar Pilihan Bingkai (Klik untuk Mengunci):</label>
                   </div>
                   <div id="singleLockCustomFrameList" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
                 </div>
@@ -737,60 +735,60 @@
               <!-- Opsi 2: Daftar Bingkai yang Diizinkan -->
               <div id="containerMultiFrameSelection" class="space-y-2">
                 <div class="flex items-center justify-between">
-                  <label class="block text-[10px] font-semibold text-[#7D6F6B]">Pilih & Atur Urutan Bingkai:</label>
-                  <span class="text-[9px] text-[#C97D76] font-mono">💡 Geser ⠿ atau klik ▲ / ▼</span>
+                  <label class="block text-[10px] font-semibold text-[#6E6862]">Pilih & Atur Urutan Bingkai:</label>
+                  <span class="text-[9px] text-[#485A44] font-mono">💡 Geser ⠿ atau klik ▲ / ▼</span>
                 </div>
                 <div class="space-y-1.5" id="adminFrameSortableList"></div>
               </div>
             </div>
 
             <!-- Upload Custom Frame Acara -->
-            <div class="border border-[#F0E6E1] rounded-xl p-3 bg-[#FFFBF8]">
-              <label class="block text-xs font-semibold text-[#2C2523] mb-1">Target Bingkai Kustom (Link URL PNG Transparan)</label>
-              <p class="text-[10px] text-[#7D6F6B] mb-2">Masukkan link URL PNG transparan (rasio 4:5) dari Google Drive atau link web.</p>
+            <div class="border border-[#E5DFD5] rounded-xl p-3 bg-[#F9F6F0]">
+              <label class="block text-xs font-semibold text-[#1F1E1D] mb-1">Target Bingkai Kustom (Link URL PNG Transparan)</label>
+              <p class="text-[10px] text-[#6E6862] mb-2">Masukkan link URL PNG transparan (rasio 4:5) dari Google Drive atau link web.</p>
               
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
                 <div>
-                  <label class="block text-[9px] font-semibold text-[#7D6F6B] mb-1">Lingkup</label>
-                  <select id="formEventFrameScope" class="w-full bg-white border border-[#F0E6E1] rounded-xl px-3 py-1.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none">
+                  <label class="block text-[9px] font-semibold text-[#6E6862] mb-1">Lingkup</label>
+                  <select id="formEventFrameScope" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-3 py-1.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none">
                     <option value="event">Khusus Acara Ini Saja</option>
                     <option value="global">Semua Acara (Berlaku Global)</option>
                   </select>
                 </div>
                 <div>
-                  <label class="block text-[9px] font-semibold text-[#7D6F6B] mb-1">Nama Bingkai</label>
-                  <input type="text" id="formEventFrameName" placeholder="Contoh: Gold Elegant Sarah" class="w-full bg-white border border-[#F0E6E1] rounded-xl px-3 py-1.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
+                  <label class="block text-[9px] font-semibold text-[#6E6862] mb-1">Nama Bingkai</label>
+                  <input type="text" id="formEventFrameName" placeholder="Contoh: Gold Elegant Sarah" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-3 py-1.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
                 </div>
               </div>
 
               <div class="space-y-1 mb-2">
                 <div class="flex items-center gap-2">
                   <div class="relative flex-1">
-                    <input type="url" id="formEventCustomFrameUrl" placeholder="https://drive.google.com/file/d/... atau https://.../bingkai.png" class="w-full bg-white border border-[#F0E6E1] rounded-xl pl-3 pr-8 py-2 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none font-mono" />
-                    <button type="button" id="btnTestFrameUrl" class="absolute right-2 top-1/2 -translate-y-1/2 text-[#C97D76] hover:text-[#A95A54] text-xs font-bold px-1" title="Cek Bingkai">➔</button>
+                    <input type="url" id="formEventCustomFrameUrl" placeholder="https://drive.google.com/file/d/... atau https://.../bingkai.png" class="w-full bg-white border border-[#D5CFC5] rounded-xl pl-3 pr-8 py-2 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none font-mono" />
+                    <button type="button" id="btnTestFrameUrl" class="absolute right-2 top-1/2 -translate-y-1/2 text-[#485A44] hover:text-[#3A4A36] text-xs font-bold px-1" title="Cek Bingkai">➔</button>
                   </div>
-                  <button type="button" id="btnRemoveCustomFrame" class="hidden text-xs text-rose-500 hover:text-rose-600 font-semibold px-2 py-1 bg-rose-50 hover:bg-rose-100 rounded-lg border border-rose-200 transition">Hapus</button>
+                  <button type="button" id="btnRemoveCustomFrame" class="hidden text-xs text-rose-600 hover:text-rose-700 font-semibold px-2 py-1 bg-white hover:bg-rose-50 rounded-lg border border-rose-300 transition">Hapus</button>
                 </div>
               </div>
 
               <div id="customFramePreviewBox" class="hidden mt-2 p-2 bg-white rounded-xl border border-emerald-300 flex items-center gap-2.5">
-                <img id="customFramePreviewImg" src="" class="w-10 h-14 object-contain border border-[#F0E6E1] rounded bg-zinc-50" alt="Preview Bingkai" />
-                <div class="text-[10px] text-[#2C2523]">
-                  <span class="font-bold text-emerald-600">✓ Bingkai Siap Disimpan</span>
+                <img id="customFramePreviewImg" src="" class="w-10 h-14 object-contain border border-[#E5DFD5] rounded bg-zinc-50" alt="Preview Bingkai" />
+                <div class="text-[10px] text-[#1F1E1D]">
+                  <span class="font-bold text-emerald-700">✓ Bingkai Siap Disimpan</span>
                 </div>
               </div>
 
-              <div class="mt-2.5 pt-2.5 border-t border-[#F0E6E1]">
-                <div class="text-[10px] font-semibold text-[#7D6F6B] mb-1">Koleksi Bingkai Kustom Aktif:</div>
+              <div class="mt-2.5 pt-2.5 border-t border-[#E5DFD5]">
+                <div class="text-[10px] font-semibold text-[#6E6862] mb-1">Koleksi Bingkai Kustom Aktif:</div>
                 <div id="customFramesListContainer" class="space-y-1.5"></div>
               </div>
             </div>
 
             <!-- Folder Google Drive Tujuan Upload Acara -->
-            <div class="border border-[#F0E6E1] rounded-xl p-3 bg-[#FFFBF8]">
-              <label class="block text-xs font-semibold text-[#2C2523] mb-1">Folder Google Drive Tujuan Upload Acara</label>
-              <input type="text" id="formEventDriveFolder" placeholder="ID Folder atau Paste URL Folder Google Drive" class="w-full bg-white border border-[#F0E6E1] rounded-xl px-3 py-2 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
-              <p class="text-[9px] text-[#7D6F6B] mt-1 leading-relaxed">
+            <div class="border border-[#E5DFD5] rounded-xl p-3 bg-[#F9F6F0]">
+              <label class="block text-xs font-semibold text-[#1F1E1D] mb-1">Folder Google Drive Tujuan Upload Acara</label>
+              <input type="text" id="formEventDriveFolder" placeholder="ID Folder atau Paste URL Folder Google Drive" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-3 py-2 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
+              <p class="text-[9px] text-[#6E6862] mt-1 leading-relaxed">
                 Salin ID dari URL Google Drive. Jika kosong, sistem otomatis membuat subfolder.
               </p>
             </div>
@@ -798,16 +796,16 @@
             <!-- Submit Button & Delete Event -->
             <div class="pt-2 flex items-center justify-between gap-2 flex-wrap">
               <div>
-                <button type="button" id="btnDeleteCurrentEvent" class="hidden px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer">
+                <button type="button" id="btnDeleteCurrentEvent" class="hidden px-3.5 py-2 rounded-xl bg-white hover:bg-rose-50 text-rose-600 border border-rose-300 text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer">
                   <span>🗑️</span>
                   <span>Hapus Acara Ini</span>
                 </button>
               </div>
               <div class="flex items-center gap-2">
-                <button type="button" id="btnCancelEditEvent" class="px-3.5 py-2 rounded-xl bg-white hover:bg-[#FFF9F5] text-[#7D6F6B] border border-[#F0E6E1] text-xs font-semibold transition cursor-pointer shadow-xs">
+                <button type="button" id="btnCancelEditEvent" class="px-3.5 py-2 rounded-xl bg-white hover:bg-[#F4EFEB] text-[#6E6862] border border-[#E5DFD5] text-xs font-semibold transition cursor-pointer">
                   Batal
                 </button>
-                <button type="submit" id="btnSubmitSaveEvent" class="px-4 py-2 rounded-xl rose-gradient-bg text-white text-xs font-bold shadow-xs hover:brightness-105 transition flex items-center gap-1.5 cursor-pointer">
+                <button type="submit" id="btnSubmitSaveEvent" class="px-4 py-2 rounded-xl bg-[#485A44] hover:bg-[#3A4A36] text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer border border-[#3A4A36]">
                   <span>Simpan Pengaturan</span>
                 </button>
               </div>
@@ -818,34 +816,34 @@
 
       <!-- TAB 2.5: KELOLA GALERI FOTO -->
       <div id="adminTabGallery" class="hidden space-y-4">
-        <div class="bg-white border border-[#F0E6E1] rounded-2xl p-4 wedding-card-shadow">
+        <div class="bg-white border border-[#E5DFD5] rounded-2xl p-4">
           <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
             <div>
-              <h3 class="font-serif text-base font-bold text-[#2C2523] flex items-center gap-2">
+              <h3 class="font-serif text-base font-bold text-[#1F1E1D] flex items-center gap-2">
                 <span>🖼️</span> Kelola Foto Galeri Acara
               </h3>
-              <p class="text-xs text-[#7D6F6B]">Atur foto yang tampil di galeri publik atau hapus foto yang tidak sesuai</p>
+              <p class="text-xs text-[#6E6862]">Atur foto yang tampil di galeri publik atau hapus foto yang tidak sesuai</p>
             </div>
             <div class="flex items-center gap-2">
-              <button type="button" id="btnAdminRefreshGallery" class="px-3 py-1.5 rounded-xl bg-white hover:bg-[#FFF9F5] border border-[#F0E6E1] text-xs text-[#7D6F6B] hover:text-[#C97D76] font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-xs">
+              <button type="button" id="btnAdminRefreshGallery" class="px-3 py-1.5 rounded-xl bg-white hover:bg-[#F4EFEB] border border-[#E5DFD5] text-xs text-[#6E6862] hover:text-[#485A44] font-semibold transition flex items-center gap-1.5 cursor-pointer">
                 <span>🔄</span> Segarkan
               </button>
             </div>
           </div>
 
-          <div class="flex items-center justify-between text-xs text-[#7D6F6B] bg-[#FFFBF8] rounded-xl p-2.5 border border-[#F0E6E1] mb-3 flex-wrap gap-2">
-            <div>Acara: <span id="adminGalleryEventName" class="text-[#C97D76] font-bold">Acara</span></div>
-            <div id="adminGalleryPhotoStats" class="font-mono text-[#2C2523]">0 Foto</div>
+          <div class="flex items-center justify-between text-xs text-[#6E6862] bg-[#F9F6F0] rounded-xl p-2.5 border border-[#E5DFD5] mb-3 flex-wrap gap-2">
+            <div>Acara: <span id="adminGalleryEventName" class="text-[#485A44] font-bold">Acara</span></div>
+            <div id="adminGalleryPhotoStats" class="font-mono text-[#1F1E1D]">0 Foto</div>
           </div>
 
           <div class="flex items-center gap-2 mb-3 overflow-x-auto pb-1 text-xs font-semibold no-scrollbar">
-            <button type="button" data-admphotofilter="ALL" class="adm-photo-filter px-3 py-1 rounded-lg rose-gradient-bg text-white transition shrink-0 cursor-pointer shadow-xs">
+            <button type="button" data-admphotofilter="ALL" class="adm-photo-filter px-3 py-1 rounded-lg bg-[#485A44] text-white transition shrink-0 cursor-pointer">
               Semua Foto
             </button>
-            <button type="button" data-admphotofilter="VISIBLE" class="adm-photo-filter px-3 py-1 rounded-lg bg-white text-[#7D6F6B] border border-[#F0E6E1] hover:border-[#C97D76] transition shrink-0 cursor-pointer shadow-xs">
+            <button type="button" data-admphotofilter="VISIBLE" class="adm-photo-filter px-3 py-1 rounded-lg bg-white text-[#6E6862] border border-[#E5DFD5] hover:border-[#485A44] transition shrink-0 cursor-pointer">
               👁️ Tampil Publik
             </button>
-            <button type="button" data-admphotofilter="HIDDEN" class="adm-photo-filter px-3 py-1 rounded-lg bg-white text-[#7D6F6B] border border-[#F0E6E1] hover:border-[#C97D76] transition shrink-0 cursor-pointer shadow-xs">
+            <button type="button" data-admphotofilter="HIDDEN" class="adm-photo-filter px-3 py-1 rounded-lg bg-white text-[#6E6862] border border-[#E5DFD5] hover:border-[#485A44] transition shrink-0 cursor-pointer">
               🔒 Disembunyikan
             </button>
           </div>
@@ -856,18 +854,18 @@
           <!-- Empty State Admin Foto -->
           <div id="adminPhotoEmptyNotice" class="hidden text-center py-8">
             <div class="text-2xl mb-1.5">📷</div>
-            <p class="text-xs font-semibold text-[#2C2523] mb-0.5">Belum Ada Foto di Galeri Acara Ini</p>
-            <p class="text-[10px] text-[#7D6F6B]">Foto yang diunggah oleh tamu akan muncul di sini.</p>
+            <p class="text-xs font-semibold text-[#1F1E1D] mb-0.5">Belum Ada Foto di Galeri Acara Ini</p>
+            <p class="text-[10px] text-[#6E6862]">Foto yang diunggah oleh tamu akan muncul di sini.</p>
           </div>
         </div>
       </div>
 
       <!-- TAB 3: LEADERBOARD PEMENANG VOTING -->
       <div id="adminTabLeaderboard" class="hidden space-y-4">
-        <div class="bg-white border border-[#F0E6E1] rounded-2xl p-4 wedding-card-shadow">
+        <div class="bg-white border border-[#E5DFD5] rounded-2xl p-4">
           <div class="flex items-center justify-between mb-3">
-            <h3 class="font-serif text-base font-bold text-[#2C2523]">Peringkat Foto Terfavorit</h3>
-            <span class="text-[11px] text-[#C97D76] font-semibold">Hasil Poling Tamu</span>
+            <h3 class="font-serif text-base font-bold text-[#1F1E1D]">Peringkat Foto Terfavorit</h3>
+            <span class="text-[11px] text-[#485A44] font-semibold">Hasil Poling Tamu</span>
           </div>
           <div id="adminLeaderboardList" class="space-y-2.5"></div>
         </div>
@@ -875,132 +873,132 @@
 
       <!-- TAB 4: GLOBAL SETTINGS -->
       <div id="adminTabSettings" class="hidden space-y-4">
-        <div class="bg-white border border-[#F0E6E1] rounded-2xl p-4 sm:p-5 wedding-card-shadow">
-          <h3 class="font-serif text-base font-bold text-[#2C2523] mb-3">Pengaturan Sistem Global (Branding & Database)</h3>
+        <div class="bg-white border border-[#E5DFD5] rounded-2xl p-4 sm:p-5">
+          <h3 class="font-serif text-base font-bold text-[#1F1E1D] mb-3">Pengaturan Sistem Global (Branding & Database)</h3>
           <form id="formGlobalSettings" class="space-y-3.5">
             
             <!-- Branding & Identitas Aplikasi -->
-            <div class="border border-[#F0E6E1] rounded-xl p-3 bg-[#FFFBF8] space-y-2.5">
-              <label class="block text-xs font-semibold text-[#C97D76] mb-0.5 font-serif">Identitas & Branding Kustom</label>
+            <div class="border border-[#E5DFD5] rounded-xl p-3 bg-[#F9F6F0] space-y-2.5">
+              <label class="block text-xs font-semibold text-[#485A44] mb-0.5 font-serif">Identitas & Branding Kustom</label>
               
               <div>
-                <label class="block text-[10px] font-semibold text-[#7D6F6B] mb-1">Nama Platform / Brand</label>
-                <input type="text" id="cfgAppTitle" placeholder="SnapEvent Studio" class="w-full bg-white border border-[#F0E6E1] rounded-xl px-3 py-1.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
+                <label class="block text-[10px] font-semibold text-[#6E6862] mb-1">Nama Platform / Brand</label>
+                <input type="text" id="cfgAppTitle" placeholder="SnapEvent Studio" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-3 py-1.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
               </div>
 
               <div>
-                <label class="block text-[10px] font-semibold text-[#7D6F6B] mb-1">URL Gambar Logo Kustom</label>
-                <input type="text" id="cfgAppLogoUrl" placeholder="https://... link logo PNG transparan" class="w-full bg-white border border-[#F0E6E1] rounded-xl px-3 py-1.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
+                <label class="block text-[10px] font-semibold text-[#6E6862] mb-1">URL Gambar Logo Kustom</label>
+                <input type="text" id="cfgAppLogoUrl" placeholder="https://... link logo PNG transparan" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-3 py-1.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div>
-                  <label class="block text-[10px] font-semibold text-[#7D6F6B] mb-1">WhatsApp / Telepon</label>
-                  <input type="text" id="cfgAppPhone" placeholder="0812-3456-7890" class="w-full bg-white border border-[#F0E6E1] rounded-xl px-3 py-1.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
+                  <label class="block text-[10px] font-semibold text-[#6E6862] mb-1">WhatsApp / Telepon</label>
+                  <input type="text" id="cfgAppPhone" placeholder="0812-3456-7890" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-3 py-1.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
                 </div>
                 <div>
-                  <label class="block text-[10px] font-semibold text-[#7D6F6B] mb-1">Instagram Resmi</label>
-                  <input type="text" id="cfgAppInstagram" placeholder="@snapevent" class="w-full bg-white border border-[#F0E6E1] rounded-xl px-3 py-1.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
+                  <label class="block text-[10px] font-semibold text-[#6E6862] mb-1">Instagram Resmi</label>
+                  <input type="text" id="cfgAppInstagram" placeholder="@snapevent" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-3 py-1.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
                 </div>
               </div>
             </div>
 
             <div>
               <div class="flex items-center justify-between mb-1">
-                <label class="block text-xs font-semibold text-[#7D6F6B]">URL Backend Google Apps Script (Web App Endpoint)</label>
-                <button type="button" id="btnTestGasConnection" class="text-[10px] font-bold text-[#C97D76] hover:text-[#A95A54] flex items-center gap-1 transition cursor-pointer">
+                <label class="block text-xs font-semibold text-[#6E6862]">URL Backend Google Apps Script (Web App Endpoint)</label>
+                <button type="button" id="btnTestGasConnection" class="text-[10px] font-bold text-[#485A44] hover:text-[#3A4A36] flex items-center gap-1 transition cursor-pointer">
                   <span>⚡ Tes Koneksi</span>
                 </button>
               </div>
-              <input type="text" id="cfgGasUrl" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-white border border-[#E8A598] focus:border-[#C97D76] rounded-xl px-3 py-2 text-xs text-[#2C2523] outline-none" autocomplete="off" spellcheck="false" />
-              <p class="text-[9px] text-[#C97D76] mt-1">⚠️ Wajib diisi agar data tersimpan ke Google Sheets & berubah di semua HP tamu.</p>
+              <input type="text" id="cfgGasUrl" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-white border border-[#D5CFC5] focus:border-[#485A44] rounded-xl px-3 py-2 text-xs text-[#1F1E1D] outline-none" autocomplete="off" spellcheck="false" />
+              <p class="text-[9px] text-[#485A44] mt-1 font-semibold">⚠️ Wajib diisi agar data tersimpan ke Google Sheets & berubah di semua HP tamu.</p>
             </div>
 
             <!-- Setting Master Google Drive -->
-            <div class="border border-[#F0E6E1] rounded-xl p-3 bg-[#FFFBF8]">
-              <label class="block text-xs font-semibold text-[#2C2523] mb-1">Folder Induk Google Drive (Master Drive Destination)</label>
-              <input type="text" id="cfgDriveMasterId" value="12LfLW50HIuMUPCGQiRJKy_aO4RhVICjw" placeholder="12LfLW50HIuMUPCGQiRJKy_aO4RhVICjw" class="w-full bg-white border border-[#F0E6E1] rounded-xl px-3 py-2 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
+            <div class="border border-[#E5DFD5] rounded-xl p-3 bg-[#F9F6F0]">
+              <label class="block text-xs font-semibold text-[#1F1E1D] mb-1">Folder Induk Google Drive (Master Drive Destination)</label>
+              <input type="text" id="cfgDriveMasterId" value="12LfLW50HIuMUPCGQiRJKy_aO4RhVICjw" placeholder="12LfLW50HIuMUPCGQiRJKy_aO4RhVICjw" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-3 py-2 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
             </div>
 
             <!-- KARTU PENGATURAN MENU FOTO PANGGUNG -->
-            <div class="border border-[#F0E6E1] rounded-xl p-3 bg-[#FFFBF8] space-y-2.5">
-              <div class="flex items-center justify-between border-b border-[#F0E6E1] pb-1.5">
+            <div class="border border-[#E5DFD5] rounded-xl p-3 bg-[#F9F6F0] space-y-2.5">
+              <div class="flex items-center justify-between border-b border-[#E5DFD5] pb-1.5">
                 <div class="flex items-center gap-1.5">
                   <span class="text-sm">🎪</span>
-                  <label class="text-xs font-bold text-[#C97D76] font-serif">Pengaturan Menu Foto Panggung</label>
+                  <label class="text-xs font-bold text-[#485A44] font-serif">Pengaturan Menu Foto Panggung</label>
                 </div>
                 <label class="flex items-center gap-1.5 cursor-pointer">
-                  <input type="checkbox" id="cfgStagePhotosEnabled" class="text-[#C97D76] rounded cursor-pointer w-3.5 h-3.5" />
-                  <span class="text-[11px] font-semibold text-[#C97D76]">Aktif</span>
+                  <input type="checkbox" id="cfgStagePhotosEnabled" class="text-[#485A44] rounded cursor-pointer w-3.5 h-3.5" />
+                  <span class="text-[11px] font-semibold text-[#485A44]">Aktif</span>
                 </label>
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div>
-                  <label class="block text-[10px] font-semibold text-[#7D6F6B] mb-1">Nama Label Menu</label>
-                  <input type="text" id="cfgStagePhotosTitle" placeholder="Foto Panggung" class="w-full bg-white border border-[#F0E6E1] rounded-xl px-3 py-1.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
+                  <label class="block text-[10px] font-semibold text-[#6E6862] mb-1">Nama Label Menu</label>
+                  <input type="text" id="cfgStagePhotosTitle" placeholder="Foto Panggung" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-3 py-1.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
                 </div>
                 <div>
-                  <label class="block text-[10px] font-semibold text-[#7D6F6B] mb-1">Folder Google Drive Resmi</label>
-                  <input type="text" id="cfgStagePhotosLink" placeholder="https://drive.google.com/drive/folders/..." class="w-full bg-white border border-[#F0E6E1] rounded-xl px-3 py-1.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
+                  <label class="block text-[10px] font-semibold text-[#6E6862] mb-1">Folder Google Drive Resmi</label>
+                  <input type="text" id="cfgStagePhotosLink" placeholder="https://drive.google.com/drive/folders/..." class="w-full bg-white border border-[#D5CFC5] rounded-xl px-3 py-1.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
                 </div>
               </div>
 
               <div class="flex items-center justify-between pt-1">
-                <span id="stagePhotosStatusText" class="text-[9px] text-[#7D6F6B] font-mono">Status: Belum disinkronkan</span>
-                <button type="button" id="btnTestStagePhotos" class="py-1 px-2.5 rounded-lg bg-white hover:bg-[#FFF9F5] text-[#2C2523] text-[10px] font-semibold border border-[#F0E6E1] transition cursor-pointer shadow-xs">
+                <span id="stagePhotosStatusText" class="text-[9px] text-[#6E6862] font-mono">Status: Belum disinkronkan</span>
+                <button type="button" id="btnTestStagePhotos" class="py-1 px-2.5 rounded-lg bg-white hover:bg-[#F4EFEB] text-[#1F1E1D] text-[10px] font-semibold border border-[#E5DFD5] transition cursor-pointer">
                   ⚡ Uji Tautan
                 </button>
               </div>
             </div>
 
             <!-- Kredensial Login Administrator Utama -->
-            <div class="border border-[#F0E6E1] rounded-xl p-3 bg-[#FFFBF8]">
-              <label class="block text-xs font-semibold text-[#2C2523] mb-1.5">Kredensial Login Administrator</label>
+            <div class="border border-[#E5DFD5] rounded-xl p-3 bg-[#F9F6F0]">
+              <label class="block text-xs font-semibold text-[#1F1E1D] mb-1.5">Kredensial Login Administrator</label>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div>
-                  <label class="block text-[10px] font-semibold text-[#7D6F6B] mb-1">Username Admin</label>
-                  <input type="text" id="cfgAdminUser" placeholder="admin" class="w-full bg-white border border-[#F0E6E1] rounded-xl px-3 py-1.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
+                  <label class="block text-[10px] font-semibold text-[#6E6862] mb-1">Username Admin</label>
+                  <input type="text" id="cfgAdminUser" placeholder="admin" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-3 py-1.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
                 </div>
                 <div>
-                  <label class="block text-[10px] font-semibold text-[#7D6F6B] mb-1">Password Admin</label>
-                  <input type="password" id="cfgAdminPass" placeholder="admin123" class="w-full bg-white border border-[#F0E6E1] rounded-xl px-3 py-1.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
+                  <label class="block text-[10px] font-semibold text-[#6E6862] mb-1">Password Admin</label>
+                  <input type="password" id="cfgAdminPass" placeholder="admin123" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-3 py-1.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
                 </div>
               </div>
             </div>
 
             <!-- Akun Kru Tambahan -->
-            <div class="border border-[#F0E6E1] rounded-xl p-3 bg-[#FFFBF8]">
+            <div class="border border-[#E5DFD5] rounded-xl p-3 bg-[#F9F6F0]">
               <div class="flex items-center justify-between mb-1.5">
-                <label class="block text-xs font-semibold text-[#2C2523]">Akun Pengguna / Kru Tambahan</label>
-                <button type="button" id="btnAddUserAccountRow" class="text-[11px] text-[#C97D76] hover:underline font-semibold">+ Tambah Akun</button>
+                <label class="block text-xs font-semibold text-[#1F1E1D]">Akun Pengguna / Kru Tambahan</label>
+                <button type="button" id="btnAddUserAccountRow" class="text-[11px] text-[#485A44] hover:underline font-semibold">+ Tambah Akun</button>
               </div>
               <div id="userAccountsContainer" class="space-y-2"></div>
             </div>
 
             <!-- Pengaturan Gelar Podium -->
-            <div class="border border-[#F0E6E1] rounded-xl p-3 bg-[#FFFBF8] space-y-2.5">
+            <div class="border border-[#E5DFD5] rounded-xl p-3 bg-[#F9F6F0] space-y-2.5">
               <div class="flex items-center justify-between">
-                <label class="block text-xs font-semibold text-[#C97D76] font-serif">✏️ Gelar Podium Juara & Mode Pemenang</label>
+                <label class="block text-xs font-semibold text-[#485A44] font-serif">✏️ Gelar Podium Juara & Mode Pemenang</label>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <div>
-                  <label class="block text-[9px] font-semibold text-[#C97D76] mb-0.5">Juara 1</label>
-                  <input type="text" id="cfgPodiumTitleP1" placeholder="🥇 Juara 1 (Emas)" class="w-full bg-white border border-[#F0E6E1] rounded-xl px-2.5 py-1.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
+                  <label class="block text-[9px] font-semibold text-[#485A44] mb-0.5">Juara 1</label>
+                  <input type="text" id="cfgPodiumTitleP1" placeholder="🥇 Juara 1 (Emas)" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-2.5 py-1.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
                 </div>
                 <div>
-                  <label class="block text-[9px] font-semibold text-[#7D6F6B] mb-0.5">Juara 2</label>
-                  <input type="text" id="cfgPodiumTitleP2" placeholder="🥈 Juara 2 (Perak)" class="w-full bg-white border border-[#F0E6E1] rounded-xl px-2.5 py-1.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
+                  <label class="block text-[9px] font-semibold text-[#6E6862] mb-0.5">Juara 2</label>
+                  <input type="text" id="cfgPodiumTitleP2" placeholder="🥈 Juara 2 (Perak)" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-2.5 py-1.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
                 </div>
                 <div>
-                  <label class="block text-[9px] font-semibold text-amber-700 mb-0.5">Juara 3</label>
-                  <input type="text" id="cfgPodiumTitleP3" placeholder="🥉 Juara 3 (Perunggu)" class="w-full bg-white border border-[#F0E6E1] rounded-xl px-2.5 py-1.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none" />
+                  <label class="block text-[9px] font-semibold text-[#B58463] mb-0.5">Juara 3</label>
+                  <input type="text" id="cfgPodiumTitleP3" placeholder="🥉 Juara 3 (Perunggu)" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-2.5 py-1.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none" />
                 </div>
               </div>
 
               <div>
-                <label class="block text-[9px] font-semibold text-[#7D6F6B] mb-0.5">Mode Tampilan Pemenang</label>
-                <select id="cfgPodiumDisplayMode" class="w-full bg-white border border-[#F0E6E1] rounded-xl px-2.5 py-1.5 text-xs text-[#2C2523] focus:border-[#C97D76] outline-none">
+                <label class="block text-[9px] font-semibold text-[#6E6862] mb-0.5">Mode Tampilan Pemenang</label>
+                <select id="cfgPodiumDisplayMode" class="w-full bg-white border border-[#D5CFC5] rounded-xl px-2.5 py-1.5 text-xs text-[#1F1E1D] focus:border-[#485A44] outline-none">
                   <option value="all">Tampil Semuanya (Juara Umum & Per Kategori)</option>
                   <option value="grand">Hanya Juara Umum (Top 3)</option>
                   <option value="category">Hanya Pemenang Per Kategori</option>
@@ -1009,21 +1007,21 @@
             </div>
 
             <!-- Bersihkan Cache Offline -->
-            <div class="border border-red-200 bg-red-50/50 rounded-xl p-3 flex items-center justify-between">
+            <div class="border border-red-200 bg-white rounded-xl p-3 flex items-center justify-between">
               <div>
                 <span class="block text-xs font-semibold text-red-600">Sinkronisasi & Hapus Cache Offline</span>
-                <span class="text-[9px] text-[#7D6F6B]">Unduh data terbaru dari cloud.</span>
+                <span class="text-[9px] text-[#6E6862]">Unduh data terbaru dari cloud.</span>
               </div>
-              <button type="button" id="btnAdminPurgeOfflineCache" class="shrink-0 px-2.5 py-1 rounded-lg bg-white hover:bg-red-50 text-red-600 text-xs font-bold border border-red-200 transition shadow-xs">
+              <button type="button" id="btnAdminPurgeOfflineCache" class="shrink-0 px-2.5 py-1 rounded-lg bg-white hover:bg-red-50 text-red-600 text-xs font-bold border border-red-200 transition">
                 🧹 Hapus & Sync
               </button>
             </div>
 
             <div class="pt-2 flex items-center justify-between">
-              <button type="button" id="btnResetDemoData" class="text-xs text-red-500 hover:underline">
+              <button type="button" id="btnResetDemoData" class="text-xs text-red-600 hover:underline">
                 Reset Demo
               </button>
-              <button type="submit" id="btnSaveGlobalSettings" class="px-4 py-2 rounded-xl rose-gradient-bg text-white text-xs font-bold transition shadow-xs">
+              <button type="submit" id="btnSaveGlobalSettings" class="px-4 py-2 rounded-xl bg-[#485A44] hover:bg-[#3A4A36] text-white text-xs font-bold transition border border-[#3A4A36]">
                 Simpan Konfigurasi
               </button>
             </div>
@@ -1035,11 +1033,11 @@
 
   </main>
 
-  <!-- FLOATING BOTTOM DOCK NAVIGATION (Pearl Glassmorphism Thumb Dock) -->
-  <nav id="bottomNavBar" class="fixed bottom-3 inset-x-0 mx-auto z-40 max-w-xs sm:max-w-sm w-[92%] sm:w-full floating-bottom-dock rounded-full py-2 px-5 flex items-center justify-around">
+  <!-- FLOATING BOTTOM DOCK NAVIGATION (Solid White Thumb Dock) -->
+  <nav id="bottomNavBar" class="fixed bottom-3 inset-x-0 mx-auto z-40 max-w-xs sm:max-w-sm w-[92%] sm:w-full floating-bottom-dock rounded-full py-2 px-5 flex items-center justify-around bg-white border border-[#E5DFD5]">
     
     <!-- Kamera -->
-    <button id="navBtnCamera" class="nav-item active flex flex-col items-center gap-0.5 text-[#C97D76] transition active:scale-90">
+    <button id="navBtnCamera" class="nav-item active flex flex-col items-center gap-0.5 text-[#485A44] transition active:scale-90 font-bold">
       <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
         <circle cx="12" cy="13" r="3"/>
@@ -1048,26 +1046,26 @@
     </button>
 
     <!-- Galeri -->
-    <button id="navBtnGallery" class="nav-item flex flex-col items-center gap-0.5 text-[#7D6F6B] hover:text-[#C97D76] transition active:scale-90">
+    <button id="navBtnGallery" class="nav-item flex flex-col items-center gap-0.5 text-[#6E6862] hover:text-[#485A44] transition active:scale-90">
       <div class="relative">
         <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect width="18" height="18" x="3" y="3" rx="3.5" ry="3.5"/>
           <circle cx="8.5" cy="8.5" r="1.5"/>
           <polyline points="21 15 16 10 5 21"/>
         </svg>
-        <span id="navGalleryDot" class="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-[#C97D76]"></span>
+        <span id="navGalleryDot" class="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-[#485A44]"></span>
       </div>
       <span class="text-[9px] font-bold tracking-wider uppercase">Galeri</span>
     </button>
 
     <!-- Panggung (Opsional) -->
-    <button id="navBtnStagePhotos" class="hidden nav-item flex flex-col items-center gap-0.5 text-[#7D6F6B] hover:text-[#C97D76] transition active:scale-90 cursor-pointer">
+    <button id="navBtnStagePhotos" class="hidden nav-item flex flex-col items-center gap-0.5 text-[#6E6862] hover:text-[#485A44] transition active:scale-90 cursor-pointer">
       <span class="text-sm leading-none">🎪</span>
       <span id="navStagePhotosLabel" class="text-[9px] font-bold tracking-wider uppercase">Panggung</span>
     </button>
 
     <!-- Profil Tamu -->
-    <button id="navBtnEventInfo" class="nav-item flex flex-col items-center gap-0.5 text-[#7D6F6B] hover:text-[#C97D76] transition active:scale-90">
+    <button id="navBtnEventInfo" class="nav-item flex flex-col items-center gap-0.5 text-[#6E6862] hover:text-[#485A44] transition active:scale-90">
       <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
         <circle cx="12" cy="7" r="4"/>
@@ -1076,40 +1074,40 @@
     </button>
   </nav>
 
-  <!-- MODAL: REVIEW FOTO SEBELUM SIMPAN (Wedding Polaroid Card Experience) -->
-  <div id="modalReviewPhoto" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-white border border-[#F0E6E1] rounded-3xl max-w-sm w-full p-4 flex flex-col items-center wedding-card-shadow-lg">
-      <h3 class="font-serif text-sm font-bold text-[#2C2523] mb-2">Pratinjau Foto Acara</h3>
+  <!-- MODAL: REVIEW FOTO SEBELUM SIMPAN (Solid Wedding Card Experience) -->
+  <div id="modalReviewPhoto" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+    <div class="bg-white border-2 border-[#E5DFD5] rounded-3xl max-w-sm w-full p-4 flex flex-col items-center">
+      <h3 class="font-serif text-sm font-bold text-[#1F1E1D] mb-2">Pratinjau Foto Acara</h3>
       
       <!-- Rendered Image Display Container -->
-      <div id="reviewPhotoContainer" class="relative w-full max-h-[48vh] sm:max-h-[52vh] rounded-2xl overflow-hidden border border-[#F0E6E1] mb-2 flex items-center justify-center bg-[#FDFBF7] shadow-inner">
+      <div id="reviewPhotoContainer" class="relative w-full max-h-[48vh] sm:max-h-[52vh] rounded-2xl overflow-hidden border border-[#E5DFD5] mb-2 flex items-center justify-center bg-[#F9F6F0]">
         <canvas id="photoRenderCanvas" class="hidden"></canvas>
-        <img id="reviewPhotoImg" src="" alt="Pratinjau Foto" class="max-h-[48vh] sm:max-h-[52vh] w-auto max-w-full h-auto object-contain rounded-xl shadow-lg" />
+        <img id="reviewPhotoImg" src="" alt="Pratinjau Foto" class="max-h-[48vh] sm:max-h-[52vh] w-auto max-w-full h-auto object-contain rounded-xl" />
       </div>
 
       <!-- Single Frame Lock Info Notice -->
-      <div id="reviewSingleFrameNotice" class="hidden w-full mb-2 py-1.5 px-3 rounded-xl bg-[#FFF5F3] border border-[#E8A598] flex items-center justify-between text-xs">
-        <span class="text-[#7D6F6B] font-medium">Bingkai Acara:</span>
-        <span id="reviewSingleFrameBadge" class="font-bold text-[#C97D76]">✨ Gold Art Deco</span>
+      <div id="reviewSingleFrameNotice" class="hidden w-full mb-2 py-1.5 px-3 rounded-xl bg-[#EBECE8] border border-[#D5D8CF] flex items-center justify-between text-xs">
+        <span class="text-[#6E6862] font-medium">Bingkai Acara:</span>
+        <span id="reviewSingleFrameBadge" class="font-bold text-[#485A44]">✨ Gold Art Deco</span>
       </div>
 
       <!-- Pilih Bingkai Pasca-Jepret -->
       <div id="reviewFrameSelectorContainer" class="w-full mb-2">
-        <div class="flex items-center justify-between text-[9px] font-semibold uppercase tracking-wider text-[#7D6F6B] mb-1 px-1">
+        <div class="flex items-center justify-between text-[9px] font-semibold uppercase tracking-wider text-[#6E6862] mb-1 px-1">
           <span>Pilih Bingkai Foto</span>
-          <span id="reviewActiveFrameName" class="text-[#C97D76] font-bold">✨ GOLD DECO</span>
+          <span id="reviewActiveFrameName" class="text-[#485A44] font-bold">✨ GOLD DECO</span>
         </div>
         <div id="reviewFrameListContainer" class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
-          <button data-frame="GOLD_DECO" class="rev-frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold rose-gradient-bg text-white border border-[#C97D76] transition shadow-xs">
+          <button data-frame="GOLD_DECO" class="rev-frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#485A44] text-white border border-[#485A44] transition">
             ✨ Gold Deco
           </button>
-          <button data-frame="POLAROID" class="rev-frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white text-[#7D6F6B] border border-[#F0E6E1] hover:border-[#C97D76] transition shadow-xs">
+          <button data-frame="POLAROID" class="rev-frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white text-[#6E6862] border border-[#E5DFD5] hover:border-[#485A44] transition">
             📷 Polaroid
           </button>
-          <button data-frame="MINIMAL" class="rev-frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white text-[#7D6F6B] border border-[#F0E6E1] hover:border-[#C97D76] transition shadow-xs">
+          <button data-frame="MINIMAL" class="rev-frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white text-[#6E6862] border border-[#E5DFD5] hover:border-[#485A44] transition">
             ▪️ Minimalist
           </button>
-          <button data-frame="NONE" class="rev-frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white text-[#7D6F6B] border border-[#F0E6E1] hover:border-[#C97D76] transition shadow-xs">
+          <button data-frame="NONE" class="rev-frame-pill shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white text-[#6E6862] border border-[#E5DFD5] hover:border-[#485A44] transition">
             Tanpa Bingkai
           </button>
         </div>
@@ -1117,15 +1115,15 @@
 
       <!-- Caption Input Field -->
       <div class="w-full mb-2.5">
-        <input type="text" id="inputPhotoCaption" placeholder="Tambahkan ucapan / kesan singkat..." class="w-full bg-[#FFFBF8] border border-[#F0E6E1] focus:border-[#C97D76] rounded-xl px-3 py-2 text-xs text-[#2C2523] placeholder-[#A39691] outline-none transition" />
+        <input type="text" id="inputPhotoCaption" placeholder="Tambahkan ucapan / kesan singkat..." class="w-full bg-white border border-[#D5CFC5] focus:border-[#485A44] rounded-xl px-3 py-2 text-xs text-[#1F1E1D] placeholder-[#8E8780] outline-none transition" />
       </div>
 
       <!-- Action Buttons -->
       <div class="w-full flex items-center gap-2">
-        <button id="btnRetakePhoto" class="flex-1 py-2 rounded-xl bg-white hover:bg-[#FFF9F5] text-[#7D6F6B] border border-[#F0E6E1] text-xs font-semibold transition active:scale-95 shadow-xs">
+        <button id="btnRetakePhoto" class="flex-1 py-2 rounded-xl bg-white hover:bg-[#F4EFEB] text-[#1F1E1D] border border-[#E5DFD5] text-xs font-semibold transition active:scale-95">
           Foto Ulang
         </button>
-        <button id="btnSaveToDrive" class="flex-1 py-2 rounded-xl rose-gradient-bg text-white text-xs font-bold shadow-md shadow-[#C97D76]/25 hover:brightness-105 active:scale-95 transition flex items-center justify-center gap-1.5">
+        <button id="btnSaveToDrive" class="flex-1 py-2 rounded-xl bg-[#485A44] hover:bg-[#3A4A36] text-white text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-95 border border-[#3A4A36]">
           <span id="btnSaveText">Simpan ke Rol</span>
         </button>
       </div>
@@ -1133,19 +1131,19 @@
   </div>
 
   <!-- MODAL: ZOOM FOTO PANGGUNG (FULLSCREEN LIGHTBOX) -->
-  <div id="modalStagePhotoZoom" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-4">
-    <div class="relative max-w-lg w-full bg-white border border-[#F0E6E1] rounded-3xl overflow-hidden shadow-2xl flex flex-col">
-      <div class="p-3 bg-white border-b border-[#F0E6E1] flex items-center justify-between">
-        <span id="stageZoomPhotoTitle" class="text-xs font-semibold text-[#2C2523] truncate font-serif">Foto Panggung</span>
-        <button type="button" id="btnCloseStageZoom" class="text-[#7D6F6B] hover:text-[#2C2523] text-lg p-1 transition cursor-pointer">✕</button>
+  <div id="modalStagePhotoZoom" class="hidden fixed inset-0 z-50 bg-black/85 flex flex-col items-center justify-center p-4">
+    <div class="relative max-w-lg w-full bg-white border border-[#E5DFD5] rounded-3xl overflow-hidden flex flex-col">
+      <div class="p-3 bg-white border-b border-[#E5DFD5] flex items-center justify-between">
+        <span id="stageZoomPhotoTitle" class="text-xs font-semibold text-[#1F1E1D] truncate font-serif">Foto Panggung</span>
+        <button type="button" id="btnCloseStageZoom" class="text-[#6E6862] hover:text-[#1F1E1D] text-lg p-1 transition cursor-pointer">✕</button>
       </div>
-      <div class="p-2 bg-[#FDFBF7] flex items-center justify-center max-h-[72vh] overflow-hidden">
-        <img id="stageZoomPhotoImg" src="" alt="Stage Photo Zoom" class="max-w-full max-h-[70vh] object-contain rounded-xl shadow-md" />
+      <div class="p-2 bg-[#F9F6F0] flex items-center justify-center max-h-[72vh] overflow-hidden">
+        <img id="stageZoomPhotoImg" src="" alt="Stage Photo Zoom" class="max-w-full max-h-[70vh] object-contain rounded-xl" />
       </div>
-      <div class="p-3 bg-white border-t border-[#F0E6E1] flex items-center justify-between gap-2">
-        <span id="stageZoomPhotoDate" class="text-[10px] text-[#7D6F6B] font-mono"></span>
+      <div class="p-3 bg-white border-t border-[#E5DFD5] flex items-center justify-between gap-2">
+        <span id="stageZoomPhotoDate" class="text-[10px] text-[#6E6862] font-mono"></span>
         <div class="flex items-center gap-2">
-          <a id="stageZoomPhotoDownload" href="#" download target="_blank" rel="noopener" class="py-1.5 px-3 rounded-xl rose-gradient-bg text-white text-xs font-bold hover:brightness-105 transition flex items-center gap-1 shadow-xs cursor-pointer">
+          <a id="stageZoomPhotoDownload" href="#" download target="_blank" rel="noopener" class="py-1.5 px-3 rounded-xl bg-[#485A44] hover:bg-[#3A4A36] text-white text-xs font-bold transition flex items-center gap-1 cursor-pointer">
             <span>⬇️</span> Unduh Foto
           </a>
         </div>
@@ -1154,30 +1152,30 @@
   </div>
 
   <!-- MODAL: LOGIN ADMIN & KRU (USERNAME & PASSWORD) -->
-  <div id="modalAdminPin" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-white border border-[#F0E6E1] rounded-3xl max-w-xs w-full p-5 text-center wedding-card-shadow-lg">
-      <div class="w-12 h-12 rounded-2xl bg-[#FFF5F3] text-[#C97D76] flex items-center justify-center mx-auto mb-3 border border-[#F0E6E1]">
+  <div id="modalAdminPin" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+    <div class="bg-white border-2 border-[#E5DFD5] rounded-3xl max-w-xs w-full p-5 text-center">
+      <div class="w-12 h-12 rounded-2xl bg-[#EBECE8] text-[#485A44] flex items-center justify-center mx-auto mb-3 border border-[#D5D8CF]">
         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
           <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
         </svg>
       </div>
-      <h3 class="font-serif text-base font-bold text-[#2C2523] mb-0.5">Akses Pengelola & Kru</h3>
-      <p class="text-xs text-[#7D6F6B] mb-3.5">Masukkan Akun Admin / Kru untuk mengelola event.</p>
+      <h3 class="font-serif text-base font-bold text-[#1F1E1D] mb-0.5">Akses Pengelola & Kru</h3>
+      <p class="text-xs text-[#6E6862] mb-3.5">Masukkan Akun Admin / Kru untuk mengelola event.</p>
       
       <form id="formAdminLogin" class="space-y-2.5 mb-2 text-left">
         <div>
-          <label class="block text-[10px] font-semibold text-[#7D6F6B] mb-1">Username</label>
-          <input type="text" id="inputAdminUser" required placeholder="admin" autocomplete="username" class="w-full bg-[#FFFBF8] border border-[#F0E6E1] focus:border-[#C97D76] rounded-xl px-3 py-2 text-xs text-[#2C2523] outline-none" />
+          <label class="block text-[10px] font-semibold text-[#1F1E1D] mb-1">Username</label>
+          <input type="text" id="inputAdminUser" required placeholder="admin" autocomplete="username" class="w-full bg-white border border-[#D5CFC5] focus:border-[#485A44] rounded-xl px-3 py-2 text-xs text-[#1F1E1D] outline-none" />
         </div>
         <div>
-          <label class="block text-[10px] font-semibold text-[#7D6F6B] mb-1">Password</label>
-          <input type="password" id="inputAdminPass" required placeholder="••••••••" autocomplete="current-password" class="w-full bg-[#FFFBF8] border border-[#F0E6E1] focus:border-[#C97D76] rounded-xl px-3 py-2 text-xs text-[#2C2523] outline-none" />
+          <label class="block text-[10px] font-semibold text-[#1F1E1D] mb-1">Password</label>
+          <input type="password" id="inputAdminPass" required placeholder="••••••••" autocomplete="current-password" class="w-full bg-white border border-[#D5CFC5] focus:border-[#485A44] rounded-xl px-3 py-2 text-xs text-[#1F1E1D] outline-none" />
         </div>
         
         <div class="flex items-center gap-2 pt-2">
-          <button type="button" id="btnCancelAdminPin" class="flex-1 py-2 rounded-xl bg-white hover:bg-[#FFF9F5] text-[#7D6F6B] border border-[#F0E6E1] text-xs font-semibold transition cursor-pointer shadow-xs">Batal</button>
-          <button type="submit" id="btnSubmitAdminPin" class="flex-1 py-2 rounded-xl rose-gradient-bg text-white text-xs font-bold hover:brightness-105 active:scale-95 transition shadow-xs cursor-pointer">Masuk</button>
+          <button type="button" id="btnCancelAdminPin" class="flex-1 py-2 rounded-xl bg-white hover:bg-[#F4EFEB] text-[#1F1E1D] border border-[#E5DFD5] text-xs font-semibold transition cursor-pointer">Batal</button>
+          <button type="submit" id="btnSubmitAdminPin" class="flex-1 py-2 rounded-xl bg-[#485A44] hover:bg-[#3A4A36] text-white text-xs font-bold active:scale-95 transition cursor-pointer">Masuk</button>
         </div>
       </form>
     </div>
@@ -1187,53 +1185,53 @@
   <div id="modalSlideshow" class="hidden fixed inset-0 z-[60] bg-black overflow-hidden select-none">
     
     <!-- Dynamic Ambient Backdrop Blur Image -->
-    <img id="slideshowBackdropImg" src="" alt="" class="absolute inset-0 w-full h-full object-cover blur-3xl opacity-35 scale-110 pointer-events-none transition-opacity duration-1000 z-0" />
+    <img id="slideshowBackdropImg" src="" alt="" class="absolute inset-0 w-full h-full object-cover opacity-25 scale-105 pointer-events-none transition-opacity duration-1000 z-0" />
     
     <!-- Top Bar: Grand Event Branding & Fullscreen Close -->
-    <div class="absolute top-0 inset-x-0 z-30 flex items-center justify-between p-5 md:p-8 bg-gradient-to-b from-black/90 via-black/40 to-transparent pointer-events-auto">
+    <div class="absolute top-0 inset-x-0 z-30 flex items-center justify-between p-5 md:p-8 bg-black/85 pointer-events-auto border-b border-white/10">
       <div>
         <div class="flex items-center gap-2 mb-1">
           <span class="flex h-2.5 w-2.5 relative">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
             <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
           </span>
-          <span class="text-[11px] uppercase font-bold text-amber-200 tracking-widest drop-shadow font-serif">LIVE BALLROOM STREAM</span>
+          <span class="text-[11px] uppercase font-bold text-[#E5DFD5] tracking-widest font-serif">LIVE BALLROOM STREAM</span>
         </div>
-        <h2 id="slideshowTitle" class="font-serif text-2xl sm:text-3xl md:text-5xl font-extrabold text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">The Wedding of Sarah & Kevin</h2>
-        <p id="slideshowHashtag" class="text-xs sm:text-base text-amber-100 font-semibold tracking-wider drop-shadow">#SarahKevinEverAfter</p>
+        <h2 id="slideshowTitle" class="font-serif text-2xl sm:text-3xl md:text-5xl font-extrabold text-white">The Wedding of Sarah & Kevin</h2>
+        <p id="slideshowHashtag" class="text-xs sm:text-base text-zinc-300 font-semibold tracking-wider">#SarahKevinEverAfter</p>
       </div>
-      <button id="btnCloseSlideshow" class="p-2.5 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 backdrop-blur-md transition shadow-xl" title="Tutup Layar Penuh">
+      <button id="btnCloseSlideshow" class="p-2.5 rounded-full bg-zinc-800 hover:bg-zinc-700 text-white border border-white/20 transition" title="Tutup Layar Penuh">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
       </button>
     </div>
 
     <!-- Center Stage: 100% True Centered Photo -->
     <div class="slideshow-centered-stage pointer-events-none">
-      <img id="slideshowImg" src="" alt="Live Event Photo" class="w-auto h-[68vh] sm:h-[76vh] md:h-[82vh] max-w-[92vw] md:max-w-[75vw] object-contain rounded-2xl drop-shadow-[0_25px_60px_rgba(0,0,0,0.9)] border border-white/30 transition-opacity duration-1000 opacity-0 ken-burns pointer-events-auto" />
-      <div id="slideshowEmptyMsg" class="hidden text-center text-zinc-300 bg-black/60 p-6 rounded-2xl border border-white/10 backdrop-blur-md pointer-events-auto">
+      <img id="slideshowImg" src="" alt="Live Event Photo" class="w-auto h-[68vh] sm:h-[76vh] md:h-[82vh] max-w-[92vw] md:max-w-[75vw] object-contain rounded-2xl border-2 border-white/40 transition-opacity duration-1000 opacity-0 ken-burns pointer-events-auto" />
+      <div id="slideshowEmptyMsg" class="hidden text-center text-zinc-300 bg-black/90 p-6 rounded-2xl border border-white/20 pointer-events-auto">
         <div class="text-4xl mb-2">🎞️</div>
         <p class="font-serif text-xl text-white font-bold mb-1">Live Photo Stream</p>
         <p class="text-xs text-zinc-400">Foto yang diunggah para tamu akan otomatis tampil di layar panggung ini.</p>
       </div>
 
       <!-- Kartu Informasi Uploader & Pesan/Ucapan Tamu -->
-      <div id="slideshowInfoOverlay" class="absolute bottom-16 sm:bottom-20 md:bottom-24 left-1/2 -translate-x-1/2 z-20 max-w-xl w-11/12 sm:w-auto min-w-[280px] bg-black/80 backdrop-blur-xl border border-white/30 rounded-2xl p-3 sm:p-3.5 text-center shadow-[0_10px_35px_rgba(0,0,0,0.8)] transition-all duration-500 pointer-events-auto">
+      <div id="slideshowInfoOverlay" class="absolute bottom-16 sm:bottom-20 md:bottom-24 left-1/2 -translate-x-1/2 z-20 max-w-xl w-11/12 sm:w-auto min-w-[280px] bg-black/90 border border-white/30 rounded-2xl p-3 sm:p-3.5 text-center transition-all duration-500 pointer-events-auto">
         <div class="flex items-center justify-center gap-2 mb-1">
-          <span id="slideshowUploaderBadge" class="text-xs px-3 py-0.5 rounded-full rose-gradient-bg text-white font-extrabold shadow-md">Oleh Tamu</span>
+          <span id="slideshowUploaderBadge" class="text-xs px-3 py-0.5 rounded-full bg-[#485A44] text-white font-extrabold">Oleh Tamu</span>
           <span id="slideshowTimeBadge" class="text-xs text-zinc-300">Baru Saja</span>
         </div>
-        <p id="slideshowCaptionText" class="font-serif italic text-xs sm:text-base text-white drop-shadow font-medium">"Momen seru bersama para sahabat!"</p>
+        <p id="slideshowCaptionText" class="font-serif italic text-xs sm:text-base text-white font-medium">"Momen seru bersama para sahabat!"</p>
       </div>
     </div>
 
     <!-- Bottom Bar: Live Indicator & Stasiun Scan QR Raksasa -->
-    <div class="absolute bottom-0 inset-x-0 z-20 flex items-center justify-between p-3 sm:p-6 md:p-8 bg-gradient-to-t from-black/95 via-black/50 to-transparent pointer-events-none">
-      <div class="pointer-events-auto flex items-center gap-1.5 text-[11px] font-semibold text-zinc-400 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10 shadow-md">
+    <div class="absolute bottom-0 inset-x-0 z-20 flex items-center justify-between p-3 sm:p-6 md:p-8 bg-black/90 border-t border-white/10 pointer-events-none">
+      <div class="pointer-events-auto flex items-center gap-1.5 text-[11px] font-semibold text-zinc-300 bg-zinc-800 px-3 py-1.5 rounded-xl border border-white/10">
         <span>📸 SnapEvent Live System</span>
       </div>
 
       <!-- Tombol Bagikan untuk Ponsel -->
-      <button id="btnSlideshowMobileShare" class="pointer-events-auto flex sm:hidden items-center justify-center w-10 h-10 rounded-full rose-gradient-bg text-white shadow-lg hover:brightness-105 active:scale-95 transition" title="Bagikan Acara">
+      <button id="btnSlideshowMobileShare" class="pointer-events-auto flex sm:hidden items-center justify-center w-10 h-10 rounded-full bg-[#485A44] text-white hover:bg-[#3A4A36] active:scale-95 transition" title="Bagikan Acara">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
           <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
@@ -1241,59 +1239,59 @@
       </button>
 
       <!-- Scan QR Meja Proyektor (Layar Desktop) -->
-      <div id="slideshowDesktopQrCard" class="pointer-events-auto hidden sm:flex flex-col items-center gap-2 bg-black/85 backdrop-blur-xl border border-white/30 p-4 rounded-3xl shadow-[0_15px_45px_rgba(0,0,0,0.9)] max-w-xs transition hover:scale-105 duration-300">
-        <div class="flex items-center gap-2 text-xs font-extrabold text-[#E8A598] uppercase tracking-wider font-serif">
+      <div id="slideshowDesktopQrCard" class="pointer-events-auto hidden sm:flex flex-col items-center gap-2 bg-black/95 border-2 border-white/30 p-4 rounded-3xl max-w-xs transition hover:scale-105 duration-300">
+        <div class="flex items-center gap-2 text-xs font-extrabold text-white uppercase tracking-wider font-serif">
           <span>📸 Scan untuk Memotret</span>
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
         </div>
-        <div class="w-36 h-36 md:w-44 md:h-44 bg-white rounded-2xl p-2 flex items-center justify-center shrink-0 shadow-2xl">
+        <div class="w-36 h-36 md:w-44 md:h-44 bg-white rounded-2xl p-2 flex items-center justify-center shrink-0 border border-white">
           <img id="slideshowQrImg" src="" alt="Scan QR" class="w-full h-full object-contain" />
         </div>
-        <p class="text-[10px] text-zinc-200 text-center font-medium max-w-[190px]">Arahkan kamera HP Anda ke QR Code untuk langsung memotret!</p>
+        <p class="text-[10px] text-zinc-300 text-center font-medium max-w-[190px]">Arahkan kamera HP Anda ke QR Code untuk langsung memotret!</p>
       </div>
     </div>
   </div>
 
   <!-- MODAL: ZOOM DETAIL FOTO & VOTING -->
-  <div id="modalZoomPhoto" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="relative max-w-sm w-full bg-white border border-[#F0E6E1] rounded-3xl overflow-hidden p-4 wedding-card-shadow-lg">
-      <button id="btnCloseZoom" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center transition active:scale-95">
+  <div id="modalZoomPhoto" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+    <div class="relative max-w-sm w-full bg-white border-2 border-[#E5DFD5] rounded-3xl overflow-hidden p-4">
+      <button id="btnCloseZoom" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-[#1F1E1D] text-white flex items-center justify-center transition active:scale-95">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
       </button>
 
-      <div class="w-full aspect-[4/5] bg-[#FDFBF7] rounded-2xl overflow-hidden mb-3 border border-[#F0E6E1]">
+      <div class="w-full aspect-[4/5] bg-[#F9F6F0] rounded-2xl overflow-hidden mb-3 border border-[#E5DFD5]">
         <img id="zoomImg" src="" alt="Detail Foto" class="w-full h-full object-contain" />
       </div>
 
       <div class="flex items-center justify-between mb-1.5">
         <div>
-          <h4 id="zoomGuestNama" class="text-sm font-bold text-[#2C2523] font-serif">Oleh Tamu</h4>
-          <p id="zoomTime" class="text-[10px] text-[#7D6F6B]">Beberapa saat lalu</p>
+          <h4 id="zoomGuestNama" class="text-sm font-bold text-[#1F1E1D] font-serif">Oleh Tamu</h4>
+          <p id="zoomTime" class="text-[10px] text-[#6E6862]">Beberapa saat lalu</p>
         </div>
-        <div id="zoomLikesBadge" class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF5F3] text-[#C97D76] text-xs font-bold border border-[#F0E6E1]">
+        <div id="zoomLikesBadge" class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EBECE8] text-[#485A44] text-xs font-bold border border-[#D5D8CF]">
           <span>❤️</span>
           <span id="zoomLikesCount">0 Suka</span>
         </div>
       </div>
 
-      <p id="zoomCaption" class="text-xs text-[#7D6F6B] italic mb-3 font-serif">"Momen seru pesta!"</p>
+      <p id="zoomCaption" class="text-xs text-[#6E6862] italic mb-3 font-serif">"Momen seru pesta!"</p>
 
       <div class="flex items-center gap-2">
-        <button id="btnZoomVote" class="flex-1 py-2 rounded-xl rose-gradient-bg text-white text-xs font-bold shadow-md shadow-[#C97D76]/25 hover:brightness-105 active:scale-95 transition flex items-center justify-center gap-1.5">
+        <button id="btnZoomVote" class="flex-1 py-2 rounded-xl bg-[#485A44] hover:bg-[#3A4A36] text-white text-xs font-bold active:scale-95 transition flex items-center justify-center gap-1.5 border border-[#3A4A36]">
           <span>Beri Suara / Like</span>
         </button>
-        <button id="btnZoomDownload" class="px-3.5 py-2 rounded-xl bg-white hover:bg-[#FFF9F5] text-[#2C2523] border border-[#F0E6E1] text-xs font-semibold transition active:scale-95 shadow-xs" title="Unduh Foto">
+        <button id="btnZoomDownload" class="px-3.5 py-2 rounded-xl bg-white hover:bg-[#F4EFEB] text-[#1F1E1D] border border-[#E5DFD5] text-xs font-semibold transition active:scale-95" title="Unduh Foto">
           ⬇️ Unduh
         </button>
       </div>
 
       <!-- Admin Photo Moderation Controls -->
-      <div id="zoomAdminControls" class="hidden mt-3 pt-3 border-t border-[#F0E6E1] grid grid-cols-2 gap-2">
-        <button id="btnZoomToggleVisibility" type="button" class="py-1.5 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer">
+      <div id="zoomAdminControls" class="hidden mt-3 pt-3 border-t border-[#E5DFD5] grid grid-cols-2 gap-2">
+        <button id="btnZoomToggleVisibility" type="button" class="py-1.5 px-3 rounded-xl bg-[#F9F6F0] hover:bg-[#EBE5DC] border border-[#E5DFD5] text-[#1F1E1D] text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer">
           <span id="zoomToggleVisibilityIcon">👁️</span>
           <span id="zoomToggleVisibilityText">Sembunyikan</span>
         </button>
-        <button id="btnZoomDeletePhoto" type="button" class="py-1.5 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer">
+        <button id="btnZoomDeletePhoto" type="button" class="py-1.5 px-3 rounded-xl bg-white hover:bg-rose-50 border border-rose-300 text-rose-600 text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer">
           <span>🗑️</span>
           <span>Hapus</span>
         </button>
@@ -1302,88 +1300,88 @@
   </div>
 
   <!-- MODAL: PILIH KATEGORI VOTING FOTO -->
-  <div id="modalVoteCategory" class="hidden fixed inset-0 z-[55] bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-white border border-[#F0E6E1] rounded-3xl max-w-sm w-full p-5 text-center wedding-card-shadow-lg relative">
-      <button id="btnCloseVoteCategory" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white hover:bg-[#FFF9F5] border border-[#F0E6E1] text-[#7D6F6B] hover:text-[#2C2523] flex items-center justify-center transition">
+  <div id="modalVoteCategory" class="hidden fixed inset-0 z-[55] bg-black/60 flex items-center justify-center p-4">
+    <div class="bg-white border-2 border-[#E5DFD5] rounded-3xl max-w-sm w-full p-5 text-center relative">
+      <button id="btnCloseVoteCategory" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white hover:bg-[#F4EFEB] border border-[#E5DFD5] text-[#1F1E1D] flex items-center justify-center transition">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
       </button>
-      <div class="w-12 h-12 rounded-2xl bg-[#FFF5F3] text-[#C97D76] flex items-center justify-center mx-auto mb-3 border border-[#F0E6E1]">
+      <div class="w-12 h-12 rounded-2xl bg-[#EBECE8] text-[#485A44] flex items-center justify-center mx-auto mb-3 border border-[#D5D8CF]">
         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
         </svg>
       </div>
-      <h3 class="font-serif text-base font-bold text-[#2C2523] mb-1">Beri Suara / Like</h3>
-      <p id="voteModalDesc" class="text-xs text-[#7D6F6B] mb-3.5">Pilih kategori penghargaan untuk foto ini:</p>
+      <h3 class="font-serif text-base font-bold text-[#1F1E1D] mb-1">Beri Suara / Like</h3>
+      <p id="voteModalDesc" class="text-xs text-[#6E6862] mb-3.5">Pilih kategori penghargaan untuk foto ini:</p>
 
       <div id="voteCategoryListContainer" class="space-y-2 mb-4 text-left"></div>
 
       <div class="flex items-center gap-2">
-        <button id="btnCancelVoteCategory" class="flex-1 py-2 rounded-xl bg-white hover:bg-[#FFF9F5] text-[#7D6F6B] border border-[#F0E6E1] text-xs font-semibold transition shadow-xs">Batal</button>
-        <button id="btnConfirmVoteCategory" class="flex-1 py-2 rounded-xl rose-gradient-bg text-white text-xs font-bold shadow-md shadow-[#C97D76]/25 hover:brightness-105 active:scale-95 transition">Kirim Suara ❤️</button>
+        <button id="btnCancelVoteCategory" class="flex-1 py-2 rounded-xl bg-white hover:bg-[#F4EFEB] text-[#1F1E1D] border border-[#E5DFD5] text-xs font-semibold transition">Batal</button>
+        <button id="btnConfirmVoteCategory" class="flex-1 py-2 rounded-xl bg-[#485A44] hover:bg-[#3A4A36] text-white text-xs font-bold active:scale-95 transition border border-[#3A4A36]">Kirim Suara ❤️</button>
       </div>
     </div>
   </div>
 
   <!-- MODAL: KONTAK & INFO LAYANAN -->
-  <div id="modalContactInfo" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-white border border-[#F0E6E1] rounded-3xl max-w-xs w-full p-5 text-center wedding-card-shadow-lg">
-      <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-3 border border-emerald-200">
+  <div id="modalContactInfo" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+    <div class="bg-white border-2 border-[#E5DFD5] rounded-3xl max-w-xs w-full p-5 text-center">
+      <div class="w-12 h-12 rounded-2xl bg-[#EBECE8] text-[#485A44] flex items-center justify-center mx-auto mb-3 border border-[#D5D8CF]">
         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
         </svg>
       </div>
-      <h3 class="font-serif text-base font-bold text-[#2C2523] mb-1" id="contactModalTitle">Hubungi Penyelenggara</h3>
-      <p class="text-xs text-[#7D6F6B] mb-3.5">Informasi kontak resmi layanan acara:</p>
+      <h3 class="font-serif text-base font-bold text-[#1F1E1D] mb-1" id="contactModalTitle">Hubungi Penyelenggara</h3>
+      <p class="text-xs text-[#6E6862] mb-3.5">Informasi kontak resmi layanan acara:</p>
       
       <div class="space-y-2 mb-4 text-left text-xs">
-        <div id="contactPhoneRow" class="flex items-center justify-between p-2.5 rounded-xl bg-[#FFFBF8] border border-[#F0E6E1]">
-          <span class="text-[#7D6F6B]">WhatsApp / Telp</span>
-          <a id="contactPhoneLink" href="#" target="_blank" class="font-semibold text-[#C97D76] hover:underline">0812-3456-7890</a>
+        <div id="contactPhoneRow" class="flex items-center justify-between p-2.5 rounded-xl bg-[#F9F6F0] border border-[#E5DFD5]">
+          <span class="text-[#6E6862]">WhatsApp / Telp</span>
+          <a id="contactPhoneLink" href="#" target="_blank" class="font-semibold text-[#485A44] hover:underline">0812-3456-7890</a>
         </div>
-        <div id="contactIgRow" class="flex items-center justify-between p-2.5 rounded-xl bg-[#FFFBF8] border border-[#F0E6E1]">
-          <span class="text-[#7D6F6B]">Instagram</span>
-          <a id="contactIgLink" href="#" target="_blank" class="font-semibold text-[#C97D76] hover:underline">@snapevent</a>
+        <div id="contactIgRow" class="flex items-center justify-between p-2.5 rounded-xl bg-[#F9F6F0] border border-[#E5DFD5]">
+          <span class="text-[#6E6862]">Instagram</span>
+          <a id="contactIgLink" href="#" target="_blank" class="font-semibold text-[#485A44] hover:underline">@snapevent</a>
         </div>
       </div>
 
-      <button id="btnCloseContact" class="w-full py-2 rounded-xl bg-white hover:bg-[#FFF9F5] text-[#7D6F6B] border border-[#F0E6E1] text-xs font-semibold transition shadow-xs">
+      <button id="btnCloseContact" class="w-full py-2 rounded-xl bg-white hover:bg-[#F4EFEB] text-[#1F1E1D] border border-[#E5DFD5] text-xs font-semibold transition">
         Tutup
       </button>
     </div>
   </div>
 
   <!-- MODAL: SHARE LINK & SCAN QR ACARA -->
-  <div id="modalShareQr" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-white border border-[#F0E6E1] rounded-3xl max-w-sm w-full p-5 text-center wedding-card-shadow-lg relative">
-      <button id="btnCloseShareQr" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white hover:bg-[#FFF9F5] border border-[#F0E6E1] text-[#7D6F6B] hover:text-[#2C2523] flex items-center justify-center transition">
+  <div id="modalShareQr" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+    <div class="bg-white border-2 border-[#E5DFD5] rounded-3xl max-w-sm w-full p-5 text-center relative">
+      <button id="btnCloseShareQr" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white hover:bg-[#F4EFEB] border border-[#E5DFD5] text-[#1F1E1D] flex items-center justify-center transition">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
       </button>
 
-      <div class="w-12 h-12 rounded-2xl bg-[#FFF5F3] text-[#C97D76] flex items-center justify-center mx-auto mb-3 border border-[#F0E6E1]">
+      <div class="w-12 h-12 rounded-2xl bg-[#EBECE8] text-[#485A44] flex items-center justify-center mx-auto mb-3 border border-[#D5D8CF]">
         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
           <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14-2h4v4h-4v-4zm-4 0h2v2h-2v-2zm2 4h2v4h-2v-4zm2 2h2v2h-2v-2zm-6-2h2v4h-2v-4z"/>
         </svg>
       </div>
 
-      <h3 class="font-serif text-lg font-bold text-[#2C2523] mb-0.5" id="shareQrEventTitle">The Wedding of Sarah & Kevin</h3>
-      <p class="text-xs text-[#C97D76] font-medium mb-3.5" id="shareQrEventHashtag">#SarahKevinEverAfter</p>
+      <h3 class="font-serif text-lg font-bold text-[#1F1E1D] mb-0.5" id="shareQrEventTitle">The Wedding of Sarah & Kevin</h3>
+      <p class="text-xs text-[#485A44] font-bold mb-3.5" id="shareQrEventHashtag">#SarahKevinEverAfter</p>
 
       <!-- QR Code Scannable Image -->
-      <div class="w-44 h-44 bg-[#FFF9F5] rounded-2xl p-2 mx-auto mb-3.5 shadow-md flex items-center justify-center ring-2 ring-[#C97D76]/25 border border-[#F0E6E1]">
+      <div class="w-44 h-44 bg-white rounded-2xl p-2 mx-auto mb-3.5 border-2 border-[#E5DFD5] flex items-center justify-center">
         <img id="shareQrImg" src="" alt="QR Code Acara" class="w-full h-full object-contain" />
       </div>
-      <p class="text-[10px] text-[#7D6F6B] mb-3">Tamu dapat memindai QR code ini untuk langsung membuka disposable camera di HP.</p>
+      <p class="text-[10px] text-[#6E6862] mb-3">Tamu dapat memindai QR code ini untuk langsung membuka disposable camera di HP.</p>
 
       <!-- URL Input & Copy -->
-      <div class="flex items-center gap-1.5 mb-3 bg-[#FFFBF8] border border-[#F0E6E1] rounded-xl p-1.5">
-        <input type="text" id="shareQrUrlInput" readonly class="w-full bg-transparent px-2 text-xs text-[#2C2523] outline-none" />
-        <button id="btnCopyShareUrl" class="shrink-0 px-3 py-1.5 rounded-lg rose-gradient-bg text-white text-xs font-bold hover:brightness-105 active:scale-95 transition shadow-xs">
+      <div class="flex items-center gap-1.5 mb-3 bg-[#F9F6F0] border border-[#E5DFD5] rounded-xl p-1.5">
+        <input type="text" id="shareQrUrlInput" readonly class="w-full bg-transparent px-2 text-xs text-[#1F1E1D] outline-none font-medium" />
+        <button id="btnCopyShareUrl" class="shrink-0 px-3 py-1.5 rounded-lg bg-[#485A44] hover:bg-[#3A4A36] text-white text-xs font-bold active:scale-95 transition">
           Salin
         </button>
       </div>
 
       <div class="flex items-center gap-2">
-        <button id="btnDownloadQrCode" class="w-full py-2 rounded-xl bg-white hover:bg-[#FFF9F5] text-[#2C2523] border border-[#F0E6E1] text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow-xs">
+        <button id="btnDownloadQrCode" class="w-full py-2 rounded-xl bg-white hover:bg-[#F4EFEB] text-[#1F1E1D] border border-[#E5DFD5] text-xs font-semibold transition flex items-center justify-center gap-1.5">
           <span>⬇️ Unduh Gambar QR</span>
         </button>
       </div>
@@ -1391,67 +1389,67 @@
   </div>
 
   <!-- MODAL: TAMBAH AKUN PENGGUNA / OPERATOR KRU -->
-  <div id="modalAddUserAccount" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-white border border-[#F0E6E1] rounded-3xl max-w-xs w-full p-5 text-center wedding-card-shadow-lg">
-      <div class="w-12 h-12 rounded-2xl bg-[#FFF5F3] text-[#C97D76] flex items-center justify-center mx-auto mb-3 border border-[#F0E6E1]">
+  <div id="modalAddUserAccount" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+    <div class="bg-white border-2 border-[#E5DFD5] rounded-3xl max-w-xs w-full p-5 text-center">
+      <div class="w-12 h-12 rounded-2xl bg-[#EBECE8] text-[#485A44] flex items-center justify-center mx-auto mb-3 border border-[#D5D8CF]">
         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/>
         </svg>
       </div>
-      <h3 class="font-serif text-base font-bold text-[#2C2523] mb-0.5">Tambah Akun Pengguna</h3>
-      <p class="text-xs text-[#7D6F6B] mb-3.5">Buat akun untuk operator kru atau panitia meja.</p>
+      <h3 class="font-serif text-base font-bold text-[#1F1E1D] mb-0.5">Tambah Akun Pengguna</h3>
+      <p class="text-xs text-[#6E6862] mb-3.5">Buat akun untuk operator kru atau panitia meja.</p>
 
       <form id="formAddUserAccount" class="space-y-2.5 mb-2 text-left">
         <div>
-          <label class="block text-[10px] font-semibold text-[#7D6F6B] mb-1">Username Akun</label>
-          <input type="text" id="inputNewUserUsername" required placeholder="Contoh: kru_meja1" class="w-full bg-[#FFFBF8] border border-[#F0E6E1] focus:border-[#C97D76] rounded-xl px-3 py-1.5 text-xs text-[#2C2523] outline-none" />
+          <label class="block text-[10px] font-semibold text-[#1F1E1D] mb-1">Username Akun</label>
+          <input type="text" id="inputNewUserUsername" required placeholder="Contoh: kru_meja1" class="w-full bg-white border border-[#D5CFC5] focus:border-[#485A44] rounded-xl px-3 py-1.5 text-xs text-[#1F1E1D] outline-none" />
         </div>
         <div>
-          <label class="block text-[10px] font-semibold text-[#7D6F6B] mb-1">Password</label>
-          <input type="password" id="inputNewUserPassword" required placeholder="Minimal 4 karakter" class="w-full bg-[#FFFBF8] border border-[#F0E6E1] focus:border-[#C97D76] rounded-xl px-3 py-1.5 text-xs text-[#2C2523] outline-none" />
+          <label class="block text-[10px] font-semibold text-[#1F1E1D] mb-1">Password</label>
+          <input type="password" id="inputNewUserPassword" required placeholder="Minimal 4 karakter" class="w-full bg-white border border-[#D5CFC5] focus:border-[#485A44] rounded-xl px-3 py-1.5 text-xs text-[#1F1E1D] outline-none" />
         </div>
         <div>
-          <label class="block text-[10px] font-semibold text-[#7D6F6B] mb-1">Peran / Hak Akses</label>
-          <select id="selectNewUserRole" class="w-full bg-[#FFFBF8] border border-[#F0E6E1] focus:border-[#C97D76] rounded-xl px-3 py-1.5 text-xs text-[#2C2523] outline-none">
+          <label class="block text-[10px] font-semibold text-[#1F1E1D] mb-1">Peran / Hak Akses</label>
+          <select id="selectNewUserRole" class="w-full bg-white border border-[#D5CFC5] focus:border-[#485A44] rounded-xl px-3 py-1.5 text-xs text-[#1F1E1D] outline-none">
             <option value="operator">Operator Kru (Kelola Foto & Event)</option>
             <option value="admin">Administrator Penuh</option>
           </select>
         </div>
         <div class="flex items-center gap-2 pt-2">
-          <button type="button" id="btnCancelAddUserModal" class="flex-1 py-2 rounded-xl bg-white hover:bg-[#FFF9F5] text-[#7D6F6B] border border-[#F0E6E1] text-xs font-semibold transition shadow-xs">Batal</button>
-          <button type="submit" id="btnSaveNewUserAccount" class="flex-1 py-2 rounded-xl rose-gradient-bg text-white text-xs font-bold shadow-xs hover:brightness-105 transition">Simpan</button>
+          <button type="button" id="btnCancelAddUserModal" class="flex-1 py-2 rounded-xl bg-white hover:bg-[#F4EFEB] text-[#1F1E1D] border border-[#E5DFD5] text-xs font-semibold transition">Batal</button>
+          <button type="submit" id="btnSaveNewUserAccount" class="flex-1 py-2 rounded-xl bg-[#485A44] hover:bg-[#3A4A36] text-white text-xs font-bold transition border border-[#3A4A36]">Simpan</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- MODAL: GANTI PASSWORD PENGGUNA -->
-  <div id="modalChangePassword" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-white border border-[#F0E6E1] rounded-3xl max-w-xs w-full p-5 text-center wedding-card-shadow-lg">
-      <div class="w-12 h-12 rounded-2xl bg-[#FFF5F3] text-[#C97D76] flex items-center justify-center mx-auto mb-3 border border-[#F0E6E1]">
+  <div id="modalChangePassword" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+    <div class="bg-white border-2 border-[#E5DFD5] rounded-3xl max-w-xs w-full p-5 text-center">
+      <div class="w-12 h-12 rounded-2xl bg-[#EBECE8] text-[#485A44] flex items-center justify-center mx-auto mb-3 border border-[#D5D8CF]">
         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/>
         </svg>
       </div>
-      <h3 class="font-serif text-base font-bold text-[#2C2523] mb-0.5">Ganti Password Akun</h3>
-      <p class="text-xs text-[#7D6F6B] mb-3.5">Perbarui kata sandi akun login Anda.</p>
+      <h3 class="font-serif text-base font-bold text-[#1F1E1D] mb-0.5">Ganti Password Akun</h3>
+      <p class="text-xs text-[#6E6862] mb-3.5">Perbarui kata sandi akun login Anda.</p>
 
       <form id="formChangePassword" class="space-y-2.5 mb-2 text-left">
         <div>
-          <label class="block text-[10px] font-semibold text-[#7D6F6B] mb-1">Password Saat Ini (Lama)</label>
-          <input type="password" id="inputOldPassword" required placeholder="Masukkan password lama" class="w-full bg-[#FFFBF8] border border-[#F0E6E1] focus:border-[#C97D76] rounded-xl px-3 py-1.5 text-xs text-[#2C2523] outline-none" />
+          <label class="block text-[10px] font-semibold text-[#1F1E1D] mb-1">Password Saat Ini (Lama)</label>
+          <input type="password" id="inputOldPassword" required placeholder="Masukkan password lama" class="w-full bg-white border border-[#D5CFC5] focus:border-[#485A44] rounded-xl px-3 py-1.5 text-xs text-[#1F1E1D] outline-none" />
         </div>
         <div>
-          <label class="block text-[10px] font-semibold text-[#7D6F6B] mb-1">Password Baru</label>
-          <input type="password" id="inputNewPassword1" required placeholder="Minimal 4 karakter" class="w-full bg-[#FFFBF8] border border-[#F0E6E1] focus:border-[#C97D76] rounded-xl px-3 py-1.5 text-xs text-[#2C2523] outline-none" />
+          <label class="block text-[10px] font-semibold text-[#1F1E1D] mb-1">Password Baru</label>
+          <input type="password" id="inputNewPassword1" required placeholder="Minimal 4 karakter" class="w-full bg-white border border-[#D5CFC5] focus:border-[#485A44] rounded-xl px-3 py-1.5 text-xs text-[#1F1E1D] outline-none" />
         </div>
         <div>
-          <label class="block text-[10px] font-semibold text-[#7D6F6B] mb-1">Konfirmasi Password Baru</label>
-          <input type="password" id="inputNewPassword2" required placeholder="Ulangi password baru" class="w-full bg-[#FFFBF8] border border-[#F0E6E1] focus:border-[#C97D76] rounded-xl px-3 py-1.5 text-xs text-[#2C2523] outline-none" />
+          <label class="block text-[10px] font-semibold text-[#1F1E1D] mb-1">Konfirmasi Password Baru</label>
+          <input type="password" id="inputNewPassword2" required placeholder="Ulangi password baru" class="w-full bg-white border border-[#D5CFC5] focus:border-[#485A44] rounded-xl px-3 py-1.5 text-xs text-[#1F1E1D] outline-none" />
         </div>
         <div class="flex items-center gap-2 pt-2">
-          <button type="button" id="btnCancelChangePassword" class="flex-1 py-2 rounded-xl bg-white hover:bg-[#FFF9F5] text-[#7D6F6B] border border-[#F0E6E1] text-xs font-semibold transition shadow-xs">Batal</button>
-          <button type="submit" id="btnSubmitChangePassword" class="flex-1 py-2 rounded-xl rose-gradient-bg text-white text-xs font-bold shadow-xs hover:brightness-105 transition">Perbarui</button>
+          <button type="button" id="btnCancelChangePassword" class="flex-1 py-2 rounded-xl bg-white hover:bg-[#F4EFEB] text-[#1F1E1D] border border-[#E5DFD5] text-xs font-semibold transition">Batal</button>
+          <button type="submit" id="btnSubmitChangePassword" class="flex-1 py-2 rounded-xl bg-[#485A44] hover:bg-[#3A4A36] text-white text-xs font-bold transition border border-[#3A4A36]">Perbarui</button>
         </div>
       </form>
     </div>
