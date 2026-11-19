@@ -1,17 +1,21 @@
 /* ==============================================================================
- * SNAPEVENT: STYLE.CSS (v2.4.0 Editorial Studio & Leica Minimalist Redesign)
- * Luxury Obsidian & Champagne Aesthetic, Tactile Camera HUD, & Micro-Interactions
+ * SNAPEVENT: STYLE.CSS (v2.5.0 Wedknot Romantic Luxury Wedding Edition)
+ * Light & Airy Alabaster Ivory, Rose Gold Blush, Pearl Glassmorphism, & Serif Calligraphy
  * ============================================================================== */
 
 :root {
-  --bg-deep: #090A0F;
-  --bg-surface: #12131A;
-  --bg-surface-elevated: #1A1B24;
-  --gold-primary: #D4AF37;
-  --gold-light: #F3E5AB;
-  --gold-dark: #997F24;
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-gold: rgba(212, 175, 55, 0.35);
+  --bg-deep: #FDFBF7;
+  --bg-surface: #FFFFFF;
+  --bg-surface-elevated: #FFF9F5;
+  --rose-gold: #C97D76;
+  --rose-gold-light: #E8A598;
+  --rose-gold-dark: #A95A54;
+  --text-primary: #2C2523;
+  --text-secondary: #7D6F6B;
+  --text-muted: #A39691;
+  --border-subtle: #F0E6E1;
+  --border-rose: rgba(201, 125, 118, 0.25);
+  --gold-primary: #C97D76; /* alias for compatibility */
 }
 
 /* Custom Minimalist Scrollbar */
@@ -25,12 +29,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(201, 125, 118, 0.25);
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--gold-primary);
+  background: var(--rose-gold);
 }
 
 /* Utility to hide scrollbars cleanly */
@@ -44,46 +48,63 @@
   scrollbar-width: none !important;
 }
 
-/* Champagne Gold Text & Surface Accents */
+/* Romantic Calligraphy Typography */
+.font-script {
+  font-family: 'Great Vibes', 'Caveat', cursive;
+}
+
+/* Rose Gold & Champagne Blush Text & Surface Accents */
+.rose-gradient-text,
 .gold-gradient-text {
-  background: linear-gradient(135deg, #FFF6D1 0%, #D4AF37 50%, #B88E28 100%);
+  background: linear-gradient(135deg, #B85D55 0%, #C97D76 50%, #E8A598 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
+.rose-gradient-bg,
 .gold-gradient-bg {
-  background: linear-gradient(135deg, #F5E8BA 0%, #D4AF37 55%, #AA8721 100%);
+  background: linear-gradient(135deg, #E8A598 0%, #C97D76 55%, #B85D55 100%);
+  color: #FFFFFF !important;
 }
 
 .gold-pill-active {
-  background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 100%) !important;
-  color: #0A0A0D !important;
+  background: linear-gradient(135deg, #E8A598 0%, #C97D76 100%) !important;
+  color: #FFFFFF !important;
   font-weight: 700 !important;
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3) !important;
+  box-shadow: 0 4px 15px rgba(201, 125, 118, 0.3) !important;
+}
+
+/* Wedding Soft Shadows */
+.wedding-card-shadow {
+  box-shadow: 0 10px 30px -5px rgba(60, 35, 30, 0.06), 0 0 1px rgba(60, 35, 30, 0.08);
+}
+
+.wedding-card-shadow-lg {
+  box-shadow: 0 20px 45px -10px rgba(60, 35, 30, 0.09), 0 0 1px rgba(60, 35, 30, 0.1);
 }
 
 /* Glassmorphism Surface Utilities */
 .glass-panel {
-  background: rgba(18, 19, 26, 0.72);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
 }
 
 .glass-capsule {
-  background: rgba(10, 10, 13, 0.82);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(201, 125, 118, 0.2);
 }
 
-/* Floating Bottom Navigation Dock */
+/* Floating Bottom Navigation Dock (Pearl Glassmorphism) */
 .floating-bottom-dock {
-  background: rgba(14, 15, 22, 0.88);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(201, 125, 118, 0.22);
+  box-shadow: 0 12px 35px rgba(60, 35, 30, 0.08), 0 0 1px rgba(255, 255, 255, 0.8);
 }
 
 /* 1 Halaman Utuh (Zero-Scroll Mobile Layout Fit & Anti-Overlap Safe Padding) */
@@ -175,32 +196,32 @@ body.camera-lock-scroll #viewCamera:not(.hidden) {
 }
 
 .filter-live-800t {
-  filter: contrast(1.15) saturate(1.3) sepia(0.22) hue-rotate(-8deg);
+  filter: contrast(1.1) saturate(1.2) sepia(0.2) hue-rotate(-6deg);
   transition: filter 0.3s ease;
 }
 
 .filter-live-warm {
-  filter: sepia(0.38) saturate(1.35) brightness(1.05) contrast(1.08);
+  filter: sepia(0.35) saturate(1.3) brightness(1.04) contrast(1.05);
   transition: filter 0.3s ease;
 }
 
 .filter-live-bw {
-  filter: grayscale(1) contrast(1.4) brightness(0.92);
+  filter: grayscale(1) contrast(1.3) brightness(0.95);
   transition: filter 0.3s ease;
 }
 
-/* Tactile Precision Shutter Button (Leica Minimalist Inspired) */
+/* Tactile Rose Gold Shutter Button */
 .custom-shutter-btn {
   width: 74px;
   height: 74px;
   border-radius: 50%;
-  border: 3px solid rgba(212, 175, 55, 0.85);
+  border: 3.5px solid rgba(201, 125, 118, 0.9);
   padding: 4px;
-  background: rgba(14, 15, 22, 0.4);
+  background: rgba(255, 255, 255, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.35), inset 0 0 10px rgba(212, 175, 55, 0.15);
+  box-shadow: 0 0 20px rgba(201, 125, 118, 0.35), inset 0 0 10px rgba(201, 125, 118, 0.15);
   transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -208,21 +229,21 @@ body.camera-lock-scroll #viewCamera:not(.hidden) {
 }
 
 .custom-shutter-btn:hover {
-  border-color: #D4AF37;
-  box-shadow: 0 0 26px rgba(212, 175, 55, 0.5), inset 0 0 14px rgba(212, 175, 55, 0.25);
+  border-color: #C97D76;
+  box-shadow: 0 0 26px rgba(201, 125, 118, 0.5), inset 0 0 14px rgba(201, 125, 118, 0.25);
 }
 
 .custom-shutter-btn:active {
   transform: scale(0.91);
-  box-shadow: 0 0 14px rgba(212, 175, 55, 0.65);
+  box-shadow: 0 0 14px rgba(201, 125, 118, 0.6);
 }
 
 .custom-shutter-core {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: radial-gradient(circle at 38% 34%, #FFF2BE 0%, #D4AF37 52%, #9B771A 100%);
-  box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.6), inset 0 -2px 4px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.45);
+  background: radial-gradient(circle at 38% 34%, #FCE8E6 0%, #C97D76 52%, #9B4F48 100%);
+  box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.8), inset 0 -2px 4px rgba(60, 35, 30, 0.3), 0 4px 12px rgba(201, 125, 118, 0.35);
   transition: transform 0.12s ease, filter 0.15s ease;
 }
 
@@ -249,12 +270,6 @@ body.camera-lock-scroll #viewCamera:not(.hidden) {
   }
 }
 
-/* Subtle Film Grain */
-.grain-overlay {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 0);
-  background-size: 4px 4px;
-}
-
 /* Ken Burns Slideshow Effect for Ballroom Projector */
 @keyframes kenBurns {
   0% {
@@ -274,21 +289,21 @@ body.camera-lock-scroll #viewCamera:not(.hidden) {
 
 /* Podium Cards */
 .podium-card-gold {
-  background: linear-gradient(145deg, rgba(212, 175, 55, 0.12) 0%, rgba(18, 19, 26, 0.92) 100%);
-  border: 1.5px solid rgba(212, 175, 55, 0.65);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 20px rgba(212, 175, 55, 0.2);
+  background: linear-gradient(145deg, rgba(201, 125, 118, 0.12) 0%, rgba(255, 255, 255, 0.95) 100%);
+  border: 1.5px solid rgba(201, 125, 118, 0.65);
+  box-shadow: 0 10px 30px rgba(60, 35, 30, 0.08), 0 0 20px rgba(201, 125, 118, 0.2);
 }
 
 .podium-card-silver {
-  background: linear-gradient(145deg, rgba(200, 205, 215, 0.1) 0%, rgba(18, 19, 26, 0.92) 100%);
+  background: linear-gradient(145deg, rgba(200, 205, 215, 0.1) 0%, rgba(255, 255, 255, 0.95) 100%);
   border: 1.5px solid rgba(200, 205, 215, 0.45);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45), 0 0 16px rgba(200, 205, 215, 0.12);
+  box-shadow: 0 10px 25px rgba(60, 35, 30, 0.08), 0 0 16px rgba(200, 205, 215, 0.12);
 }
 
 .podium-card-bronze {
-  background: linear-gradient(145deg, rgba(205, 135, 75, 0.1) 0%, rgba(18, 19, 26, 0.92) 100%);
+  background: linear-gradient(145deg, rgba(205, 135, 75, 0.1) 0%, rgba(255, 255, 255, 0.95) 100%);
   border: 1.5px solid rgba(205, 135, 75, 0.45);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45), 0 0 16px rgba(205, 135, 75, 0.12);
+  box-shadow: 0 10px 25px rgba(60, 35, 30, 0.08), 0 0 16px rgba(205, 135, 75, 0.12);
 }
 
 .podium-card-gold, .podium-card-silver, .podium-card-bronze {
@@ -297,7 +312,7 @@ body.camera-lock-scroll #viewCamera:not(.hidden) {
 
 .podium-card-gold:hover {
   transform: translateY(-3px);
-  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.55), 0 0 28px rgba(212, 175, 55, 0.35);
+  box-shadow: 0 14px 35px rgba(60, 35, 30, 0.12), 0 0 28px rgba(201, 125, 118, 0.3);
 }
 
 /* Micro-Interactions */

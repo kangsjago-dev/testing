@@ -1,27 +1,28 @@
 # RENCANA REVISI & PENYEMPURNAAN SISTEM (revisi.md)
 # Projek: SnapEvent - Web App Disposable Camera & Live Event Gallery
 ================================================================================
-VERSI TARGET: v2.4.0 (Redesign UI: Simpel, Elegan, Luxury & Menarik Digunakan)
-STATUS: SELESAI DITERAPKAN & TERVERIFIKASI (v2.4.0)
+VERSI TARGET: v2.5.0 (Transformasi Desain: Romantic Luxury Wedding Aesthetic - "Wedknot Style")
+STATUS: SELESAI DITERAPKAN & TERVERIFIKASI (v2.5.0)
 AUTHOR: ZettBOT by Zettbos (Universal Product Architect & Lead Engineering Mentor)
 TANGGAL: 19 November 2026
+REFERENSI: Screenshot Pengguna (media_1795096910101_83e9226c.jpg - Wedknot Luxury Wedding)
 ================================================================================
 
-## 1. RINGKASAN TINDAKAN & PERUBAHAN
-1. **Palet Warna "Obsidian & Champagne Gold":**
-   - Transisi latar belakang utama ke `#090A0F` (Deep Obsidian) dengan permukaan komponen `#12131A` dan `#181922` yang sangat halus dan mewah.
-   - Aksen Champagne Gold (`#D4AF37` / `#F3E5AB`) digunakan secara presisi untuk hierarki visual yang tajam tanpa menyilaukan.
-2. **Leica Minimalist Viewfinder (`viewCamera`):**
-   - Viewfinder dengan sudut melengkung modern rasio 4:5 yang bersih dari distraksi.
-   - Pilihan zoom (1x, 2x, 3x) dan filter kamera (RAW, 800T, Warm, BW) ditata ulang dalam bentuk **Floating Glass Capsules** di pojok atas viewfinder dengan efek *frosted blur*.
-   - Tombol Shutter dirancang ulang menjadi **Tactile Precision Shutter Button** dengan cincin logam ganda dan umpan balik haptic visual yang responsif.
-3. **Penyederhanaan Layar Sambutan (`viewWelcome`):**
-   - Ditata ulang bergaya **VIP Event Invitation Badge**: judul serif yang anggun, deskripsi yang ringkas, kartu QR minimalis dengan 3 tombol aksi presisi, serta kolom nama tamu dengan *champagne focus ring*.
-4. **Editorial Gallery Grid (`viewGallery`):**
-   - Banner galeri minimalis dengan tipografi elegan, tombol filter kategori pil kapsul (`rounded-full`), dan tata letak grid foto yang proporsional.
-   - Kartu like dan status pengunggah dibuat lebih lembut dengan *glass pill badge*.
-5. **Floating Glass Bottom Dock (`#bottomNavBar`):**
-   - Dermaga navigasi bawah berbentuk kapsul melayang (*floating frosted dock*) di tengah layar, memberikan kenyamanan maksimal bagi jangkauan satu jempol tamu (*mobile-first thumb zone*).
+## 1. RINGKASAN TINDAKAN IMPLEMENTASI v2.5.0
+1. **Palet Warna "Warm Alabaster & Rose Gold Blush":**
+   - Transisi menyeluruh latar belakang ke Warm Alabaster Ivory (`#FDFBF7`), kartu murni putih (`#FFFFFF`), border mawar lembut (`#F0E6E1`), dan teks Deep Warm Charcoal (`#2C2523`).
+   - Aksen Rose Gold & Blush Coral (`#C97D76`, `#E8A598`, `#A95A54`) untuk tombol, aksen, dan badge status.
+2. **Tipografi Romantis Editorial & Kaligrafi ("With Love"):**
+   - Mengintegrasikan Google Fonts `Great Vibes` berpadu dengan `Playfair Display` dan `Plus Jakarta Sans`.
+   - Judul layar sambutan beraksen kaligrafi romantis kursif khas undangan pernikahan mewah.
+3. **Layar Sambutan & Kartu QR (Wedding Invitation Card):**
+   - Tampilan selamat datang berdesain fisik kartu undangan mewah: sudut kartu melengkung lembut (*rounded-3xl*), bayangan bulu halus (*feather shadow*), QR Code bersih di atas wadah ivory, dan 3 tombol aksi dock presisi.
+4. **Wedding Edition Disposable Camera:**
+   - Viewfinder berbingkai Alabaster Cream bersih rasio 4:5.
+   - Tombol Shutter bertransformasi menjadi **Rose Gold Luxury Shutter Ring** dengan umpan balik haptic visual.
+   - Kapsul melayang (*Pearl Glass Capsules*) untuk pengatur zoom 1x-3x dan filter kamera di sudut atas.
+5. **Floating Pearl Glass Bottom Dock:**
+   - Navigasi bawah melayang di tengah layar dengan efek kaca mutiara putih semi-transparan (`rgba(255, 255, 255, 0.92)` dengan blur halus), penanda aktif Rose Gold, sangat ramah satu jempol tamu.
 6. **Preservasi 100% Elemen & Zero-Regression:**
    - Seluruh 258 ID elemen DOM dan event listener JavaScript terverifikasi 100% utuh tanpa ada yang hilang.
-   - Seluruh fungsionalitas pengambilan gambar kamera, watermarking kanvas, kompresi foto, Google Drive upload, dan sinkronisasi Sheets tetap berjalan sempurna.
+   - Seluruh fungsionalitas pengambilan foto, kompresi kanvas, watermarking frame, unggah Google Drive, dan sinkronisasi Google Sheets tetap bekerja sempurna.
