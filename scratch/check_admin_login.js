@@ -1,8 +1,5 @@
 const fs = require('fs');
-const content = fs.readFileSync('code.gs', 'utf8');
-const lines = content.split('\n');
+const code = fs.readFileSync('js/app.js', 'utf8');
 
-const idx = lines.findIndex(l => l.includes('function adminLogin'));
-console.log('adminLogin at line', idx + 1);
-console.log(lines.slice(idx, idx + 40).join('\n'));
-
+const idx = code.indexOf('function handleAdminLogin(');
+console.log(code.substring(idx + 1000, idx + 2600));

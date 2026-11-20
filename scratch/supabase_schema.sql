@@ -126,10 +126,28 @@ CREATE POLICY "Allow anon all on activity_logs"
   WITH CHECK (true);
 
 -- ================================================================================
--- REALTIME REPLICATION ENABLE
+-- REALTIME REPLICATION ENABLE (IDEMPOTENT SAFE)
 -- ================================================================================
-ALTER PUBLICATION supabase_realtime ADD TABLE public.events;
-ALTER PUBLICATION supabase_realtime ADD TABLE public.settings;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' 
+      AND schemaname = 'public' 
+      AND tablename = 'events'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.events;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' 
+      AND schemaname = 'public' 
+      AND tablename = 'settings'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.settings;
+  END IF;
+END $$;
 
 -- ================================================================================
 -- SEED DATA: 3 EVENT AKTIF DARI GOOGLE SHEETS

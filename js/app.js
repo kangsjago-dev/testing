@@ -2420,7 +2420,11 @@ function testAndSyncDriveFolder() {
             submitBtn.innerHTML = `<span>Masuk</span>`;
             if (res.error) {
               if (alertBox) {
-                alertBox.innerText = "Gagal memverifikasi ke Supabase: " + res.error.message;
+                let msg = res.error.message || "";
+                if (msg.includes("NetworkError") || msg.includes("Failed to fetch") || msg.includes("fetch")) {
+                  msg = "Koneksi ke Supabase gagal (NetworkError). Periksa apakah Project URL & Anon Key Supabase sudah benar dan project Supabase aktif.";
+                }
+                alertBox.innerText = "Gagal memverifikasi ke Supabase: " + msg;
                 alertBox.style.display = "block";
               }
               return;
@@ -2447,7 +2451,11 @@ function testAndSyncDriveFolder() {
             submitBtn.disabled = false;
             submitBtn.innerHTML = `<span>Masuk</span>`;
             if (alertBox) {
-              alertBox.innerText = "Koneksi Supabase gagal: " + (err.message || err);
+              let msg = (err && err.message) || String(err);
+              if (msg.includes("NetworkError") || msg.includes("Failed to fetch") || msg.includes("fetch")) {
+                msg = "Koneksi ke Supabase gagal (NetworkError). Periksa apakah Project URL & Anon Key Supabase sudah benar dan project Supabase aktif.";
+              }
+              alertBox.innerText = "Koneksi Supabase gagal: " + msg;
               alertBox.style.display = "block";
             }
           });
