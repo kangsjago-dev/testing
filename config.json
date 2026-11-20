@@ -1,0 +1,32 @@
+{
+  "DATABASE_ENGINE": "supabase",
+  "SUPABASE_URL": "https://faszgrkwdlqxbppownh.supabase.co",
+  "SUPABASE_ANON_KEY": "",
+  "ACTIVE_EVENT_ID": "",
+  "ALL_PHOTOS_LABEL": "Semua Foto",
+  "ADMIN_ACCOUNTS": [],
+  "EVENTS": [],
+  "EVENT_NAME": "",
+  "EVENT_DATE": "",
+  "EVENT_VENUE": "",
+  "EVENT_LOGO_URL": "",
+  "SUBTITLE": "",
+  "WELCOME_MESSAGE": "",
+  "FOOTER_MESSAGE": "",
+  "CUSTOM_CATEGORIES": [],
+  "DRIVE_FOLDER_ID": "",
+  "DRIVE_FOLDER_URL": "",
+  "FRAME_IMAGE_URL": "",
+  "PHOTOBOOTH_URL": "",
+  "WEDDING_FOLDER_URL": "",
+  "DEFAULT_ADMIN_USERNAME": "",
+  "ADMIN_USERNAME": "",
+  "DEFAULT_ADMIN_PIN": "",
+  "SLIDESHOW_INTERVAL_SEC": 4,
+  "AUTO_REFRESH_INTERVAL_SEC": 20,
+  "NEW_BADGE_MINUTES": 10,
+  "coverSettings": {
+    "enabled": false
+  },
+  "COUPLE_NAME": ""
+}

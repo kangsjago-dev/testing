@@ -1,1481 +1,862 @@
 <!DOCTYPE html>
-<html lang="id" class="dark">
+<html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>SnapEvent - Disposable Event Camera & Live Gallery</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
 
-  <!-- Google Fonts: Plus Jakarta Sans & Playfair Display untuk Luxury Aesthetic -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
-
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              gold: '#D4AF37',
-              goldLight: '#F3E5AB',
-              goldDark: '#997F24',
-              surface: '#121216',
-              surfaceLight: '#1B1B22',
-              surfaceBorder: '#272732',
-              dark: '#0A0A0D'
-            }
-          },
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            serif: ['"Playfair Display"', 'serif'],
-            hand: ['"Caveat"', 'cursive']
-          }
-        }
-      }
-    }
-  </script>
-
-  <!-- Universal Base Path Resolver (Supports Root & Subfolders like /cam) -->
+  <!-- Inline Micro-Loader: Mencegah Kedipan Teks Lama (Zero FOUC) -->
   <script>
     (function() {
       try {
-        var p = window.location.pathname || '';
-        var baseHref = (p.indexOf('/cam') !== -1) ? '/cam/' : '/';
-        document.write('<base href="' + baseHref + '">');
-      } catch (e) {}
+        var s = localStorage.getItem("WEDDING_ACTIVE_EVENT_CFG");
+        if (s) {
+          var c = JSON.parse(s);
+          var name = c.EVENT_NAME || c.COUPLE_NAME || "";
+          if (name) document.title = name + " - Wedding Photo Gallery";
+        }
+      } catch(e) {}
     })();
   </script>
 
-  <!-- Modular Stylesheet (Dark Gold Luxury, Flash & Ken Burns Animations) -->
-  <link rel="stylesheet" href="style.css?v=2.3.2" onerror="if(!this.dataset.retried){this.dataset.retried='1';this.href=(window.location.pathname.indexOf('/cam')!==-1?'/cam/':'/')+'style.css?v=2.3.2';}" />
+  <!-- Google Fonts: Cormorant Garamond (Serif Elegan) & Plus Jakarta Sans (Modern Clean) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Modular JavaScript Engine (Clean, Robust & GitHub Ready) -->
-  <script src="app.js?v=2.3.2" defer onerror="if(!this.dataset.retried){this.dataset.retried='1';var s=document.createElement('script');s.src=(window.location.pathname.indexOf('/cam')!==-1?'/cam/':'/')+'app.js?v=2.3.2';s.defer=true;document.head.appendChild(s);}"></script>
+  <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-[#0A0A0D] text-zinc-100 font-sans antialiased min-h-screen flex flex-col selection:bg-brand-gold selection:text-black">
+<body>
 
-  <!-- FLASH OVERLAY EFFECT (Camera Shutter Flash) -->
-  <div id="flashOverlay" class="pointer-events-none fixed inset-0 z-50 opacity-0 bg-white"></div>
+  <!-- Floating Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
 
-  <!-- TOAST NOTIFICATION SYSTEM -->
-  <div id="toastContainer" class="fixed top-5 left-1/2 -translate-x-1/2 z-[100] flex flex-col items-center gap-2 pointer-events-none w-11/12 max-w-sm"></div>
-
-  <!-- TOP HEADER / APP BAR -->
-  <header class="sticky top-0 z-40 bg-[#0A0A0D]/85 backdrop-blur-md border-b border-white/5 px-4 py-3 flex items-center justify-between">
-    <div class="flex items-center gap-2.5">
-      <div id="headerLogoContainer" class="w-8 h-8 rounded-lg overflow-hidden bg-gradient-to-br from-brand-gold to-amber-700 flex items-center justify-center text-black font-bold shadow-md shadow-brand-gold/20 shrink-0">
-        <svg id="headerDefaultLogoIcon" class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
-          <circle cx="12" cy="13" r="3"/>
+  <!-- Floating Background Download Progress Bar Widget -->
+  <div id="downloadProgressWidget" class="download-progress-widget">
+    <div class="dpw-header">
+      <div class="dpw-icon-box">
+        <svg id="dpwIconSpinner" class="spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25"></circle>
+          <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor"></path>
         </svg>
-        <img id="headerCustomLogoImg" src="" alt="Logo" class="hidden w-full h-full object-cover" />
+        <svg id="dpwIconCheck" style="display: none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
       </div>
-      <div>
-        <h1 class="text-sm font-semibold tracking-wide text-zinc-100 flex items-center gap-1.5">
-          <span id="headerAppTitle">SnapEvent</span>
-        </h1>
-        <p id="headerEventHashtag" class="text-[11px] text-zinc-400 font-medium">#SarahKevinEverAfter</p>
+      <div class="dpw-info">
+        <div class="dpw-title" id="dpwTitle">Menyiapkan Kenangan Berbingkai...</div>
+        <div class="dpw-subtitle" id="dpwSubtitle">Resolusi Asli • Berjalan di latar belakang</div>
+      </div>
+      <span class="dpw-badge" id="dpwBadge">1 Foto</span>
+      <button type="button" class="dpw-close-btn" onclick="dismissDownloadWidget()" title="Sembunyikan notifikasi">✕</button>
+    </div>
+
+    <div class="dpw-progress-track">
+      <div class="dpw-progress-fill" id="dpwProgressFill" style="width: 15%;"></div>
+    </div>
+
+    <div class="dpw-footer-note">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+      <span id="dpwFooterText">Berjalan di latar belakang • Anda bebas melihat foto lainnya</span>
+    </div>
+  </div>
+
+  <!-- Demo Notice Banner -->
+  <div id="demoNotice" class="demo-banner" style="display: none;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="8" x2="12" y2="12"></line>
+      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>
+    <span><strong>Mode Demo Aktif:</strong> Menampilkan foto sampel. Klik ikon <strong>Gembok (Admin)</strong> untuk menghubungkan Google Apps Script Backend atau folder Google Drive Anda.</span>
+  </div>
+
+  <!-- Halaman Kosong / Acara Tidak Ditemukan (Jika link diketik manual tanpa ?event=...) -->
+  <div id="eventNotFoundScreen" class="event-not-found-wrapper" style="display: none;">
+    <div class="event-not-found-card">
+      <div class="event-not-found-icon-box">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <h2 class="event-not-found-title" id="eventNotFoundTitle">Halaman Tidak Ditemukan</h2>
+      <p class="event-not-found-desc" id="eventNotFoundDesc">
+        Tautan galeri tidak menyertakan kode acara yang valid.<br>
+        Silakan periksa kembali tautan undangan Anda.
+      </p>
+    </div>
+  </div>
+
+  <!-- Hero Header Section -->
+  <header class="hero" id="heroSection">
+    <!-- Logo Acara / Monogram (Dapat diatur via link Google Drive dari Admin) -->
+    <div id="heroLogoContainer" class="hero-logo-container" style="display: none;">
+      <img id="heroLogoImg" alt="Logo Acara / Monogram" class="hero-logo-img" onerror="this.onerror=null; this.removeAttribute('src'); if (this.parentElement) this.parentElement.style.display='none';">
+    </div>
+
+    <div class="hero-ornament">
+      <div class="line"></div>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+      </svg>
+      <div class="line right"></div>
+    </div>
+
+    <!-- Nama Event Acara Pernikahan (Hydration Dinamis Realtime Tanpa Kedipan) -->
+    <h1 id="coupleName" class="hero-title" style="min-height: 1.2em;"></h1>
+    <script>
+      (function() {
+        try {
+          var params = new URLSearchParams(window.location.search);
+          var targetEventId = (params.get("event") || params.get("e") || "").trim();
+          if (!targetEventId) {
+            var nf = document.getElementById("eventNotFoundScreen");
+            var hr = document.getElementById("heroSection");
+            var filterWrap = document.getElementById("gallerySection") || document.querySelector(".filter-wrapper");
+            var galMain = document.querySelector(".gallery-container");
+            var footer = document.querySelector(".footer");
+            var floatBar = document.getElementById("adminActiveFloatingBar");
+            if (nf) nf.style.display = "flex";
+            if (hr) hr.style.display = "none";
+            if (filterWrap) filterWrap.style.display = "none";
+            if (galMain) galMain.style.display = "none";
+            if (footer) footer.style.display = "none";
+            if (floatBar) floatBar.style.display = "none";
+            return;
+          }
+          var cacheKey = "WEDDING_EVENT_CFG_" + targetEventId;
+          var saved = localStorage.getItem(cacheKey);
+          if (saved) {
+            var c = JSON.parse(saved);
+            var n = c.EVENT_NAME || c.COUPLE_NAME;
+            if (n) document.getElementById("coupleName").textContent = n;
+            if (c.SUBTITLE) document.getElementById("subtitle").textContent = c.SUBTITLE;
+            var lUrl = c.EVENT_LOGO_URL || c.LOGO_URL || c.logoUrl;
+            var img = document.getElementById("heroLogoImg");
+            var cont = document.getElementById("heroLogoContainer");
+            if (lUrl && String(lUrl).trim()) {
+              var cleanL = String(lUrl).trim();
+              var m = cleanL.match(/\/d\/([a-zA-Z0-9_\-]+)/) || cleanL.match(/id=([a-zA-Z0-9_\-]+)/);
+              var normL = (m && m[1]) ? ("https://lh3.googleusercontent.com/d/" + m[1] + "=w800") : cleanL;
+              if (img && cont) {
+                img.src = normL;
+                cont.style.display = "flex";
+              }
+            } else {
+              if (img && cont) {
+                img.removeAttribute("src");
+                cont.style.display = "none";
+              }
+            }
+            if (c.EVENT_DATE) {
+              var rawD = String(c.EVENT_DATE).trim().replace(/^[a-zA-Z]+,?\s+/, '');
+              var days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+              var months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+              var mMap = { "januari":0,"februari":1,"maret":2,"april":3,"mei":4,"juni":5,"juli":6,"agustus":7,"september":8,"oktober":9,"november":10,"desember":11 };
+              var m = rawD.match(/^(\d{1,2})\s+([a-zA-Z]+)\s+(\d{4})/);
+              if (m && mMap[m[2].toLowerCase()] !== undefined) {
+                var dt = new Date(parseInt(m[3],10), mMap[m[2].toLowerCase()], parseInt(m[1],10));
+                document.getElementById("eventDate").textContent = days[dt.getDay()] + ", " + m[1] + " " + months[mMap[m[2].toLowerCase()]] + " " + m[3];
+              } else {
+                var ymd = rawD.match(/^(\d{4})-(\d{2})-(\d{2})/);
+                if (ymd) {
+                  var dt2 = new Date(parseInt(ymd[1],10), parseInt(ymd[2],10)-1, parseInt(ymd[3],10));
+                  document.getElementById("eventDate").textContent = days[dt2.getDay()] + ", " + parseInt(ymd[3],10) + " " + months[parseInt(ymd[2],10)-1] + " " + ymd[1];
+                } else {
+                  document.getElementById("eventDate").textContent = c.EVENT_DATE;
+                }
+              }
+            }
+            if (c.EVENT_VENUE) document.getElementById("eventVenue").textContent = c.EVENT_VENUE;
+            if (c.WELCOME_MESSAGE) document.getElementById("welcomeMessage").textContent = c.WELCOME_MESSAGE;
+          }
+        } catch(e) {}
+      })();
+    </script>
+    <div id="subtitle" class="hero-subtitle"></div>
+
+    <!-- Badge Tanggal dan Venue (Lokasi Acara - Live Database) -->
+    <div class="hero-badges-wrapper">
+      <div class="hero-date-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        <span id="eventDate"></span>
+      </div>
+
+      <div class="hero-date-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <span id="eventVenue"></span>
       </div>
     </div>
 
-    <!-- Right Quick Actions: Kontak, Slideshow Proyektor & Admin -->
-    <div class="flex items-center gap-1.5">
-
-      <button id="btnHeaderContact" title="Kontak / WhatsApp" class="hidden p-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 transition">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-        </svg>
-      </button>
-
-      <button id="btnOpenSlideshow" title="Layar Proyektor Panggung" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white transition">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect width="18" height="12" x="3" y="4" rx="2"/><line x1="8" x2="16" y1="20" y2="20"/><line x1="12" x2="12" y1="16" y2="20"/>
-        </svg>
-      </button>
-
-      <button id="btnOpenAdmin" title="Menu Admin & Pengaturan" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-brand-gold transition flex items-center gap-1 text-xs">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-        </svg>
-      </button>
-    </div>
+    <p id="welcomeMessage" class="hero-desc"></p>
   </header>
 
-  <!-- MAIN CONTAINER (VIEW ROUTER) -->
-  <main class="flex-1 flex flex-col max-w-md w-full mx-auto md:max-w-xl lg:max-w-4xl relative overflow-hidden">
-
-    <!-- VIEW 1: WELCOME & GUEST IDENTITY -->
-    <section id="viewWelcome" class="hidden flex-1 flex flex-col items-center justify-center p-6 pb-24 text-center overflow-y-auto">
-      <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-brand-goldDark to-brand-gold flex items-center justify-center text-black mb-6 shadow-xl shadow-brand-gold/15">
-        <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
-          <circle cx="12" cy="13" r="3"/>
-        </svg>
-      </div>
-
-      <h2 id="welcomeEventTitle" class="font-serif text-2xl md:text-3xl font-bold text-white mb-2">The Wedding of Sarah & Kevin</h2>
-      <p id="welcomeEventDesc" class="text-zinc-400 text-sm max-w-xs mb-8">Abadikan setiap momen pesta malam ini dengan kamera sekali pakai digital!</p>
-
-      <!-- Status Nama Tamu Aktif & Tombol Reset Identitas -->
-      <div id="activeGuestInfoBox" class="hidden w-full max-w-xs bg-brand-gold/10 border border-brand-gold/30 rounded-2xl p-4 mb-4 text-left shadow-lg">
-        <div class="flex items-center justify-between mb-1.5">
-          <span class="text-[10px] uppercase tracking-wider text-amber-300 font-bold flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            Identitas Tamu Aktif
-          </span>
-          <span class="text-[10px] text-zinc-400">Siap Memotret</span>
-        </div>
-        <p class="text-sm font-bold text-white mb-2.5">
-          👤 <span id="activeGuestNameText">Tamu</span>
-        </p>
-        <button id="btnResetGuestName" type="button" class="w-full py-2 px-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-semibold transition flex items-center justify-center gap-1.5 active:scale-95">
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-          <span>Ganti / Reset Nama Tamu</span>
+  <!-- Sticky Filter Bar with Admin Trigger & Live Sync Indicator -->
+  <div class="filter-wrapper" id="gallerySection">
+    <div class="filter-container">
+      <div class="filter-scroll" id="categoryTabs">
+        <button class="filter-pill active" data-category="Semua Foto">
+          <span>Semua Foto</span>
+          <span class="pill-count" id="countAll"></span>
         </button>
       </div>
 
-      <!-- KARTU QR CODE DI SCREEN UNTUK DIFOTO / PINDAI OLEH TAMU (DILENGKAPI TOMBOL SHARE, DOWNLOAD, COPY LINK DENGAN QR LEBIH BESAR & DESAIN MEWAH) -->
-      <div id="welcomeQrCard" class="w-full max-w-sm sm:max-w-md bg-gradient-to-b from-[#181822] via-[#121217] to-[#0D0D12] border border-brand-gold/30 rounded-3xl p-4 sm:p-5 mb-5 shadow-2xl shadow-brand-gold/10">
-        <div class="flex items-center justify-between mb-3">
-          <div class="flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-brand-gold animate-pulse"></span>
-            <span class="text-[11px] font-bold text-brand-gold uppercase tracking-wider">KODE QR RESMI ACARA</span>
-          </div>
-          <span class="text-[10px] text-zinc-400 bg-white/5 border border-white/10 px-2.5 py-0.5 rounded-full">Buka di HP Lain</span>
-        </div>
-        
-        <div class="flex items-center justify-center gap-3.5 sm:gap-5 mb-3.5">
-          <!-- QR Code Image Box (Besar, Mewah, Bersih Bebas Obstruksi) -->
-          <div class="w-40 h-40 sm:w-44 sm:h-44 bg-white rounded-2xl p-2 shrink-0 shadow-xl shadow-brand-gold/15 flex items-center justify-center cursor-pointer hover:scale-[1.02] transition-transform duration-300 ring-2 ring-brand-gold/50 border border-brand-gold/40 relative" id="welcomeQrClickBox" title="Klik untuk perbesar QR Code di layar penuh">
-            <img id="welcomeQrImg" src="" alt="QR Code Acara" class="w-full h-full object-contain" />
-          </div>
-
-          <!-- VIP Action Dock: 3 Tombol Aksi Logo Saja yang Presisi & Mewah (Tinggi 1:1 Sejajar QR) -->
-          <div class="flex flex-col items-center justify-between h-40 sm:h-44 p-1.5 rounded-2xl bg-black/40 border border-brand-gold/30 shadow-inner shrink-0">
-            <!-- 1. Bagikan Link Acara -->
-            <button id="btnWelcomeShareLink" type="button" class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl gold-gradient-bg text-black hover:brightness-110 active:scale-95 transition-all duration-200 flex items-center justify-center shadow-md shadow-brand-gold/30 cursor-pointer group" title="Bagikan Link Acara" aria-label="Bagikan Link Acara">
-              <svg class="w-5 h-5 text-black shrink-0 transition-transform group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-            </button>
-
-            <!-- 2. Unduh QR Meja HD -->
-            <button id="btnWelcomeDownloadQr" type="button" class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#14141C]/90 hover:bg-[#1C1C26] text-brand-gold border border-brand-gold/40 hover:border-brand-gold/80 active:scale-95 transition-all duration-200 flex flex-col items-center justify-center shadow-sm cursor-pointer group" title="Unduh QR Meja HD 1000px" aria-label="Unduh QR Meja HD 1000px">
-              <svg class="w-4 h-4 text-brand-gold shrink-0 transition-transform group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              <span class="text-[7.5px] font-mono font-black text-amber-300 tracking-tight leading-none mt-0.5">HD</span>
-            </button>
-
-            <!-- 3. Salin Link QR Acara -->
-            <button id="btnWelcomeCopyQrLink" type="button" class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#14141C]/90 hover:bg-[#1C1C26] text-brand-gold border border-brand-gold/40 hover:border-brand-gold/80 active:scale-95 transition-all duration-200 flex items-center justify-center shadow-sm cursor-pointer group" title="Salin Link Acara" aria-label="Salin Link Acara">
-              <svg class="w-5 h-5 text-brand-gold shrink-0 transition-transform group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <p class="text-[10px] text-zinc-400 text-center flex items-center justify-center gap-1">
-          <span>📷</span> Arahkan kamera HP ke kode QR di atas untuk membuka disposable camera pesta ini.
-        </p>
-      </div>
-
-      <div class="w-full max-w-xs bg-brand-surfaceLight border border-brand-surfaceBorder rounded-2xl p-5 mb-6 text-left">
-        <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-2">Nama Panggilan Kamu <span class="text-rose-400 font-bold">*Wajib Diisi</span></label>
-        <input type="text" id="inputGuestName" placeholder="Contoh: Sarah / Budi" required class="w-full bg-[#111116] border border-white/15 focus:border-brand-gold rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 outline-none transition mb-2" />
-        <p id="guestNameWarning" class="hidden text-[11px] text-rose-400 font-medium mb-1.5 flex items-center gap-1">⚠️ Masukkan nama panggilanmu agar foto tersimpan dengan namamu!</p>
-        <p class="text-[11px] text-zinc-400">Nama akan dicetak di hasil foto dan voting foto terfavorit.</p>
-      </div>
-
-      <button id="btnStartCamera" class="w-full max-w-xs py-3.5 px-6 rounded-xl gold-gradient-bg text-black font-semibold text-sm shadow-lg shadow-brand-gold/25 hover:brightness-110 active:scale-95 transition flex items-center justify-center gap-2">
-        <span>Simpan & Buka Kamera Acara</span>
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-      </button>
-
-      <!-- Akses Cepat ke Galeri & Voting dari Halaman Tulis Nama -->
-      <div class="mt-4 flex items-center justify-center gap-3">
-        <button id="btnWelcomeGoGallery" type="button" class="text-xs text-brand-gold hover:text-amber-300 font-semibold flex items-center gap-1.5 transition py-1.5 px-3.5 rounded-xl bg-brand-gold/10 hover:bg-brand-gold/20 border border-brand-gold/30 shadow-sm">
-          <span>🖼️ Lihat Galeri & Voting Acara</span>
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
-      </div>
-    </section>
-
-    <!-- VIEW: EVENT CLOSED / INACTIVE GATE -->
-    <section id="viewEventClosed" class="hidden flex-1 flex flex-col items-center justify-center p-6 pb-24 text-center max-w-md mx-auto overflow-y-auto">
-      <div class="w-20 h-20 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-6 shadow-xl shadow-amber-500/10">
-        <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/>
-        </svg>
-      </div>
-      <h2 id="closedEventTitle" class="font-serif text-2xl font-bold text-white mb-2">Acara Ini Sedang Tidak Aktif</h2>
-      <p id="closedEventDesc" class="text-zinc-400 text-sm max-w-xs mb-8">Tautan acara ini telah selesai atau belum dimulai. Hanya acara yang berstatus aktif yang dapat diakses oleh tamu.</p>
-      <button id="btnGoActiveEvent" class="w-full max-w-xs py-3.5 px-6 rounded-xl gold-gradient-bg text-black font-semibold text-sm shadow-lg shadow-brand-gold/25 hover:brightness-110 active:scale-95 transition flex items-center justify-center gap-2">
-        <span>Buka Acara yang Sedang Berlangsung</span>
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-      </button>
-    </section>
-
-    <!-- VIEW 2: DISPOSABLE CAMERA VIEWFINDER (1 HALAMAN UTUH ZERO-SCROLL) -->
-    <section id="viewCamera" class="hidden flex-1 camera-page-container px-3 py-1.5 max-w-md mx-auto w-full">
-      
-      <!-- Film Roll Status & Event Hashtag + Guest Badge -->
-      <div class="flex items-center justify-between bg-brand-surfaceLight/80 backdrop-blur-sm border border-brand-surfaceBorder px-3 py-1.5 rounded-xl shrink-0 gap-2">
-        <div class="flex items-center gap-2 min-w-0">
-          <div class="w-6 h-6 rounded bg-amber-500/20 text-brand-gold flex items-center justify-center text-xs font-bold shrink-0">
-            🎞️
-          </div>
-          <div class="truncate">
-            <div class="text-[9px] text-zinc-400 uppercase tracking-wider font-semibold">Sisa Jepretan</div>
-            <div id="camRemainingPhotosText" class="text-xs font-bold text-white tracking-wide">10 / 10 Foto Tersisa</div>
-          </div>
-        </div>
-        <div class="flex items-center gap-1.5 shrink-0">
-          <button id="btnCamChangeGuest" type="button" title="Ganti / Reset Nama Tamu" class="flex items-center gap-1 text-[11px] font-medium text-amber-200 bg-brand-gold/10 hover:bg-brand-gold/20 px-2.5 py-1 rounded-lg border border-brand-gold/30 transition active:scale-95">
-            <span>👤</span>
-            <span id="camGuestNameDisplay" class="max-w-[85px] truncate">Tamu</span>
-            <span class="text-[9px] text-zinc-400">🔄</span>
-          </button>
-          <div id="camEventBadge" class="hidden sm:inline-block text-xs font-medium text-brand-gold bg-brand-gold/10 px-2.5 py-0.5 rounded-full border border-brand-gold/20">
-            #SarahKevinEverAfter
-          </div>
-        </div>
-      </div>
-
-      <!-- CAMERA VIEWFINDER FRAME (RESPONSIVE FLEX-1 FIT DENGAN KUNCI ASPECT RATIO ASLI BINGKAI & ZERO-DISTORTION) -->
-      <div id="viewfinderViewport" class="relative w-full flex-1 min-h-0 my-1 bg-black/95 rounded-2xl overflow-hidden border border-brand-gold/30 shadow-2xl flex items-center justify-center select-none p-0.5">
-        <!-- Frame Container dengan Aspect Ratio Proporsional Sesuai Bingkai Asli -->
-        <div id="viewfinderFrameContainer" class="relative w-full h-full max-h-full max-w-full aspect-[4/5] mx-auto overflow-hidden flex items-center justify-center rounded-xl bg-black">
-          <!-- Live Video Element with Realtime CSS Filter Effect & Autoplay -->
-          <video id="cameraVideo" autoplay playsinline muted class="w-full h-full object-cover filter-live-800t"></video>
-
-          <!-- Custom Frame Image Overlay (PNG Asli Tanpa Distorsi Pixel) -->
-          <img id="vfCustomFrameImg" src="" alt="Custom Frame Overlay" class="hidden absolute inset-0 w-full h-full object-fill pointer-events-none z-10" />
-
-          <!-- Live Frame Overlay Preview (Built-in) -->
-          <div id="viewfinderFrameOverlay" class="pointer-events-none absolute inset-0 flex flex-col justify-between p-3.5 z-10">
-            <div class="flex justify-between items-center text-[10px] font-medium text-amber-200/90 tracking-widest uppercase drop-shadow">
-              <span id="vfFrameTopLeft">SNAPEVENT 800T</span>
-              <span id="vfFrameDate">20.11.2026</span>
-            </div>
-
-            <div class="w-20 h-20 border border-white/20 rounded-lg mx-auto pointer-events-none flex items-center justify-center">
-              <div class="w-2 h-2 bg-brand-gold/60 rounded-full animate-pulse"></div>
-            </div>
-
-            <div class="text-center pb-14 pointer-events-none select-none">
-              <p id="vfFrameBottomTitle" class="font-serif italic text-sm text-amber-200 drop-shadow">The Wedding of Sarah & Kevin</p>
-              <p id="vfFrameBottomHashtag" class="text-[10px] text-white/80 font-hand tracking-wider">#SarahKevinEverAfter</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Floating Camera Zoom Selector (1x, 2x, 3x) di Sudut Atas Kanan agar tidak menutupi tulisan nama di frame bawah -->
-        <div id="cameraZoomControls" class="absolute top-2.5 right-2.5 z-20 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-md border border-white/20 shadow-xl select-none">
-          <button type="button" class="btn-cam-zoom px-2 py-0.5 rounded-full text-[10px] font-bold transition-all bg-brand-gold text-black shadow-sm cursor-pointer" data-zoom="1">1x</button>
-          <button type="button" class="btn-cam-zoom px-2 py-0.5 rounded-full text-[10px] font-bold transition-all text-white/70 hover:text-white cursor-pointer" data-zoom="2">2x</button>
-          <button type="button" class="btn-cam-zoom px-2 py-0.5 rounded-full text-[10px] font-bold transition-all text-white/70 hover:text-white cursor-pointer" data-zoom="3">3x</button>
-        </div>
-
-        <!-- Floating Filter Selector Pills di Sudut Atas Kiri agar tidak menutupi tulisan nama di frame bawah -->
-        <div class="absolute top-2.5 left-2.5 z-20 max-w-[62%] w-auto flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-md border border-white/20 shadow-xl overflow-x-auto no-scrollbar" id="filterListContainer">
-          <button data-filter="RAW" class="filter-pill shrink-0 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-white/10 text-zinc-300 border border-white/10 hover:border-brand-gold/50 transition cursor-pointer">
-            RAW
-          </button>
-          <button data-filter="800T" class="filter-pill shrink-0 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-brand-gold text-black border border-brand-gold transition shadow-sm cursor-pointer">
-            800T
-          </button>
-          <button data-filter="WARM" class="filter-pill shrink-0 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-white/10 text-zinc-300 border border-white/10 hover:border-brand-gold/50 transition cursor-pointer">
-            Warm
-          </button>
-          <button data-filter="BW" class="filter-pill shrink-0 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-white/10 text-zinc-300 border border-white/10 hover:border-brand-gold/50 transition cursor-pointer">
-            B&W
-          </button>
-        </div>
-
-        <!-- Standby Notice if camera fails or waiting -->
-        <div id="cameraStandbyNotice" class="hidden absolute inset-0 bg-[#121217] flex flex-col items-center justify-center p-6 text-center z-20">
-          <div class="w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-brand-gold mb-2.5">
-            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
-              <circle cx="12" cy="13" r="3"/>
-            </svg>
-          </div>
-          <p class="text-xs font-semibold text-white mb-1">Membuka Kamera HP...</p>
-          <p class="text-[11px] text-zinc-400 max-w-xs mb-3">Izinkan akses kamera di browsermu atau gunakan foto dari galeri.</p>
-          <button id="btnInitStream" class="text-xs py-1.5 px-3.5 rounded-lg bg-white/10 hover:bg-white/15 text-zinc-200 transition">
-            Coba Nyalakan Lagi
-          </button>
-        </div>
-
-        <!-- Hidden Native File Input -->
-        <input type="file" id="nativeCameraInput" accept="image/*" capture="environment" class="hidden" />
-      </div>
-
-      <!-- Frame Selector Pill Bar (Di Atas Tombol Shutter) -->
-      <div class="shrink-0 w-full py-1 flex items-center justify-between gap-1.5 z-20">
-        <div class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1 shrink-0">
-          <span>🖼️ Bingkai:</span>
-        </div>
-        
-        <!-- Badge untuk Single Locked Frame -->
-        <div id="camSingleFrameBadge" class="hidden flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-gold/15 text-brand-gold border border-brand-gold/30 text-xs font-bold">
-          <span>🔒</span>
-          <span id="camSingleFrameName">Bingkai Resmi Acara</span>
-        </div>
-
-        <!-- Multi-Frame Pill Container -->
-        <div id="frameListContainer" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 flex-1">
-          <!-- Dynamic Frame Pills diinjeksi via app.js -->
-        </div>
-      </div>
-
-      <!-- Hidden container for filter name & frame compatibility -->
-      <div id="activeFilterName" class="hidden">800T CINE</div>
-      <div id="activeFrameName" class="hidden">GOLD ART DECO</div>
-      <div id="vfActiveFrameBadge" class="hidden"></div>
-
-      <!-- CAMERA CONTROLS: SHUTTER & SWITCH BUTTONS -->
-      <div class="shrink-0 flex items-center justify-around py-1 z-20">
-        <button id="btnSwitchCamera" class="w-12 h-12 rounded-full bg-brand-surfaceLight border border-brand-surfaceBorder flex items-center justify-center text-zinc-300 hover:text-white active:scale-95 transition shadow-lg" title="Putar Kamera Depan/Belakang">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-            <path d="M3 3v5h5"/>
-            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
-            <path d="M16 21h5v-5"/>
+      <div class="action-controls-group">
+        <button id="btnShareModal" class="ctrl-icon-btn" onclick="openShareModal()" title="Bagikan & QR Code Galeri" aria-label="Bagikan & QR Code">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
           </svg>
         </button>
 
-        <button id="btnShutter" class="custom-shutter-btn flex items-center justify-center select-none" title="Jepret Foto">
-          <div class="custom-shutter-core"></div>
-        </button>
-
-        <!-- Tombol Unggah dari Galeri HP (Di Samping Shutter) -->
-        <button id="btnOpenGalleryUpload" class="w-12 h-12 rounded-full bg-brand-surfaceLight border border-brand-surfaceBorder flex items-center justify-center text-zinc-300 hover:text-brand-gold active:scale-95 transition shadow-lg" title="Unggah Foto dari Galeri HP">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect width="18" height="18" x="3" y="3" rx="3.5" ry="3.5"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
+        <button class="ctrl-icon-btn" onclick="fetchGalleryData(true)" title="Sinkronkan foto sekarang (Auto-sync aktif)">
+          <svg id="refreshIconSvg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 4v6h-6"></path>
+            <path d="M1 20v-6h6"></path>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
           </svg>
         </button>
-        <input type="file" id="galleryUploadInput" accept="image/*" class="hidden" />
 
-        <!-- Hidden compat button to prevent null references -->
-        <button id="btnCycleFrame" class="hidden"></button>
-      </div>
-    </section>
-
-    <!-- VIEW 3: EVENT GALLERY & POLING/VOTING -->
-    <section id="viewGallery" class="hidden flex-1 flex flex-col p-4 pb-24 overflow-y-auto">
-      
-      <!-- Gallery Header Banner -->
-      <div class="bg-gradient-to-r from-brand-surfaceLight via-[#1A1A24] to-brand-surfaceLight border border-brand-surfaceBorder rounded-2xl p-4 mb-4">
-        <div class="flex items-center justify-between mb-1.5">
-          <span class="text-[11px] font-bold text-brand-gold uppercase tracking-widest">Album Foto Bersama</span>
-          <span id="galleryPhotoCountBadge" class="text-xs bg-white/10 px-2.5 py-0.5 rounded-full text-zinc-300 font-semibold">0 Foto</span>
-        </div>
-        <h2 id="galleryEventTitle" class="font-serif text-xl font-bold text-white mb-1">The Wedding of Sarah & Kevin</h2>
-        <p id="galleryEventHashtag" class="text-xs text-zinc-400">Semua foto yang dijepret tamu akan berkumpul di sini.</p>
-      </div>
-
-      <!-- STAGE PHOTOS BANNER SHORTCUT (Jika Menu Foto Panggung Diaktifkan Admin) -->
-      <div id="galleryStagePhotosBanner" class="hidden w-full mb-4 p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-brand-gold/15 to-amber-700/15 border border-brand-gold/40 flex items-center justify-between cursor-pointer hover:border-brand-gold transition shadow-lg group">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-brand-gold/20 text-brand-gold flex items-center justify-center text-lg border border-brand-gold/30 shrink-0 group-hover:scale-105 transition">
-            🎪
-          </div>
-          <div>
-            <div id="galleryStageBannerTitle" class="text-xs font-bold text-amber-200 flex items-center gap-1.5">
-              <span>Foto Panggung</span>
-              <span class="text-[9px] bg-brand-gold/20 text-brand-gold px-1.5 py-0.2 rounded font-mono">OFFICIAL</span>
-            </div>
-            <div class="text-[10px] text-zinc-400">Dokumentasi panggung & vendor yang disinkronkan dari Google Drive</div>
-          </div>
-        </div>
-        <div class="px-2.5 py-1.5 rounded-xl bg-brand-gold text-black text-xs font-bold shadow flex items-center gap-1 shrink-0 group-hover:brightness-110 transition">
-          <span>Buka</span>
-          <span>→</span>
-        </div>
-      </div>
-
-      <!-- Voting Category Tabs -->
-      <div class="mb-4">
-        <div class="flex items-center justify-between text-xs font-semibold text-zinc-400 mb-2">
-          <span>Kategori Voting Foto</span>
-          <button id="btnSyncGalleryManual" type="button" class="text-[10px] text-amber-300 hover:text-white flex items-center gap-1 bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded-lg border border-white/10 transition" title="Sinkronkan galeri dengan Google Drive">
-            <span>🔄 Sync Galeri</span>
-          </button>
-        </div>
-        <div class="flex items-center gap-2 overflow-x-auto pb-1" id="galleryCategoryTabs">
-          <button data-cat="ALL" class="cat-tab shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-brand-gold text-black border border-brand-gold transition shadow-sm">
-            Semua Foto
-          </button>
-        </div>
-      </div>
-
-      <!-- SPOTLIGHT HASIL VOTING TERKINI (Highlight Banner) -->
-      <div id="galleryWinnerSpotlight" class="hidden mb-4"></div>
-
-      <!-- WINNERS SHOWCASE PODIUM (Juara 1 Emas, Juara 2 Perak, Juara 3 Perunggu) -->
-      <div id="galleryWinnersContainer" class="hidden mb-6 space-y-4">
-        <div class="flex items-center justify-between mb-1 px-1">
-          <button type="button" id="btnBackToGalleryFromWinners" class="text-xs text-brand-gold hover:underline flex items-center gap-1 font-semibold cursor-pointer">
-            ← Kembali ke Galeri Foto
-          </button>
-        </div>
-        <div class="text-center bg-gradient-to-b from-brand-gold/15 to-transparent border border-brand-gold/30 rounded-2xl p-4">
-          <span class="text-[10px] font-bold text-brand-gold uppercase tracking-widest bg-brand-gold/20 px-3 py-0.5 rounded-full border border-brand-gold/40">Hall of Fame</span>
-          <h3 class="font-serif text-xl font-bold text-white mt-1.5">🏆 Pemenang Foto Terfavorit Pesta</h3>
-          <p class="text-xs text-zinc-400 mt-0.5">Karya foto dengan perolehan like terbanyak dari seluruh tamu undangan</p>
-        </div>
-        <div id="galleryWinnersPodium" class="space-y-3"></div>
-      </div>
-
-      <!-- REVEAL LOCK NOTICE (Jika Mode 'Setelah Acara' & Belum Di-reveal) -->
-      <div id="galleryLockedNotice" class="hidden bg-brand-surfaceLight border border-amber-500/30 rounded-2xl p-8 text-center my-6">
-        <div class="w-16 h-16 rounded-full bg-amber-500/10 text-brand-gold flex items-center justify-center mx-auto mb-4 text-2xl">
-          🔒
-        </div>
-        <h3 class="font-serif text-lg font-bold text-white mb-2">Foto-Foto Sedang Dirol Rahasia!</h3>
-        <p class="text-xs text-zinc-400 max-w-sm mx-auto leading-relaxed mb-4">
-          Seperti kamera sekali pakai asli, foto-foto yang kamu dan tamu lain jepret akan diungkapkan secara serentak setelah pesta selesai.
-        </p>
-        <span class="inline-block text-[11px] font-semibold text-brand-gold bg-brand-gold/10 px-3 py-1 rounded-full border border-brand-gold/20">
-          Nantikan Pengungkapan Galeri!
-        </span>
-      </div>
-
-      <!-- EMPTY STATE GALLERY -->
-      <div id="galleryEmptyNotice" class="hidden text-center py-12">
-        <div class="w-14 h-14 rounded-full bg-white/5 text-zinc-500 flex items-center justify-center mx-auto mb-3">
-          <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-            <circle cx="9" cy="9" r="2"/>
-            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+        <button id="adminBtn" class="ctrl-icon-btn" onclick="openAdminModal()" title="Menu Admin & Pengaturan Google Drive">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
           </svg>
-        </div>
-        <p class="text-sm font-semibold text-zinc-300 mb-1">Belum Ada Foto Terbit</p>
-        <p class="text-xs text-zinc-500 mb-4">Jadilah orang pertama yang mengabadikan momen malam ini!</p>
-        <button id="btnEmptyGoCamera" class="py-2.5 px-4 rounded-xl gold-gradient-bg text-black font-semibold text-xs shadow-md">
-          Mulai Jepret Sekarang
         </button>
       </div>
+    </div>
+  </div>
 
-      <!-- PHOTO GRID (Responsive 2 Columns Mobile, 3-4 Desktop) -->
-      <div id="galleryPhotoGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
-    </section>
-
-    <!-- VIEW 6: FOTO PANGGUNG (OFFICIAL STAGE & VENDOR GALLERY DARI GOOGLE DRIVE) -->
-    <section id="viewStagePhotos" class="hidden flex-1 flex flex-col p-4 pb-24 overflow-y-auto">
-      <div class="bg-gradient-to-r from-brand-surfaceLight via-[#1A1A24] to-brand-surfaceLight border border-brand-surfaceBorder rounded-2xl p-4 mb-4">
-        <div class="flex items-center justify-between mb-1.5">
-          <span class="text-[11px] font-bold text-brand-gold uppercase tracking-widest flex items-center gap-1.5">
-            <span>🎪</span> Dokumentasi Resmi Panggung
-          </span>
-          <span id="stagePhotoCountBadge" class="text-xs bg-white/10 px-2.5 py-0.5 rounded-full text-zinc-300 font-semibold">0 Foto</span>
-        </div>
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h2 id="stagePhotosHeaderTitle" class="font-serif text-xl font-bold text-white mb-0.5 flex items-center gap-2">
-              <span>🎪</span>
-              <span id="stagePhotosTitleText">Foto Panggung</span>
-            </h2>
-            <p class="text-xs text-zinc-400">Galeri foto panggung & vendor resmi yang disinkronkan langsung dari Google Drive.</p>
-          </div>
-          <div class="flex items-center gap-2 pt-1 sm:pt-0 shrink-0">
-            <button id="btnRefreshStagePhotos" type="button" class="py-1.5 px-3 rounded-xl bg-white/10 hover:bg-white/15 text-zinc-200 text-xs font-semibold border border-white/15 flex items-center gap-1.5 transition active:scale-95 cursor-pointer">
-              <span>🔄</span> Sinkron
-            </button>
-            <a id="btnStagePhotosOpenDrive" href="#" target="_blank" rel="noopener" class="py-1.5 px-3 rounded-xl gold-gradient-bg text-black text-xs font-bold shadow flex items-center gap-1.5 transition hover:brightness-110 active:scale-95">
-              <span>📂</span> Buka di Drive ↗
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- STAGE PHOTO GRID -->
-      <div id="stagePhotosGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
-
-      <!-- EMPTY STATE STAGE PHOTOS -->
-      <div id="stagePhotosEmptyNotice" class="hidden text-center py-16 px-4 bg-brand-surfaceLight border border-brand-surfaceBorder rounded-2xl my-4">
-        <div class="w-14 h-14 rounded-full bg-white/5 text-brand-gold flex items-center justify-center mx-auto mb-3 text-2xl">
-          🎪
-        </div>
-        <h4 class="text-sm font-bold text-white mb-1">Belum Ada Foto Panggung</h4>
-        <p class="text-xs text-zinc-400 max-w-sm mx-auto leading-relaxed">
-          Foto panggung yang diunggah ke folder Google Drive resmi akan otomatis tersinkron dan tampil di album ini.
-        </p>
-      </div>
-    </section>
-
-    <!-- VIEW 4: ADMIN DASHBOARD & EVENT WIZARD -->
-    <section id="viewAdmin" class="hidden flex-1 flex flex-col p-4 pb-24 overflow-y-auto">
-      
-      <!-- Admin Top Navigation Tabs -->
-      <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
-        <div>
-          <h2 class="text-base font-bold text-white flex items-center gap-2">
-            <span>Panel Pengelola Acara</span>
-            <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30">Admin</span>
-          </h2>
-          <p class="text-xs text-zinc-400">Atur event, kuota kamera, dan kontrol galeri Drive.</p>
-        </div>
-        <div class="flex items-center gap-1.5 flex-wrap">
-          <button id="btnAdminGoCamera" type="button" class="text-xs text-amber-300 hover:text-white py-1.5 px-2.5 rounded-lg bg-brand-gold/15 hover:bg-brand-gold/25 border border-brand-gold/30 transition flex items-center gap-1 font-semibold cursor-pointer" title="Lihat Live Kamera Acara">
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-            <span class="hidden sm:inline">Lihat</span> Live Cam
-          </button>
-          <button id="btnAdminGoGallery" type="button" class="text-xs text-zinc-300 hover:text-white py-1.5 px-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition flex items-center gap-1 font-semibold cursor-pointer" title="Buka Galeri Tamu">
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-            <span class="hidden sm:inline">Buka</span> Galeri
-          </button>
-          <button id="btnOpenChangePassword" type="button" class="text-xs text-brand-gold hover:underline py-1.5 px-2 rounded-lg bg-white/5 hover:bg-white/10 border border-brand-gold/30 transition flex items-center gap-1 cursor-pointer" title="Ganti Password Akun">
-            <span>🔑</span>
-            <span class="hidden md:inline">Password</span>
-          </button>
-          <button id="btnAdminLogout" type="button" class="text-xs text-zinc-400 hover:text-red-400 py-1.5 px-2.5 rounded-lg bg-white/5 transition font-semibold cursor-pointer">
-            Keluar
-          </button>
-        </div>
-      </div>
-
-      <!-- Admin Tab Switcher (Satu Pintu: Buat Acara difokuskan di tab Daftar Event) -->
-      <div class="flex items-center gap-2 overflow-x-auto pb-2 mb-4 text-xs font-semibold" id="adminTabsContainer">
-        <button data-admintab="events" class="adm-tab px-3 py-1.5 rounded-lg bg-brand-gold text-black transition shrink-0 cursor-pointer">
-          Daftar Event
-        </button>
-        <button data-admintab="gallery" class="adm-tab px-3 py-1.5 rounded-lg bg-white/5 text-zinc-300 border border-white/10 hover:border-brand-gold/50 transition shrink-0 flex items-center gap-1.5 cursor-pointer">
-          🖼️ Kelola Galeri
-        </button>
-        <button data-admintab="leaderboard" class="adm-tab px-3 py-1.5 rounded-lg bg-white/5 text-zinc-300 border border-white/10 hover:border-brand-gold/50 transition shrink-0 cursor-pointer">
-          Pemenang Voting
-        </button>
-        <button data-admintab="settings" class="adm-tab px-3 py-1.5 rounded-lg bg-white/5 text-zinc-300 border border-white/10 hover:border-brand-gold/50 transition shrink-0 cursor-pointer">
-          Pengaturan Global
-        </button>
-      </div>
-
-      <!-- TAB 1: LIST EVENTS & METRICS -->
-      <div id="adminTabEvents" class="space-y-4">
-        <div class="grid grid-cols-3 gap-2.5">
-          <div class="bg-brand-surfaceLight border border-brand-surfaceBorder p-3 rounded-xl text-center">
-            <div class="text-[10px] uppercase font-bold text-zinc-400 mb-0.5">Total Event</div>
-            <div id="admMetricEvents" class="text-lg font-bold text-white">-</div>
-          </div>
-          <div class="bg-brand-surfaceLight border border-brand-surfaceBorder p-3 rounded-xl text-center">
-            <div class="text-[10px] uppercase font-bold text-zinc-400 mb-0.5">Total Foto</div>
-            <div id="admMetricPhotos" class="text-lg font-bold text-brand-gold">-</div>
-          </div>
-          <div class="bg-brand-surfaceLight border border-brand-surfaceBorder p-3 rounded-xl text-center">
-            <div class="text-[10px] uppercase font-bold text-zinc-400 mb-0.5">Total Suara</div>
-            <div id="admMetricVotes" class="text-lg font-bold text-emerald-400">-</div>
-          </div>
-        </div>
-
-        <!-- Bar Header & Tombol Sinkronisasi Data GAS -->
-        <div class="flex items-center justify-between gap-2 pt-1 pb-0.5">
-          <div class="flex items-center gap-1.5">
-            <span class="text-xs font-bold text-white uppercase tracking-wider">Daftar Acara</span>
-            <span id="admSyncStatusBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30">Tersinkron Cloud</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <button id="btnAddNewEventTop" type="button" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-gold text-black text-xs font-bold transition shadow-sm hover:brightness-110 active:scale-95 cursor-pointer">
-              <span>➕ Buat Acara</span>
-            </button>
-            <button id="btnSyncEventsBackend" type="button" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-gold/15 hover:bg-brand-gold text-brand-gold hover:text-black border border-brand-gold/40 text-xs font-bold transition shadow-sm active:scale-95 cursor-pointer">
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
-              <span id="btnSyncEventsText">🔄 Sinkronkan Data GAS</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="space-y-3" id="adminEventListContainer">
-          <div class="p-4 rounded-xl border border-white/5 bg-white/[0.02] text-center text-xs text-zinc-500 animate-pulse">
-            Menyiapkan daftar acara...
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 2: WIZARD FORM BUAT / EDIT EVENT -->
-      <div id="adminTabCreate" class="hidden space-y-4">
-        <div class="bg-brand-surfaceLight border border-brand-surfaceBorder rounded-2xl p-5">
-          <h3 id="formEventTitle" class="font-serif text-lg font-bold text-white mb-4">Pengaturan Acara Baru</h3>
-
-          <form id="formSaveEvent" class="space-y-4">
-            <input type="hidden" id="formEventId" value="" />
-
-            <!-- Nama & Slug Event -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-semibold text-zinc-300 mb-1">Nama Acara</label>
-                <input type="text" id="formEventNama" required placeholder="Contoh: The Wedding of Sarah & Kevin" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-brand-gold outline-none" />
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-zinc-300 mb-1">Tanda Pagar Acara (#Hashtag)</label>
-                <input type="text" id="formEventHashtag" placeholder="#SarahKevinEverAfter" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-brand-gold outline-none" />
-              </div>
-            </div>
-
-            <!-- Tanggal & Kuota -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div>
-                <label class="block text-xs font-semibold text-zinc-300 mb-1">Tanggal Acara</label>
-                <input type="date" id="formEventTanggal" value="2026-11-15" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-brand-gold outline-none" />
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-zinc-300 mb-1">Maks. Foto per Tamu</label>
-                <input type="number" id="formEventMaxFoto" min="1" max="100" value="10" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-brand-gold outline-none" />
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-zinc-300 mb-1">Maks. Vote per Tamu</label>
-                <input type="number" id="formEventMaxVote" min="1" max="20" value="1" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-brand-gold outline-none" />
-              </div>
-            </div>
-
-            <!-- Mode Waktu Pengungkapan Foto -->
-            <div class="border border-white/10 rounded-xl p-3.5 bg-black/20">
-              <label class="block text-xs font-semibold text-zinc-200 mb-1">Kapan foto-foto diungkapkan?</label>
-              <p class="text-[11px] text-zinc-400 mb-2.5">Pilih kapan para tamu undangan boleh melihat hasil jepretan.</p>
-              <div class="grid grid-cols-2 gap-2">
-                <label class="cursor-pointer border border-white/10 has-[:checked]:border-brand-gold has-[:checked]:bg-brand-gold/10 rounded-xl p-3 flex flex-col items-center text-center transition">
-                  <input type="radio" name="revealModeRadio" value="SEGERA" checked class="hidden" />
-                  <span class="text-xs font-bold text-white mb-0.5">⏱️ Selama Acara</span>
-                  <span class="text-[10px] text-zinc-400">Terungkap langsung saat dijepret</span>
-                </label>
-                <label class="cursor-pointer border border-white/10 has-[:checked]:border-brand-gold has-[:checked]:bg-brand-gold/10 rounded-xl p-3 flex flex-col items-center text-center transition">
-                  <input type="radio" name="revealModeRadio" value="SETELAH" class="hidden" />
-                  <span class="text-xs font-bold text-white mb-0.5">🔒 Setelah Acara</span>
-                  <span class="text-[10px] text-zinc-400">Ditahan sampai acara selesai</span>
-                </label>
-              </div>
-            </div>
-
-            <!-- Toggle Izin & Fitur Like -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div class="flex items-center justify-between border border-white/10 rounded-xl p-3 bg-black/20">
-                <div>
-                  <div class="text-xs font-semibold text-white">Like Foto & Poling</div>
-                  <div class="text-[10px] text-zinc-400">Tamu dapat menyukai foto favorit</div>
-                </div>
-                <input type="checkbox" id="formCheckLike" checked class="w-5 h-5 accent-amber-500 rounded cursor-pointer" />
-              </div>
-              <div class="flex items-center justify-between border border-white/10 rounded-xl p-3 bg-black/20">
-                <div>
-                  <div class="text-xs font-semibold text-white">Izin Visibilitas Galeri</div>
-                  <div class="text-[10px] text-zinc-400">Semua yang punya link dapat lihat</div>
-                </div>
-                <input type="checkbox" id="formCheckVisibility" checked class="w-5 h-5 accent-amber-500 rounded cursor-pointer" />
-              </div>
-            </div>
-
-            <!-- Kategori Voting Dinamis -->
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <label class="text-xs font-semibold text-zinc-300">Kategori Poling / Voting</label>
-                <button type="button" id="btnAddCategoryRow" class="text-[11px] font-bold text-brand-gold hover:underline">
-                  + Tambah Kategori
-                </button>
-              </div>
-              <div id="categoryInputsContainer" class="space-y-2"></div>
-            </div>
-
-            <!-- Pengaturan Kebijakan Bingkai Acara (Frame Policy: Multi-Frame vs Kunci 1 Bingkai) -->
-            <div class="border border-brand-gold/30 rounded-xl p-4 bg-brand-gold/5 space-y-3.5">
-              <div class="flex items-center justify-between">
-                <div>
-                  <h4 class="text-xs font-bold text-amber-200 uppercase tracking-wider flex items-center gap-1.5">
-                    <span>🖼️</span> Pengaturan Bingkai Foto Acara
-                  </h4>
-                  <p class="text-[11px] text-zinc-400">Atur bingkai yang dapat digunakan tamu atau kunci 1 bingkai seragam.</p>
-                </div>
-              </div>
-
-              <!-- Pilihan Mode Bingkai -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                <label class="flex items-center gap-2 p-2.5 rounded-xl border border-white/10 bg-[#111116] cursor-pointer hover:border-brand-gold/50 transition">
-                  <input type="radio" name="frameLockModeRadio" value="multi" checked class="text-brand-gold focus:ring-brand-gold" />
-                  <div>
-                    <span class="font-semibold text-white block">Bebas Pilih (Multi-Frame)</span>
-                    <span class="text-[10px] text-zinc-400 block">Tamu bebas memilih dari bingkai yang aktif</span>
-                  </div>
-                </label>
-                <label class="flex items-center gap-2 p-2.5 rounded-xl border border-white/10 bg-[#111116] cursor-pointer hover:border-brand-gold/50 transition">
-                  <input type="radio" name="frameLockModeRadio" value="single" class="text-brand-gold focus:ring-brand-gold" />
-                  <div>
-                    <span class="font-semibold text-white block">Kunci 1 Bingkai (Single Lock)</span>
-                    <span class="text-[10px] text-zinc-400 block">1 bingkai seragam wajib untuk seluruh tamu</span>
-                  </div>
-                </label>
-              </div>
-
-              <!-- Opsi 1: Pilihan 1 Bingkai Terkunci (Muncul saat mode 'single') -->
-              <div id="containerSingleFrameLock" class="hidden bg-[#111116] border border-brand-gold/40 rounded-xl p-3 space-y-3">
-                <div>
-                  <label class="block text-[11px] font-semibold text-amber-300 mb-1">Pilih 1 Bingkai Wajib Acara (Dropdown):</label>
-                  <select id="formEventSingleFrameSelect" class="w-full bg-black/40 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:border-brand-gold outline-none">
-                    <option value="GOLD_DECO">✨ Gold Art Deco (Mewah & Elegan)</option>
-                    <option value="POLAROID">📷 Classic Polaroid (Vintage Putih)</option>
-                    <option value="MINIMAL">▪️ Minimalist Clean (Garis Halus Modern)</option>
-                    <option value="NONE">Tanpa Bingkai (Foto Asli Polos)</option>
-                  </select>
-                  <p class="text-[10px] text-zinc-400 mt-1">Semua foto tamu akan otomatis dicetak dengan bingkai ini tanpa perlu memilih lagi di layar review.</p>
-                </div>
-
-                <!-- Daftar Visual Pilihan Bingkai Kustom & Standar -->
-                <div class="pt-2 border-t border-white/10">
-                  <div class="flex items-center justify-between mb-2">
-                    <label class="text-[11px] font-semibold text-amber-300 flex items-center gap-1.5">
-                      <span>🖼️</span> Daftar Pilihan Bingkai (Klik untuk Mengunci):
-                    </label>
-                    <span class="text-[10px] text-zinc-400 font-mono">Pilih dari Koleksi Kustom</span>
-                  </div>
-                  <div id="singleLockCustomFrameList" class="space-y-1.5 max-h-56 overflow-y-auto pr-1">
-                    <!-- Diisi dinamis oleh renderSingleLockCustomFrameList() -->
-                  </div>
-                </div>
-              </div>
-
-              <!-- Opsi 2: Daftar Bingkai yang Diizinkan (Drag & Drop Reordering, Muncul saat mode 'multi') -->
-              <div id="containerMultiFrameSelection" class="space-y-2">
-                <div class="flex items-center justify-between">
-                  <label class="block text-[11px] font-semibold text-zinc-300">Pilih & Atur Urutan Bingkai:</label>
-                  <span class="text-[10px] text-brand-gold font-mono">💡 Geser ⠿ atau klik ▲ / ▼</span>
-                </div>
-                <div class="space-y-1.5" id="adminFrameSortableList">
-                  <!-- Diisi dinamis oleh renderAdminFrameSettings() -->
-                </div>
-              </div>
-            </div>
-
-            <!-- Upload Custom Frame Acara (PNG Transparan - Multi Frame & Scope) -->
-            <div class="border border-white/10 rounded-xl p-3.5 bg-black/20">
-              <label class="block text-xs font-semibold text-zinc-200 mb-1">Target Bingkai Kustom (Link URL PNG Transparan)</label>
-              <p class="text-[11px] text-zinc-400 mb-2.5">Masukkan link URL target bingkai berformat PNG transparan (rasio 4:5) dari Google Drive atau link web langsung.</p>
-              
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2.5">
-                <div>
-                  <label class="block text-[10px] font-semibold text-zinc-400 mb-1">Lingkup Penggunaan</label>
-                  <select id="formEventFrameScope" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-brand-gold outline-none">
-                    <option value="event">Khusus Acara Ini Saja</option>
-                    <option value="global">Semua Acara (Berlaku Global)</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-[10px] font-semibold text-zinc-400 mb-1">Nama Bingkai</label>
-                  <input type="text" id="formEventFrameName" placeholder="Contoh: Gold Elegant Sarah" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-brand-gold outline-none" />
-                </div>
-              </div>
-
-              <!-- Input Link Target Bingkai (Menggantikan Upload File) -->
-              <div class="space-y-1 mb-2.5">
-                <label class="block text-[10px] font-semibold text-zinc-400">Link URL Target Bingkai (Google Drive / Direct PNG)</label>
-                <div class="flex items-center gap-2">
-                  <div class="relative flex-1">
-                    <input type="url" id="formEventCustomFrameUrl" placeholder="https://drive.google.com/file/d/... atau https://.../bingkai.png" class="w-full bg-[#111116] border border-white/10 rounded-xl pl-3 pr-9 py-2 text-xs text-white focus:border-brand-gold outline-none font-mono placeholder:font-sans placeholder:text-zinc-500" />
-                    <button type="button" id="btnTestFrameUrl" class="absolute right-2 top-1/2 -translate-y-1/2 text-brand-gold hover:text-white text-xs font-bold px-1 py-0.5" title="Cek & Muat Bingkai">➔</button>
-                  </div>
-                  <button type="button" id="btnRemoveCustomFrame" class="hidden text-xs text-rose-400 hover:text-rose-300 font-semibold px-2 py-1 bg-rose-500/10 hover:bg-rose-500/20 rounded-lg border border-rose-500/20 transition">Hapus</button>
-                </div>
-              </div>
-
-              <div id="customFramePreviewBox" class="hidden mt-2 p-2.5 bg-[#111116] rounded-xl border border-emerald-500/30 flex items-center gap-3">
-                <img id="customFramePreviewImg" src="" class="w-12 h-16 object-contain border border-white/20 rounded bg-zinc-900" alt="Preview Bingkai" />
-                <div class="text-[11px] text-zinc-300">
-                  <span class="font-bold text-emerald-400">✓ Bingkai Siap Disimpan</span>
-                  <div class="text-zinc-400 text-[10px]">Akan langsung aktif di live camera & review seluruh tamu</div>
-                </div>
-              </div>
-
-              <!-- Daftar Bingkai Kustom yang Aktif -->
-              <div class="mt-3 pt-3 border-t border-white/10">
-                <div class="text-[11px] font-semibold text-zinc-300 mb-1.5">Koleksi Bingkai Kustom Aktif:</div>
-                <div id="customFramesListContainer" class="space-y-1.5">
-                  <!-- Diisi dinamis oleh app.js -->
-                </div>
-              </div>
-            </div>
-
-            <!-- Folder Google Drive Tujuan Upload Acara -->
-            <div class="border border-white/10 rounded-xl p-3.5 bg-black/20">
-              <label class="block text-xs font-semibold text-zinc-200 mb-1">Folder Google Drive Tujuan Upload Acara</label>
-              <input type="text" id="formEventDriveFolder" placeholder="ID Folder atau Paste URL Folder Google Drive" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-brand-gold outline-none" />
-              <p class="text-[10px] text-zinc-400 mt-1.5 leading-relaxed">
-                Salin ID dari URL Google Drive (contoh: <code>drive.google.com/drive/folders/<b>1AbCdEfGhIjK...</b></code>). Jika dikosongkan, sistem otomatis membuat subfolder di Google Drive Anda.
-              </p>
-            </div>
-
-            <!-- Submit Button & Delete Event -->
-            <div class="pt-2 flex items-center justify-between gap-2 flex-wrap">
-              <div>
-                <button type="button" id="btnDeleteCurrentEvent" class="hidden px-4 py-2.5 rounded-xl bg-rose-500/15 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/30 text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer">
-                  <span>🗑️</span>
-                  <span>Hapus Acara Ini</span>
-                </button>
-              </div>
-              <div class="flex items-center gap-2">
-                <button type="button" id="btnCancelEditEvent" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-300 text-xs font-semibold transition cursor-pointer">
-                  Batal
-                </button>
-                <button type="submit" id="btnSubmitSaveEvent" class="px-5 py-2.5 rounded-xl gold-gradient-bg text-black text-xs font-bold shadow-md hover:brightness-110 transition flex items-center gap-1.5 cursor-pointer">
-                  <span>Simpan Pengaturan Acara</span>
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <!-- TAB 2.5: KELOLA GALERI FOTO (Tampilkan / Sembunyikan & Hapus Foto) -->
-      <div id="adminTabGallery" class="hidden space-y-4">
-        <div class="bg-brand-surfaceLight border border-brand-surfaceBorder rounded-2xl p-4">
-          <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
-            <div>
-              <h3 class="font-serif text-base font-bold text-white flex items-center gap-2">
-                <span>🖼️</span> Kelola Foto Galeri Acara
-              </h3>
-              <p class="text-xs text-zinc-400">Atur foto yang tampil di galeri publik atau hapus foto yang tidak sesuai</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <button type="button" id="btnAdminRefreshGallery" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-zinc-300 hover:text-brand-gold font-semibold transition flex items-center gap-1.5 cursor-pointer">
-                <span>🔄</span> Segarkan Galeri
-              </button>
-            </div>
-          </div>
-
-          <!-- Info Bar Acara & Filter Mode -->
-          <div class="flex items-center justify-between text-xs text-zinc-400 bg-black/40 rounded-xl p-3 border border-white/5 mb-4 flex-wrap gap-2">
-            <div>Acara Aktif: <span id="adminGalleryEventName" class="text-brand-gold font-bold">Acara</span></div>
-            <div id="adminGalleryPhotoStats" class="font-mono text-zinc-300">0 Foto</div>
-          </div>
-
-          <!-- Filter Pill Admin Foto -->
-          <div class="flex items-center gap-2 mb-4 overflow-x-auto pb-1 text-xs font-semibold">
-            <button type="button" data-admphotofilter="ALL" class="adm-photo-filter px-3 py-1.5 rounded-lg bg-brand-gold text-black transition shrink-0 cursor-pointer">
-              Semua Foto
-            </button>
-            <button type="button" data-admphotofilter="VISIBLE" class="adm-photo-filter px-3 py-1.5 rounded-lg bg-white/5 text-zinc-300 border border-white/10 hover:border-brand-gold/50 transition shrink-0 cursor-pointer">
-              👁️ Tampil Publik
-            </button>
-            <button type="button" data-admphotofilter="HIDDEN" class="adm-photo-filter px-3 py-1.5 rounded-lg bg-white/5 text-zinc-300 border border-white/10 hover:border-brand-gold/50 transition shrink-0 cursor-pointer">
-              🔒 Disembunyikan
-            </button>
-          </div>
-
-          <!-- Grid Foto Admin -->
-          <div id="adminPhotoGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            <!-- Diinjeksi dinamis oleh renderAdminGallery() -->
-          </div>
-
-          <!-- Empty State Admin Foto -->
-          <div id="adminPhotoEmptyNotice" class="hidden text-center py-10">
-            <div class="text-3xl mb-2">📷</div>
-            <p class="text-sm font-semibold text-zinc-300 mb-1">Belum Ada Foto di Galeri Acara Ini</p>
-            <p class="text-xs text-zinc-500">Foto yang diunggah oleh tamu akan muncul di sini untuk dikelola.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 3: LEADERBOARD PEMENANG VOTING -->
-      <div id="adminTabLeaderboard" class="hidden space-y-4">
-        <div class="bg-brand-surfaceLight border border-brand-surfaceBorder rounded-2xl p-4">
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="font-serif text-base font-bold text-white">Peringkat Foto Terfavorit</h3>
-            <span class="text-[11px] text-brand-gold font-semibold">Hasil Poling Tamu</span>
-          </div>
-          <div id="adminLeaderboardList" class="space-y-2.5"></div>
-        </div>
-      </div>
-
-      <!-- TAB 4: GLOBAL SETTINGS -->
-      <div id="adminTabSettings" class="hidden space-y-4">
-        <div class="bg-brand-surfaceLight border border-brand-surfaceBorder rounded-2xl p-5">
-          <h3 class="font-serif text-base font-bold text-white mb-4">Pengaturan Sistem Global (Branding & Database)</h3>
-          <form id="formGlobalSettings" class="space-y-4">
-            
-            <!-- Branding & Identitas Aplikasi -->
-            <div class="border border-white/10 rounded-xl p-3.5 bg-black/20 space-y-3">
-              <label class="block text-xs font-semibold text-brand-gold mb-1">Identitas & Branding Kustom</label>
-              
-              <div>
-                <label class="block text-[11px] font-semibold text-zinc-400 mb-1">Nama Platform / Brand Aplikasi</label>
-                <input type="text" id="cfgAppTitle" placeholder="SnapEvent Studio" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:border-brand-gold outline-none" />
-              </div>
-
-              <div>
-                <label class="block text-[11px] font-semibold text-zinc-400 mb-1">URL / Link Gambar Logo Kustom</label>
-                <input type="text" id="cfgAppLogoUrl" placeholder="https://... atau paste link gambar logo PNG transparan" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:border-brand-gold outline-none" />
-              </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-[11px] font-semibold text-zinc-400 mb-1">No. WhatsApp / Telepon Kontak</label>
-                  <input type="text" id="cfgAppPhone" placeholder="0812-3456-7890" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:border-brand-gold outline-none" />
-                </div>
-                <div>
-                  <label class="block text-[11px] font-semibold text-zinc-400 mb-1">Akun Instagram Resmi</label>
-                  <input type="text" id="cfgAppInstagram" placeholder="@snapevent" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:border-brand-gold outline-none" />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <div class="flex items-center justify-between mb-1">
-                <label class="block text-xs font-semibold text-zinc-300">URL Backend Google Apps Script (Web App Endpoint) <span class="text-amber-400 font-bold">*Wajib Cloud</span></label>
-                <button type="button" id="btnTestGasConnection" class="text-[11px] font-bold text-brand-gold hover:text-amber-300 flex items-center gap-1 transition cursor-pointer" title="Uji Koneksi Backend GAS">
-                  <span>⚡ Tes Koneksi & Sinkronisasi</span>
-                </button>
-              </div>
-              <input type="text" id="cfgGasUrl" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-[#111116] border border-amber-500/40 focus:border-brand-gold rounded-xl px-3.5 py-2.5 text-xs text-white outline-none selection:bg-brand-gold selection:text-black cursor-text" autocomplete="off" spellcheck="false" />
-              <p class="text-[10px] text-amber-300/80 mt-1">⚠️ Wajib diisi agar settingan, nama brand, folder Drive, dan foto tamu tersimpan ke Google Sheets & berubah di semua perangkat/HP tamu.</p>
-            </div>
-
-            <!-- Setting Master Google Drive -->
-            <div class="border border-white/10 rounded-xl p-3.5 bg-black/20">
-              <label class="block text-xs font-semibold text-zinc-200 mb-1">Folder Induk Google Drive (Master Drive Destination)</label>
-              <input type="text" id="cfgDriveMasterId" value="12LfLW50HIuMUPCGQiRJKy_aO4RhVICjw" placeholder="12LfLW50HIuMUPCGQiRJKy_aO4RhVICjw" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-brand-gold outline-none" />
-              <p class="text-[10px] text-zinc-400 mt-1">
-                Folder utama tempat seluruh galeri foto event akan disimpan secara otomatis di Google Drive Anda.
-              </p>
-            </div>
-
-            <!-- KARTU PENGATURAN MENU FOTO PANGGUNG (SYNC GOOGLE DRIVE) -->
-            <div class="border border-brand-gold/30 rounded-xl p-3.5 bg-brand-gold/5 space-y-3">
-              <div class="flex items-center justify-between border-b border-brand-gold/20 pb-2">
-                <div class="flex items-center gap-2">
-                  <span class="text-base">🎪</span>
-                  <label class="text-xs font-bold text-amber-200">Pengaturan Menu Foto Panggung</label>
-                </div>
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" id="cfgStagePhotosEnabled" class="text-brand-gold rounded cursor-pointer w-4 h-4" />
-                  <span class="text-xs font-semibold text-brand-gold">Aktif (Tampil untuk Tamu)</span>
-                </label>
-              </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-[11px] font-semibold text-zinc-300 mb-1">Nama Label Menu (Kustom)</label>
-                  <input type="text" id="cfgStagePhotosTitle" placeholder="Foto Panggung" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:border-brand-gold outline-none" />
-                  <p class="text-[10px] text-zinc-400 mt-1">Nama tombol yang tampil di navigasi bawah & galeri tamu.</p>
-                </div>
-                <div>
-                  <label class="block text-[11px] font-semibold text-zinc-300 mb-1">Tautan / Folder Google Drive Resmi</label>
-                  <input type="text" id="cfgStagePhotosLink" placeholder="https://drive.google.com/drive/folders/..." class="w-full bg-[#111116] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:border-brand-gold outline-none" />
-                  <p class="text-[10px] text-zinc-400 mt-1">Link folder Drive publik berisi foto resmi vendor/panggung.</p>
-                </div>
-              </div>
-
-              <div class="flex items-center justify-between pt-1">
-                <span id="stagePhotosStatusText" class="text-[10px] text-zinc-400 font-mono">Status: Belum disinkronkan</span>
-                <button type="button" id="btnTestStagePhotos" class="py-1 px-3 rounded-lg bg-white/10 hover:bg-white/15 text-zinc-200 text-xs font-semibold border border-white/15 transition cursor-pointer">
-                  ⚡ Uji Tautan Drive
-                </button>
-              </div>
-            </div>
-
-            <!-- Kredensial Login Administrator Utama -->
-            <div class="border border-white/10 rounded-xl p-3.5 bg-black/20">
-              <label class="block text-xs font-semibold text-zinc-200 mb-2">Kredensial Login Administrator</label>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-[11px] font-semibold text-zinc-400 mb-1">Username Admin</label>
-                  <input type="text" id="cfgAdminUser" placeholder="admin" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:border-brand-gold outline-none" />
-                </div>
-                <div>
-                  <label class="block text-[11px] font-semibold text-zinc-400 mb-1">Password Admin</label>
-                  <input type="password" id="cfgAdminPass" placeholder="admin123" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:border-brand-gold outline-none" />
-                </div>
-              </div>
-            </div>
-
-            <!-- Akun Operator / Kru Tambahan (Multi-User) -->
-            <div class="border border-white/10 rounded-xl p-3.5 bg-black/20">
-              <div class="flex items-center justify-between mb-2">
-                <label class="block text-xs font-semibold text-zinc-200">Akun Pengguna / Kru Tambahan</label>
-                <button type="button" id="btnAddUserAccountRow" class="text-xs text-brand-gold hover:underline font-semibold">+ Tambah Akun</button>
-              </div>
-              <p class="text-[10px] text-zinc-400 mb-2.5">Tambahkan akun login untuk operator fotografer atau panitia meja.</p>
-              <div id="userAccountsContainer" class="space-y-2">
-                <!-- Diisi dinamis oleh app.js -->
-              </div>
-            </div>
-
-            <!-- Pengaturan Gelar Podium & Mode Pemenang (✏️ Edit Kata Gelar) -->
-            <div class="border border-white/10 rounded-xl p-3.5 bg-black/20 space-y-3">
-              <div class="flex items-center justify-between">
-                <label class="block text-xs font-semibold text-brand-gold">✏️ Edit Gelar Podium Juara & Mode Pemenang</label>
-                <span class="text-[10px] text-zinc-400">Khusus Admin</span>
-              </div>
-              <p class="text-[10px] text-zinc-400">Sesuaikan sebutan gelar juara (misal: "Juara 1 Emas", "The Best Model", dll) serta mode tampilannya di halaman galeri:</p>
-              
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                <div>
-                  <label class="block text-[10px] font-semibold text-amber-300 mb-1">Gelar Juara 1</label>
-                  <input type="text" id="cfgPodiumTitleP1" placeholder="🥇 Juara 1 (Emas)" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-brand-gold outline-none" />
-                </div>
-                <div>
-                  <label class="block text-[10px] font-semibold text-zinc-300 mb-1">Gelar Juara 2</label>
-                  <input type="text" id="cfgPodiumTitleP2" placeholder="🥈 Juara 2 (Perak)" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-brand-gold outline-none" />
-                </div>
-                <div>
-                  <label class="block text-[10px] font-semibold text-amber-600 mb-1">Gelar Juara 3</label>
-                  <input type="text" id="cfgPodiumTitleP3" placeholder="🥉 Juara 3 (Perunggu)" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-brand-gold outline-none" />
-                </div>
-              </div>
-
-              <div>
-                <label class="block text-[10px] font-semibold text-zinc-300 mb-1">Mode Tampilan Pemenang di Galeri</label>
-                <select id="cfgPodiumDisplayMode" class="w-full bg-[#111116] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-brand-gold outline-none">
-                  <option value="all">Tampil Semuanya (Juara Umum & Pemenang Per Kategori)</option>
-                  <option value="grand">Hanya Juara Umum Pesta (Top 3 Keseluruhan)</option>
-                  <option value="category">Hanya Pemenang Per Kategori Voting</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Bersihkan Cache Offline & Sinkronkan Ulang -->
-            <div class="border border-red-500/20 bg-red-950/10 rounded-xl p-3.5 flex items-center justify-between">
-              <div>
-                <span class="block text-xs font-semibold text-red-300">Sinkronisasi & Hapus Cache Offline</span>
-                <span class="text-[10px] text-zinc-400">Hapus cache foto lama/rusak di browser ini dan unduh data terbaru dari cloud.</span>
-              </div>
-              <button type="button" id="btnAdminPurgeOfflineCache" class="shrink-0 px-3 py-1.5 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300 text-xs font-bold border border-red-500/40 transition">
-                🧹 Hapus & Sinkron Ulang
-              </button>
-            </div>
-
-            <div class="pt-2 flex items-center justify-between">
-              <button type="button" id="btnResetDemoData" class="text-xs text-red-400 hover:underline">
-                Reset ke Contoh Demo
-              </button>
-              <button type="submit" id="btnSaveGlobalSettings" class="px-5 py-2.5 rounded-xl gold-gradient-bg text-black text-xs font-bold transition">
-                Simpan Konfigurasi
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-    </section>
-
+  <!-- Main Photo Gallery Grid -->
+  <main class="gallery-container">
+    <div class="gallery-grid" id="photosGrid">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+    </div>
   </main>
 
-  <!-- BOTTOM FIXED NAVIGATION BAR (Mobile-First Thumb Navigation) -->
-  <nav id="bottomNavBar" class="fixed bottom-0 left-0 right-0 z-40 bg-[#0A0A0D]/90 backdrop-blur-lg border-t border-white/10 py-2 px-6">
-    <div class="max-w-md mx-auto flex items-center justify-around">
-      <button id="navBtnCamera" class="nav-item active flex flex-col items-center gap-1 text-brand-gold transition">
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
-          <circle cx="12" cy="13" r="3"/>
-        </svg>
-        <span class="text-[10px] font-semibold tracking-wider uppercase">Kamera</span>
-      </button>
-
-      <button id="navBtnGallery" class="nav-item flex flex-col items-center gap-1 text-zinc-400 hover:text-white transition">
-        <div class="relative">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect width="18" height="18" x="3" y="3" rx="3.5" ry="3.5"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
+  <!-- Lightbox Modal -->
+  <div id="lightbox" class="lightbox-modal">
+    <div class="lightbox-topbar">
+      <div class="lightbox-info">
+        <span class="lightbox-counter" id="lightboxCounter">FOTO 1 DARI 8</span>
+        <span class="lightbox-title" id="lightboxTitle">Judul Foto</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button class="lightbox-action-btn" onclick="startSlideshowFromCurrent()" title="Mode Panggung (Layar Penuh)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
           </svg>
-          <span id="navGalleryDot" class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-brand-gold"></span>
-        </div>
-        <span class="text-[10px] font-semibold tracking-wider uppercase">Galeri</span>
-      </button>
+        </button>
+        <button class="lightbox-close" onclick="closeLightbox()" title="Tutup (Esc)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
 
-      <!-- Tombol Navigasi Menu Foto Panggung (Dapat Diaktif/Nonaktifkan & Dicustom oleh Admin) -->
-      <button id="navBtnStagePhotos" class="hidden nav-item flex flex-col items-center gap-1 text-zinc-400 hover:text-white transition cursor-pointer">
-        <span class="text-lg leading-none">🎪</span>
-        <span id="navStagePhotosLabel" class="text-[10px] font-semibold tracking-wider uppercase">Panggung</span>
-      </button>
-
-      <button id="navBtnEventInfo" class="nav-item flex flex-col items-center gap-1 text-zinc-400 hover:text-white transition">
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
+    <div class="lightbox-body" id="lightboxBody">
+      <button class="lightbox-nav-btn prev" onclick="navigateLightbox(-1)" title="Sebelumnya (Panah Kiri)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
         </svg>
-        <span class="text-[10px] font-semibold tracking-wider uppercase">Profil Tamu</span>
+      </button>
+
+      <div class="lightbox-img-wrapper" id="lightboxImgWrapper">
+        <img id="lightboxImg" class="lightbox-img" src="" alt="Wedding Photo Preview">
+        <video id="lightboxVideo" class="lightbox-video" src="" controls playsinline autoplay loop style="display:none;"></video>
+      </div>
+
+      <button class="lightbox-nav-btn next" onclick="navigateLightbox(1)" title="Berikutnya (Panah Kanan)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
       </button>
     </div>
-  </nav>
 
-  <!-- MODAL: REVIEW FOTO SEBELUM SIMPAN (FRAME SELECTION & CANVAS RENDER) -->
-  <div id="modalReviewPhoto" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-brand-surfaceLight border border-brand-surfaceBorder rounded-2xl max-w-sm w-full p-4 flex flex-col items-center shadow-2xl">
-      <h3 class="font-serif text-base font-bold text-white mb-2">Pratinjau Foto Acara</h3>
-      
-      <!-- Rendered Image Display Container (Adaptif & Bebas Black Void) -->
-      <div id="reviewPhotoContainer" class="relative w-full max-h-[50vh] sm:max-h-[55vh] rounded-2xl overflow-hidden border border-brand-gold/30 mb-2.5 flex items-center justify-center bg-black/50 shadow-inner">
-        <canvas id="photoRenderCanvas" class="hidden"></canvas>
-        <img id="reviewPhotoImg" src="" alt="Pratinjau Foto" class="max-h-[50vh] sm:max-h-[55vh] w-auto max-w-full h-auto object-contain rounded-xl shadow-2xl" />
-      </div>
+    <div class="lightbox-bottombar">
+      <button id="lightboxDownloadBtn" class="btn btn-gold" onclick="handleCurrentLightboxDownload()">
+        <svg id="downloadIconSvg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span id="downloadBtnLabel">Simpan Foto Asli</span>
+      </button>
+    </div>
+  </div>
 
-      <!-- Single Frame Lock Info Notice (Muncul jika Acara Mengunci 1 Bingkai Seragam) -->
-      <div id="reviewSingleFrameNotice" class="hidden w-full mb-2.5 py-2 px-3 rounded-xl bg-brand-gold/10 border border-brand-gold/30 flex items-center justify-between text-xs">
-        <span class="text-zinc-400 font-medium">Bingkai Resmi Acara:</span>
-        <span id="reviewSingleFrameBadge" class="font-bold text-amber-300">✨ Gold Art Deco</span>
-      </div>
+  <!-- Stage Slideshow Overlay (Mode Panggung Layar Penuh) -->
+  <div id="slideshowOverlay" class="slideshow-overlay">
+    <div class="slideshow-progress-bar" id="slideshowProgress"></div>
 
-      <!-- Pilih Bingkai Pasca-Jepret (Frame Selector Carousel - Muncul saat Mode Multi-Frame) -->
-      <div id="reviewFrameSelectorContainer" class="w-full mb-2.5">
-        <div class="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-zinc-400 mb-1 px-1">
-          <span>Pilih Bingkai Foto</span>
-          <span id="reviewActiveFrameName" class="text-brand-gold font-bold">✨ GOLD DECO</span>
-        </div>
-        <div id="reviewFrameListContainer" class="flex items-center gap-1.5 overflow-x-auto pb-1">
-          <button data-frame="GOLD_DECO" class="rev-frame-pill shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold bg-brand-gold text-black border border-brand-gold transition">
-            ✨ Gold Deco
-          </button>
-          <button data-frame="POLAROID" class="rev-frame-pill shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold bg-white/5 text-zinc-300 border border-white/10 hover:border-brand-gold/50 transition">
-            📷 Polaroid
-          </button>
-          <button data-frame="MINIMAL" class="rev-frame-pill shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold bg-white/5 text-zinc-300 border border-white/10 hover:border-brand-gold/50 transition">
-            ▪️ Minimalist
-          </button>
-          <button data-frame="NONE" class="rev-frame-pill shrink-0 px-2.5 py-1 rounded-lg text-xs font-semibold bg-white/5 text-zinc-300 border border-white/10 hover:border-brand-gold/50 transition">
-            Tanpa Bingkai
-          </button>
-        </div>
-      </div>
+    <div class="slideshow-watermark">
+      <h2 id="slideshowCouple"></h2>
+      <p id="slideshowCategory"></p>
+    </div>
 
-      <!-- Caption Input Field -->
-      <div class="w-full mb-3">
-        <input type="text" id="inputPhotoCaption" placeholder="Tambahkan ucapan / kesan singkat..." class="w-full bg-[#111116] border border-white/15 focus:border-brand-gold rounded-xl px-3.5 py-2 text-xs text-white placeholder-zinc-500 outline-none transition" />
-      </div>
+    <div class="slideshow-stage">
+      <img id="slideshowImgA" class="slideshow-img visible" src="" alt="Slideshow A">
+      <img id="slideshowImgB" class="slideshow-img" src="" alt="Slideshow B">
+    </div>
 
-      <!-- Action Buttons -->
-      <div class="w-full flex items-center gap-2">
-        <button id="btnRetakePhoto" class="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-zinc-300 text-xs font-semibold transition">
-          Foto Ulang
+    <div class="slideshow-controls">
+      <button class="slideshow-ctrl-btn" onclick="prevSlide()" title="Sebelumnya">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <button class="slideshow-ctrl-btn" id="slideshowPlayBtn" onclick="togglePlayPause()" title="Jeda / Putar">
+        <svg id="playIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+        <svg id="pauseIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="6" y="4" width="4" height="16"></rect>
+          <rect x="14" y="4" width="4" height="16"></rect>
+        </svg>
+      </button>
+
+      <button class="slideshow-ctrl-btn" onclick="nextSlide()" title="Berikutnya">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+
+      <button class="slideshow-ctrl-btn" onclick="closeSlideshow()" title="Keluar Layar Penuh (Esc)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal: Bagikan & QR Code Galeri -->
+  <div id="shareQrModal" class="admin-modal-overlay">
+    <div class="admin-card share-qr-card">
+      <div class="admin-card-header share-modal-header">
+        <h3 class="share-modal-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          <span>Bagikan & QR Code Galeri</span>
+        </h3>
+        <button class="ctrl-icon-btn share-close-btn" onclick="closeShareModal()" title="Tutup">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
-        <button id="btnSaveToDrive" class="flex-1 py-2.5 rounded-xl gold-gradient-bg text-black text-xs font-bold shadow-md hover:brightness-110 active:scale-95 transition flex items-center justify-center gap-1.5">
-          <span id="btnSaveText">Simpan ke Rol</span>
-        </button>
+      </div>
+
+      <div class="admin-card-body share-modal-body">
+        <div class="share-meta-header">
+          <div class="share-event-title" id="shareEventTitle"></div>
+          <div class="share-event-date" id="shareEventDate"></div>
+          <div class="share-event-venue" id="shareEventVenue"></div>
+        </div>
+
+        <!-- QR Code Box -->
+        <div class="qr-code-display-box">
+          <img id="shareQrImg" src="" alt="QR Code Galeri">
+        </div>
+
+        <!-- Logo Buttons (Bagikan, Salin, & Unduh QR Code) - Hanya Icon Saja -->
+        <input type="hidden" id="shareUrlInput" value="">
+        <div class="share-actions-row">
+          <button type="button" class="ctrl-icon-btn share-action-btn" onclick="shareViaWebShare()" title="Bagikan Tautan (Share Link)" aria-label="Bagikan Tautan">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="18" cy="5" r="3"></circle>
+              <circle cx="6" cy="12" r="3"></circle>
+              <circle cx="18" cy="19" r="3"></circle>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+          </button>
+          <button type="button" class="ctrl-icon-btn share-action-btn" onclick="copyShareUrl()" title="Salin Tautan (Copy Link)" aria-label="Salin Tautan">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+          <button type="button" class="ctrl-icon-btn share-action-btn share-download-btn" onclick="downloadQrCodeImage()" title="Unduh Gambar QR Code (PNG)" aria-label="Unduh QR Code">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: ZOOM FOTO PANGGUNG (FULLSCREEN LIGHTBOX) -->
-  <div id="modalStagePhotoZoom" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-4">
-    <div class="relative max-w-lg w-full bg-[#111116] border border-white/15 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
-      <div class="p-3 bg-black/60 border-b border-white/10 flex items-center justify-between">
-        <span id="stageZoomPhotoTitle" class="text-xs font-semibold text-zinc-200 truncate">Foto Panggung</span>
-        <button type="button" id="btnCloseStageZoom" class="text-zinc-400 hover:text-white text-lg p-1 transition cursor-pointer">✕</button>
+  <!-- Modal 1: Login Admin (Username & Password) -->
+  <div id="adminLoginModal" class="admin-modal-overlay">
+    <div class="admin-card" style="max-width: 400px;">
+      <div class="admin-card-header">
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>Masuk Admin</span>
+        </h3>
+        <button class="ctrl-icon-btn" onclick="closeAdminLoginModal()" style="width: 32px; height: 32px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
-      <div class="p-2 bg-black flex items-center justify-center max-h-[72vh] overflow-hidden">
-        <img id="stageZoomPhotoImg" src="" alt="Stage Photo Zoom" class="max-w-full max-h-[70vh] object-contain rounded-lg" />
-      </div>
-      <div class="p-3 bg-[#111116] border-t border-white/10 flex items-center justify-between gap-2">
-        <span id="stageZoomPhotoDate" class="text-[11px] text-zinc-400 font-mono"></span>
-        <div class="flex items-center gap-2">
-          <a id="stageZoomPhotoDownload" href="#" download target="_blank" rel="noopener" class="py-1.5 px-3 rounded-lg bg-brand-gold text-black text-xs font-bold hover:brightness-110 transition flex items-center gap-1 shadow cursor-pointer">
-            <span>⬇️</span> Unduh Foto
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- MODAL: LOGIN ADMIN & KRU (USERNAME & PASSWORD) -->
-  <div id="modalAdminPin" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-brand-surfaceLight border border-brand-surfaceBorder rounded-2xl max-w-xs w-full p-5 text-center shadow-2xl">
-      <div class="w-12 h-12 rounded-full bg-brand-gold/15 text-brand-gold flex items-center justify-center mx-auto mb-3">
-        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-        </svg>
-      </div>
-      <h3 class="font-serif text-base font-bold text-white mb-1">Akses Pengelola & Kru</h3>
-      <p class="text-xs text-zinc-400 mb-4">Masukkan Username & Password Admin/Kru untuk mengelola event.</p>
-      
-      <form id="formAdminLogin" class="space-y-3 mb-2 text-left">
-        <div>
-          <label class="block text-[11px] font-semibold text-zinc-300 mb-1">Username</label>
-          <input type="text" id="inputAdminUser" required placeholder="admin" autocomplete="username" class="w-full bg-[#111116] border border-white/15 focus:border-brand-gold rounded-xl px-3 py-2 text-xs text-white outline-none" />
+      <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+        <div class="admin-card-body" style="padding-top: 8px;">
+          <div class="admin-field-group">
+            <label class="admin-label" for="adminUsernameInput">Nama Pengguna (Username)</label>
+            <input type="text" id="adminUsernameInput" class="admin-input" placeholder="Masukkan username" required autocomplete="username" value="">
+          </div>
+
+          <div class="admin-field-group">
+            <label class="admin-label" for="adminPasswordInput">Kata Sandi (Password)</label>
+            <div style="position: relative;">
+              <input type="password" id="adminPasswordInput" class="admin-input" placeholder="Masukkan password" required autocomplete="current-password" style="padding-right: 42px;">
+              <button type="button" id="toggleAdminPassVisibility" onclick="togglePasswordVisibility('adminPasswordInput', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #64748B; padding: 4px; display: flex; align-items: center; justify-content: center;" title="Lihat/Sembunyikan Password" aria-label="Lihat Password">
+                <svg class="pass-eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div id="loginAlertBox" class="admin-alert-box error" style="display: none;"></div>
         </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-zinc-300 mb-1">Password</label>
-          <input type="password" id="inputAdminPass" required placeholder="••••••••" autocomplete="current-password" class="w-full bg-[#111116] border border-white/15 focus:border-brand-gold rounded-xl px-3 py-2 text-xs text-white outline-none" />
-        </div>
-        
-        <div class="flex items-center gap-2 pt-2">
-          <button type="button" id="btnCancelAdminPin" class="flex-1 py-2 rounded-xl bg-white/10 text-zinc-300 text-xs font-semibold hover:bg-white/15 transition cursor-pointer">Batal</button>
-          <button type="submit" id="btnSubmitAdminPin" class="flex-1 py-2 rounded-xl gold-gradient-bg text-black text-xs font-bold hover:brightness-110 active:scale-95 transition shadow-md cursor-pointer">Masuk</button>
+
+        <div class="admin-card-footer">
+          <button type="button" class="btn btn-outline" onclick="closeAdminLoginModal()">Batal</button>
+          <button type="submit" id="loginSubmitBtn" class="btn btn-gold">
+            <span>Masuk</span>
+          </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL: LIVE VENUE SLIDESHOW (PROYEKTOR / TV SCREEN BALLROOM) -->
-  <div id="modalSlideshow" class="hidden fixed inset-0 z-[60] bg-black overflow-hidden select-none">
-    
-    <!-- Dynamic Ambient Backdrop Blur Image (Eliminates Empty Black Void) -->
-    <img id="slideshowBackdropImg" src="" alt="" class="absolute inset-0 w-full h-full object-cover blur-3xl opacity-35 scale-110 pointer-events-none transition-opacity duration-1000 z-0" />
-    
-    <!-- Top Bar: Grand Event Branding & Fullscreen Close -->
-    <div class="absolute top-0 inset-x-0 z-30 flex items-center justify-between p-6 md:p-8 bg-gradient-to-b from-black/90 via-black/40 to-transparent pointer-events-auto">
-      <div>
-        <div class="flex items-center gap-2.5 mb-1">
-          <span class="flex h-3 w-3 relative">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-          </span>
-          <span class="text-xs uppercase font-extrabold text-amber-300 tracking-widest drop-shadow">LIVE BALLROOM STREAM</span>
+  <!-- Modal 2: Panel Pengaturan Admin & Vercel -->
+  <div id="adminSettingsModal" class="admin-modal-overlay">
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <div>
+          <h3 style="display: flex; align-items: center; gap: 8px;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>Pengaturan Admin & Vercel</span>
+          </h3>
+          <div id="adminUserGreeting" style="font-size: 0.78rem; color: #1E3A8A; background: #DBEAFE; padding: 2px 10px; border-radius: 9999px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; margin-top: 5px; border: 1px solid #BFDBFE;">
+            👤 Masuk sebagai: <span id="adminGreetingName">Super Admin</span>
+          </div>
         </div>
-        <h2 id="slideshowTitle" class="font-serif text-2xl sm:text-3xl md:text-5xl font-extrabold text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">The Wedding of Sarah & Kevin</h2>
-        <p id="slideshowHashtag" class="text-sm sm:text-base md:text-lg text-brand-gold font-semibold tracking-wider drop-shadow">#SarahKevinEverAfter</p>
-      </div>
-      <button id="btnCloseSlideshow" class="p-3 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 backdrop-blur-md transition shadow-xl" title="Tutup Layar Penuh">
-        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-      </button>
-    </div>
-
-    <!-- Center Stage: 100% True Centered Photo (slideshow-centered-stage) -->
-    <div class="slideshow-centered-stage pointer-events-none">
-      <img id="slideshowImg" src="" alt="Live Event Photo" class="w-auto h-[70vh] sm:h-[78vh] md:h-[84vh] max-w-[92vw] md:max-w-[75vw] object-contain rounded-2xl drop-shadow-[0_25px_60px_rgba(0,0,0,0.9)] border border-white/20 transition-opacity duration-1000 opacity-0 ken-burns pointer-events-auto" />
-      <div id="slideshowEmptyMsg" class="hidden text-center text-zinc-300 bg-black/60 p-8 rounded-2xl border border-white/10 backdrop-blur-md pointer-events-auto">
-        <div class="text-5xl mb-3">🎞️</div>
-        <p class="font-serif text-2xl text-white font-bold mb-2">Live Photo Stream</p>
-        <p class="text-sm text-zinc-400">Foto yang diunggah para tamu akan otomatis tampil bergantian di layar panggung ini.</p>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button type="button" class="btn btn-outline" onclick="closeAdminSettingsModal()" style="font-size: 0.78rem; padding: 5px 12px; border-color: #CBD5E1; color: #334155; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;" title="Lihat dan uji coba galeri tanpa keluar dari mode admin">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <span>Lihat / Test Galeri</span>
+          </button>
+          <button class="ctrl-icon-btn" onclick="closeAdminSettingsModal()" style="width: 32px; height: 32px;" title="Tutup Pengaturan">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <!-- Kartu Informasi Uploader & Pesan/Ucapan Tamu (Live Event Overlay) -->
-      <div id="slideshowInfoOverlay" class="absolute bottom-20 sm:bottom-20 md:bottom-24 left-1/2 -translate-x-1/2 z-20 max-w-xl w-11/12 sm:w-auto min-w-[280px] bg-black/85 backdrop-blur-xl border border-brand-gold/60 rounded-2xl p-3 sm:p-4 text-center shadow-[0_10px_35px_rgba(0,0,0,0.8)] transition-all duration-500 pointer-events-auto">
-        <div class="flex items-center justify-center gap-2 mb-1">
-          <span id="slideshowUploaderBadge" class="text-xs sm:text-sm px-3.5 py-1 rounded-full bg-brand-gold text-black font-extrabold shadow-md">Oleh Tamu</span>
-          <span id="slideshowTimeBadge" class="text-xs text-zinc-300">Baru Saja</span>
+      <!-- Locked Sticky Admin Navigation Tabs (Terkunci Tidak Tertutup Saat Scroll) -->
+      <div class="admin-tabs-sticky-wrapper">
+        <div class="admin-tabs-nav">
+          <button type="button" class="admin-tab-btn active" id="tabBtn-event" onclick="switchAdminTab('event')">
+            <span>💍 Acara & Event</span>
+          </button>
+          <button type="button" class="admin-tab-btn" id="tabBtn-media" onclick="switchAdminTab('media')">
+            <span>🖼️ Foto & Kategori</span>
+          </button>
+          <button type="button" class="admin-tab-btn" id="tabBtn-users" onclick="switchAdminTab('users')">
+            <span>👥 Akun Admin</span>
+          </button>
+          <button type="button" class="admin-tab-btn" id="tabBtn-cloud" onclick="switchAdminTab('cloud')">
+            <span>⚡ Database Supabase</span>
+          </button>
         </div>
-        <p id="slideshowCaptionText" class="font-serif italic text-sm sm:text-base md:text-lg text-white drop-shadow font-medium">"Momen seru bersama para sahabat!"</p>
       </div>
-    </div>
 
-    <!-- Bottom Bar: Live Indicator & Stasiun Scan QR Raksasa -->
-    <div class="absolute bottom-0 inset-x-0 z-20 flex items-center justify-between p-3 sm:p-6 md:p-8 bg-gradient-to-t from-black/95 via-black/50 to-transparent pointer-events-none">
-      <div class="pointer-events-auto flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-zinc-400 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10 shadow-md">
-        <span>📸 SnapEvent Live System</span>
+      <div class="admin-card-body">
+
+        <!-- Tab 1: Acara & Pernikahan -->
+        <div class="admin-tab-pane active" id="tabPane-event">
+          <!-- Multi-Event Manager Box -->
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px; margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div style="font-size: 0.84rem; font-weight: 700; color: var(--text-main);">📅 Kelola & Pilih Event (Multi-Event)</div>
+              <div style="display: flex; gap: 6px;">
+                <button type="button" class="btn btn-gold" style="font-size: 0.74rem; padding: 4px 10px;" onclick="openNewEventModal()">
+                  <span>+ Tambah Event Baru</span>
+                </button>
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center;">
+              <div>
+                <label class="admin-label" style="font-size: 0.72rem; margin-bottom: 2px;" for="adminEventSelect">Event Aktif yang Sedang Diedit:</label>
+                <select id="adminEventSelect" class="admin-input" onchange="handleSelectEventChange(this.value)" style="padding: 6px 10px; font-size: 0.84rem;"></select>
+              </div>
+              <button type="button" id="btnDeleteCurrentEvent" class="btn btn-outline" style="color: #EF4444; border-color: #FCA5A5; padding: 6px 10px; font-size: 0.76rem; margin-top: 14px;" onclick="handleDeleteCurrentEvent()" title="Hapus Event Ini">
+                <span>🗑️ Hapus</span>
+              </button>
+            </div>
+            <div id="eventShareLinkBox" style="margin-top: 10px; background: #FFFFFF; padding: 10px 12px; border-radius: 8px; border: 1px solid #CBD5E1;">
+              <div style="font-size: 0.72rem; font-weight: 700; color: #334155; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+                <span>🔗 Link Khusus Event Ini (Dedicated Home Link):</span>
+                <span id="activeEventBadgeTag" style="background: #ECFDF5; color: #059669; padding: 2px 8px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; border: 1px solid #A7F3D0;">✓ Terisolasi</span>
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <input type="text" id="activeEventUrlInput" class="admin-input" readonly style="font-size: 0.75rem; background: #F8FAFC; color: #1E293B; font-family: monospace; padding: 6px 10px; font-weight: 600;" onclick="this.select()" title="Klik untuk menyeleksi link event">
+                <button type="button" class="btn btn-outline" style="font-size: 0.74rem; padding: 6px 10px; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;" onclick="copyActiveEventUrl()" title="Salin Link Event Khusus Ini">
+                  <span>📋 Salin Link</span>
+                </button>
+                <button type="button" class="btn btn-gold" style="font-size: 0.74rem; padding: 6px 10px; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;" onclick="openActiveEventHome()" title="Buka Halaman Utama Acara Ini">
+                  <span>🌐 Buka Home</span>
+                </button>
+              </div>
+              <div style="display: none;" id="activeEventUrlPreview"></div>
+              <div style="font-size: 0.68rem; color: #64748B; margin-top: 6px; line-height: 1.4;">
+                * <strong>1 Link per Event:</strong> Setiap event memiliki halaman home tersendiri sehingga nama pengantin, tanggal, dan foto tidak akan saling bercampur.
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-field-group">
+            <label class="admin-label" for="cfgCoupleName">Nama Event / Pasangan Pengantin</label>
+            <input type="text" id="cfgCoupleName" class="admin-input" placeholder="Contoh: Nama Pasangan / Acara">
+          </div>
+
+          <div class="admin-field-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <label class="admin-label" for="cfgEventLogoUrl" style="margin-bottom: 0;">🎨 Logo Acara / Monogram (Link Google Drive / URL Gambar)</label>
+              <span style="font-size: 0.7rem; color: #64748B;">Opsional</span>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="text" id="cfgEventLogoUrl" class="admin-input" placeholder="Contoh: https://drive.google.com/file/d/... atau https://..." oninput="handleEventLogoInput(this.value)" style="flex: 1;">
+              <div id="adminLogoPreviewBox" style="width: 44px; height: 44px; border-radius: 8px; border: 1px solid #CBD5E1; background: #F8FAFC; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;" title="Pratinjau Logo">
+                <span id="adminLogoPreviewPlaceholder" style="font-size: 1.1rem; color: #94A3B8;">💍</span>
+                <img id="adminLogoPreviewImg" alt="Pratinjau Logo" style="display: none; width: 100%; height: 100%; object-fit: contain; padding: 2px;" onerror="this.onerror=null; this.removeAttribute('src'); this.style.display='none'; const ph = document.getElementById('adminLogoPreviewPlaceholder'); if (ph) ph.style.display='block';">
+              </div>
+            </div>
+            <div class="admin-help-text">Mendukung link Google Drive atau URL gambar. Ditampilkan menarik & proporsional tepat di atas nama pengantin.</div>
+          </div>
+
+          <div class="admin-field-group">
+            <label class="admin-label" for="cfgEventDate">Tanggal Acara (Klik untuk Buka Kalender)</label>
+            <input type="date" id="cfgEventDate" class="admin-input" onclick="try{this.showPicker()}catch(e){}" onfocus="try{this.showPicker()}catch(e){}" style="cursor: pointer;">
+          </div>
+
+          <div class="admin-field-group">
+            <label class="admin-label" for="cfgEventVenue">Venue (Lokasi Acara)</label>
+            <input type="text" id="cfgEventVenue" class="admin-input" placeholder="Contoh: Lokasi Gedung / Hotel">
+          </div>
+
+          <div class="admin-field-group">
+            <label class="admin-label" for="cfgSubtitle">Subjudul Galeri</label>
+            <input type="text" id="cfgSubtitle" class="admin-input" placeholder="Contoh: The Wedding Gallery & Precious Memories">
+          </div>
+
+          <div class="admin-field-group">
+            <label class="admin-label" for="cfgWelcomeMessage">Pesan Sambutan Tamu</label>
+            <textarea id="cfgWelcomeMessage" class="admin-input" rows="3" style="resize: vertical; font-family: inherit; font-size: 0.88rem; box-sizing: border-box; width: 100%;" placeholder="Pesan sambutan hangat untuk tamu undangan..."></textarea>
+          </div>
+
+          <div class="admin-field-group">
+            <label class="admin-label" for="cfgFooterMessage">Pesan Penutup Footer (Di Bagian Bawah)</label>
+            <textarea id="cfgFooterMessage" class="admin-input" rows="2" style="resize: vertical; font-family: inherit; font-size: 0.88rem; box-sizing: border-box; width: 100%;" placeholder="Diabadikan dengan cinta&#10;Terima kasih atas doa restunya."></textarea>
+            <span style="font-size: 0.72rem; color: #64748B; margin-top: 3px; display: block;">Mendukung tombol Enter / baris baru untuk tampilan multi-baris di footer.</span>
+          </div>
+        </div>
+
+        <!-- Tab: Desain Cover & Halaman Depan -->
+        <!-- Tab 2: Foto & Bingkai -->
+        <div class="admin-tab-pane" id="tabPane-media">
+          <div class="admin-field-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <label class="admin-label" for="cfgFrameImageUrl" style="margin-bottom: 0;">Bingkai PNG Transparan Saat Download</label>
+              <span id="frameStatusBadge" style="font-size: 0.75rem; font-weight: 600;"></span>
+            </div>
+            <input type="text" id="cfgFrameImageUrl" class="admin-input" placeholder="Tautan / ID File Bingkai PNG Google Drive">
+            <div class="admin-help-text">Unggah file bingkai berformat PNG transparan ke Google Drive dengan izin <em>"Anyone with the link can view"</em>.</div>
+          </div>
+
+          <!-- Pengaturan Kategori & Tautan Display Galeri Kustom -->
+          <div class="admin-field-group" style="margin-top: 16px; border-top: 1px solid #E2E8F0; padding-top: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <label class="admin-label" style="margin-bottom: 0;">📁 Kategori Momen & Tautan Display Galeri</label>
+              <span style="font-size: 0.72rem; color: var(--gold-dark); font-weight: 600;">Google Drive / Link Lain</span>
+            </div>
+            <div class="admin-help-text" style="margin-bottom: 10px;">
+              Atur kategori / folder galeri (misal: <em>Teapai, Photobooth, Akad Nikah, Resepsi</em>) dan custom link target display (misal Google Drive atau <em>https://fotoshare.co</em>).
+            </div>
+
+            <div id="adminCategoriesContainer" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;"></div>
+
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn btn-outline" style="flex: 1; min-width: 140px; justify-content: center; font-size: 0.82rem; padding: 8px;" onclick="addCategoryConfigRow('', '')">
+                <span>+ Tambah Kategori</span>
+              </button>
+              <button type="button" id="btnSyncCategories" class="btn btn-gold" style="flex: 1; min-width: 170px; justify-content: center; font-size: 0.82rem; padding: 8px;" onclick="syncCategoriesAndDisplayLinks()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                </svg>
+                <span>Sinkronkan Kategori & Tautan</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Pengguna & Akun Admin -->
+        <div class="admin-tab-pane" id="tabPane-users">
+          <!-- Ubah Password Akun Sendiri -->
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 12px; margin-bottom: 14px;">
+            <div style="font-size: 0.84rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">🔐 Ubah Password Akun Anda</div>
+            <div style="display: flex; gap: 8px;">
+              <input type="password" id="cfgNewAdminPassword" class="admin-input" placeholder="Password Baru (Min 4 karakter)" style="padding: 7px 10px; font-size: 0.84rem;">
+              <button type="button" class="btn btn-gold" style="white-space: nowrap; padding: 7px 14px; font-size: 0.82rem;" onclick="handleChangeAdminPassword()">Perbarui Password</button>
+            </div>
+            <div id="changePassAlertBox" class="admin-alert-box" style="margin-top: 6px; font-size: 0.78rem; display: none;"></div>
+          </div>
+
+          <!-- Form Tambah Akun Admin Baru -->
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 12px; margin-bottom: 14px;">
+            <div style="font-size: 0.84rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">➕ Tambah Akun Admin Baru</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+              <div>
+                <label class="admin-label" style="font-size: 0.75rem;" for="newAdminUsernameInput">Username</label>
+                <input type="text" id="newAdminUsernameInput" class="admin-input" placeholder="Contoh: panitia1" style="padding: 7px 10px; font-size: 0.84rem;">
+              </div>
+              <div>
+                <label class="admin-label" style="font-size: 0.75rem;" for="newAdminNameInput">Nama Lengkap</label>
+                <input type="text" id="newAdminNameInput" class="admin-input" placeholder="Contoh: Panitia Foto" style="padding: 7px 10px; font-size: 0.84rem;">
+              </div>
+            </div>
+            <div style="margin-bottom: 8px;">
+              <label class="admin-label" style="font-size: 0.75rem;" for="newAdminPasswordInput">Password</label>
+              <input type="password" id="newAdminPasswordInput" class="admin-input" placeholder="Minimal 4 karakter" style="padding: 7px 10px; font-size: 0.84rem;">
+            </div>
+            <div id="addUserAlertBox" class="admin-alert-box error" style="margin-bottom: 8px; font-size: 0.78rem; display: none;"></div>
+            <button type="button" id="btnAddAdminUserBtn" class="btn btn-gold" style="width: 100%; padding: 8px; font-size: 0.84rem; justify-content: center;" onclick="handleAddAdminUser()">
+              <span>+ Tambahkan Akun Admin</span>
+            </button>
+          </div>
+
+          <!-- Daftar Admin Terdaftar -->
+          <div style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px;">Daftar Akun Admin:</div>
+          <div id="adminUsersList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+        </div>
+
+        <!-- Tab 4: Cloud Database (Supabase Realtime) -->
+        <div class="admin-tab-pane" id="tabPane-cloud">
+          <!-- Supabase Cloud Database & Realtime Engine -->
+          <div style="background: #F0FDF4; border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 16px; margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+              <div style="font-weight: 700; color: #065F46; font-size: 0.92rem; display: flex; align-items: center; gap: 6px;">
+                <span>⚡ Supabase Realtime Database (PostgreSQL)</span>
+              </div>
+              <span id="supabaseStatusBadge" style="font-size: 0.74rem; background: #D1FAE5; color: #065F46; padding: 4px 10px; border-radius: 6px; font-weight: 600;">Terhubung & Realtime Aktif</span>
+            </div>
+            <div style="font-size: 0.76rem; color: #1E3A8A; line-height: 1.5; margin-bottom: 12px; background: rgba(255,255,255,0.7); padding: 8px 10px; border-radius: 8px; border: 1px dashed rgba(16,185,129,0.3);">
+              🚀 <strong>Single Source of Truth:</strong> Database cloud PostgreSQL berkecepatan tinggi (&lt;50ms) dengan sinkronisasi instan otomatis (WebSocket 0 detik). Seluruh data acara, kategori, dan pengaturan terhubung langsung ke Supabase tanpa database ganda.
+            </div>
+
+            <div class="admin-field-group" style="margin-bottom: 10px;">
+              <label class="admin-label" for="cfgSupabaseUrl" style="font-size: 0.78rem;">Project URL Supabase</label>
+              <input type="text" id="cfgSupabaseUrl" class="admin-input" placeholder="https://xxxxxxxxxxxx.supabase.co" style="padding: 7px 10px; font-size: 0.84rem;">
+            </div>
+
+            <div class="admin-field-group" style="margin-bottom: 12px;">
+              <label class="admin-label" for="cfgSupabaseAnonKey" style="font-size: 0.78rem;">Anon / Public API Key</label>
+              <input type="password" id="cfgSupabaseAnonKey" class="admin-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." style="padding: 7px 10px; font-size: 0.84rem;">
+            </div>
+
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn btn-outline" id="btnTestSupabase" onclick="handleTestSupabaseConnection()" style="font-size: 0.75rem; padding: 6px 12px; border-color: #059669; color: #059669; font-weight: 600;">
+                <span>🔌 Uji Koneksi Supabase</span>
+              </button>
+              <button type="button" class="btn btn-gold" id="btnRefreshSupabase" onclick="handleRefreshFromSupabase()" style="font-size: 0.75rem; padding: 6px 12px; font-weight: 600;">
+                <span>🔄 Segarkan Data Realtime</span>
+              </button>
+            </div>
+            <div id="supabaseSyncStatusText" style="font-size: 0.74rem; margin-top: 8px; display: none;"></div>
+          </div>
+        </div>
+
+        <div id="saveAlertBox" class="admin-alert-box"></div>
       </div>
 
-      <!-- Tampilan Tombol Bagikan untuk Mobile Ponsel (sm:hidden, Icon-Only Button) -->
-      <button id="btnSlideshowMobileShare" class="pointer-events-auto flex sm:hidden items-center justify-center w-10 h-10 rounded-full bg-brand-gold text-black shadow-lg shadow-brand-gold/25 hover:brightness-110 active:scale-95 transition" title="Bagikan Acara">
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-          <line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/>
-        </svg>
-      </button>
+      <div class="admin-card-footer" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <button type="button" class="btn btn-outline" onclick="handleAdminLogout()" style="color: #EF4444; border-color: #FECACA;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span>Keluar</span>
+        </button>
 
-      <!-- Tampilan Stasiun Scan QR Raksasa untuk Layar PC Desktop / Proyektor (hidden sm:flex) -->
-      <div id="slideshowDesktopQrCard" class="pointer-events-auto hidden sm:flex flex-col items-center gap-2 bg-black/85 backdrop-blur-xl border border-brand-gold/60 p-4 rounded-3xl shadow-[0_15px_45px_rgba(0,0,0,0.9)] max-w-xs transition hover:scale-105 duration-300">
-        <div class="flex items-center gap-2 text-xs font-extrabold text-brand-gold uppercase tracking-wider">
-          <span>📸 Scan untuk Memotret</span>
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-        </div>
-        <div class="w-40 h-40 md:w-48 md:h-48 bg-white rounded-2xl p-2.5 flex items-center justify-center shrink-0 shadow-2xl">
-          <img id="slideshowQrImg" src="" alt="Scan QR" class="w-full h-full object-contain" />
-        </div>
-        <p class="text-[11px] text-zinc-200 text-center font-medium max-w-[200px]">Arahkan kamera HP Anda ke QR Code untuk langsung memotret!</p>
+        <button type="button" class="btn btn-outline" onclick="closeAdminSettingsModal()" style="font-size: 0.84rem; padding: 8px 16px; border-color: var(--gold-dark); color: var(--gold-dark); font-weight: 600;" title="Tutup jendela pengaturan untuk melihat & menguji coba menu galeri">
+          <span>👁️ Lihat / Test Galeri</span>
+        </button>
+
+        <button type="button" id="btnSaveSettings" class="btn btn-gold" onclick="handleSaveAllSettings()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>Simpan Perubahan</span>
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: ZOOM DETAIL FOTO & VOTING -->
-  <div id="modalZoomPhoto" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="relative max-w-sm w-full bg-brand-surfaceLight border border-brand-surfaceBorder rounded-2xl overflow-hidden p-4">
-      <button id="btnCloseZoom" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-      </button>
-
-      <div class="w-full aspect-[4/5] bg-black rounded-xl overflow-hidden mb-3">
-        <img id="zoomImg" src="" alt="Detail Foto" class="w-full h-full object-contain" />
+  <!-- Floating Bar Mode Admin Aktif (Modern Luxury Dock saat View Gallery) -->
+  <div id="adminActiveFloatingBar" class="admin-floating-dock">
+    <div class="admin-dock-identity">
+      <div class="admin-dock-badge-pulse" title="Sesi Admin Aktif & Terverifikasi">
+        <span class="dot"></span>
       </div>
-
-      <div class="flex items-center justify-between mb-2">
-        <div>
-          <h4 id="zoomGuestNama" class="text-sm font-bold text-white">Oleh Tamu</h4>
-          <p id="zoomTime" class="text-[10px] text-zinc-400">Beberapa saat lalu</p>
-        </div>
-        <div id="zoomLikesBadge" class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-gold/15 text-brand-gold text-xs font-bold border border-brand-gold/30">
-          <span>❤️</span>
-          <span id="zoomLikesCount">0 Suka</span>
-        </div>
-      </div>
-
-      <p id="zoomCaption" class="text-xs text-zinc-300 italic mb-4">"Momen seru pesta!"</p>
-
-      <div class="flex items-center gap-2">
-        <button id="btnZoomVote" class="flex-1 py-2.5 rounded-xl gold-gradient-bg text-black text-xs font-bold shadow-md hover:brightness-110 active:scale-95 transition flex items-center justify-center gap-1.5">
-          <span>Beri Suara / Like</span>
-        </button>
-        <button id="btnZoomDownload" class="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold transition" title="Unduh Foto">
-          ⬇️ Unduh
-        </button>
-      </div>
-
-      <!-- Admin Photo Moderation Controls (Khusus Admin) -->
-      <div id="zoomAdminControls" class="hidden mt-3 pt-3 border-t border-white/10 grid grid-cols-2 gap-2">
-        <button id="btnZoomToggleVisibility" type="button" class="py-2 px-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer">
-          <span id="zoomToggleVisibilityIcon">👁️</span>
-          <span id="zoomToggleVisibilityText">Sembunyikan</span>
-        </button>
-        <button id="btnZoomDeletePhoto" type="button" class="py-2 px-3 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer">
-          <span>🗑️</span>
-          <span>Hapus Foto</span>
-        </button>
+      <div class="admin-dock-text-col">
+        <span class="admin-dock-sub">Mode Admin • Pratinjau</span>
+        <span class="admin-dock-name" id="floatingBarAdminName">Administrator</span>
       </div>
     </div>
-  </div>
-
-  <!-- MODAL: PILIH KATEGORI VOTING FOTO (1 Vote / Kategori) -->
-  <div id="modalVoteCategory" class="hidden fixed inset-0 z-[55] bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-brand-surfaceLight border border-brand-surfaceBorder rounded-2xl max-w-sm w-full p-5 text-center shadow-2xl relative">
-      <button id="btnCloseVoteCategory" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white flex items-center justify-center transition">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    <div class="admin-dock-divider"></div>
+    <div class="admin-dock-actions">
+      <button type="button" class="admin-float-btn settings" onclick="openAdminSettingsModal()" title="Buka Panel Pengaturan Admin">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        <span>Pengaturan</span>
       </button>
-      <div class="w-12 h-12 rounded-full bg-brand-gold/15 text-brand-gold flex items-center justify-center mx-auto mb-3">
-        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      <button type="button" class="admin-float-btn logout" onclick="handleAdminLogout()" title="Keluar dari Akun Admin">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
         </svg>
-      </div>
-      <h3 class="font-serif text-lg font-bold text-white mb-1">Beri Suara / Like</h3>
-      <p id="voteModalDesc" class="text-xs text-zinc-400 mb-4">Pilih kategori penghargaan untuk foto ini (Maks. 2x vote per tamu):</p>
-
-      <div id="voteCategoryListContainer" class="space-y-2 mb-4 text-left">
-        <!-- Diinjeksi dinamis oleh app.js -->
-      </div>
-
-      <div class="flex items-center gap-2">
-        <button id="btnCancelVoteCategory" class="flex-1 py-2.5 rounded-xl bg-white/10 text-zinc-300 text-xs font-semibold hover:bg-white/15 transition">Batal</button>
-        <button id="btnConfirmVoteCategory" class="flex-1 py-2.5 rounded-xl gold-gradient-bg text-black text-xs font-bold shadow-md hover:brightness-110 active:scale-95 transition">Kirim Suara ❤️</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: KONTAK & INFO LAYANAN (BRANDING KUSTOM) -->
-  <div id="modalContactInfo" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-brand-surfaceLight border border-brand-surfaceBorder rounded-2xl max-w-xs w-full p-5 text-center shadow-2xl">
-      <div class="w-12 h-12 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center mx-auto mb-3">
-        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-        </svg>
-      </div>
-      <h3 class="font-serif text-base font-bold text-white mb-1" id="contactModalTitle">Hubungi Penyelenggara</h3>
-      <p class="text-xs text-zinc-400 mb-4">Informasi kontak resmi layanan acara:</p>
-      
-      <div class="space-y-2 mb-4 text-left text-xs">
-        <div id="contactPhoneRow" class="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/5">
-          <span class="text-zinc-400">WhatsApp / Telp</span>
-          <a id="contactPhoneLink" href="#" target="_blank" class="font-semibold text-brand-gold hover:underline">0812-3456-7890</a>
-        </div>
-        <div id="contactIgRow" class="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/5">
-          <span class="text-zinc-400">Instagram</span>
-          <a id="contactIgLink" href="#" target="_blank" class="font-semibold text-brand-gold hover:underline">@snapevent</a>
-        </div>
-      </div>
-
-      <button id="btnCloseContact" class="w-full py-2 rounded-xl bg-white/10 text-zinc-300 text-xs font-semibold hover:bg-white/15 transition">
-        Tutup
+        <span>Keluar</span>
       </button>
     </div>
   </div>
 
-  <!-- MODAL: SHARE LINK & SCAN QR ACARA -->
-  <div id="modalShareQr" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-brand-surfaceLight border border-brand-surfaceBorder rounded-2xl max-w-sm w-full p-5 text-center shadow-2xl relative">
-      <button id="btnCloseShareQr" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white flex items-center justify-center transition">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-      </button>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-names" id="footerCoupleName"></div>
+    <p id="footerBlessing" style="white-space: pre-line; line-height: 1.6;"></p>
+  </footer>
 
-      <div class="w-12 h-12 rounded-full bg-brand-gold/15 text-brand-gold flex items-center justify-center mx-auto mb-3">
-        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14-2h4v4h-4v-4zm-4 0h2v2h-2v-2zm2 4h2v4h-2v-4zm2 2h2v2h-2v-2zm-6-2h2v4h-2v-4z"/>
-        </svg>
-      </div>
+  <!-- ==========================================================================
+       CLIENT-SIDE JAVASCRIPT ENGINE (DUAL RUNTIME: VERCEL FETCH & GAS SCRIPT.RUN)
+       ========================================================================== -->
 
-      <h3 class="font-serif text-lg font-bold text-white mb-1" id="shareQrEventTitle">The Wedding of Sarah & Kevin</h3>
-      <p class="text-xs text-brand-gold font-medium mb-4" id="shareQrEventHashtag">#SarahKevinEverAfter</p>
+  <!-- Supabase Client Library (PostgreSQL Cloud & Realtime WebSocket Engine) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-      <!-- QR Code Scannable Image -->
-      <div class="w-48 h-48 bg-white rounded-2xl p-2.5 mx-auto mb-4 shadow-xl flex items-center justify-center">
-        <img id="shareQrImg" src="" alt="QR Code Acara" class="w-full h-full object-contain" />
-      </div>
-      <p class="text-[11px] text-zinc-400 mb-3">Tamu dapat memindai QR code ini untuk langsung membuka disposable camera di HP mereka.</p>
+  <!-- Main Modular Application Script (Live Realtime Database Engine) -->
+  <script src="js/app.js"></script>
 
-      <!-- URL Input & Copy -->
-      <div class="flex items-center gap-1.5 mb-3 bg-[#111116] border border-white/10 rounded-xl p-1.5">
-        <input type="text" id="shareQrUrlInput" readonly class="w-full bg-transparent px-2 text-xs text-zinc-300 outline-none" />
-        <button id="btnCopyShareUrl" class="shrink-0 px-3 py-1.5 rounded-lg bg-brand-gold text-black text-xs font-bold hover:brightness-110 active:scale-95 transition">
-          Salin
+  <!-- Modal Tambah Event Baru dengan Date Picker Native (Tanpa Browser Prompt) -->
+  <div id="modalNewEvent" class="admin-modal-overlay" style="z-index: 10500;">
+    <div class="admin-card" style="max-width: 500px; margin: 20px auto;">
+      <div class="admin-card-header">
+        <h3 style="display: flex; align-items: center; gap: 8px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold-primary)" stroke-width="2">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+          </svg>
+          <span>Tambah Event / Acara Baru</span>
+        </h3>
+        <button type="button" class="ctrl-icon-btn" onclick="closeNewEventModal()" style="width: 32px; height: 32px;" title="Tutup">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
       </div>
 
-      <div class="flex items-center gap-2">
-        <button id="btnDownloadQrCode" class="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold transition flex items-center justify-center gap-1.5">
-          <span>⬇️ Unduh Gambar QR</span>
+      <div class="admin-card-body" style="padding: 16px;">
+        <div class="admin-field-group" style="margin-bottom: 12px;">
+          <label class="admin-label" for="neEventName">Nama Pasangan / Acara <span style="color: #EF4444;">*</span></label>
+          <input type="text" id="neEventName" class="admin-input" placeholder="Contoh: Romeo & Juliet" required>
+        </div>
+
+        <div class="admin-field-group" style="margin-bottom: 12px;">
+          <label class="admin-label" for="neEventDate">Tanggal Acara (Pilih Kalender) <span style="color: #EF4444;">*</span></label>
+          <input type="date" id="neEventDate" class="admin-input" onclick="try{this.showPicker()}catch(e){}" style="cursor: pointer;" required>
+        </div>
+
+        <div class="admin-field-group" style="margin-bottom: 12px;">
+          <label class="admin-label" for="neEventVenue">Venue / Lokasi Acara</label>
+          <input type="text" id="neEventVenue" class="admin-input" placeholder="Contoh: Grand Ballroom Hotel Mulia, Jakarta">
+        </div>
+
+        <div class="admin-field-group" style="margin-bottom: 12px;">
+          <label class="admin-label" for="neDriveFolderId">Tautan / Folder ID Google Drive (Opsional)</label>
+          <input type="text" id="neDriveFolderId" class="admin-input" placeholder="ID folder atau URL Google Drive">
+        </div>
+
+        <div class="admin-field-group" style="margin-bottom: 12px;">
+          <label class="admin-label" for="neLogoUrl">Logo Acara / Monogram (Opsional)</label>
+          <input type="text" id="neLogoUrl" class="admin-input" placeholder="Link Google Drive logo / monogram PNG">
+        </div>
+
+        <div class="admin-field-group" style="margin-bottom: 14px;">
+          <label class="admin-label" for="nePhotoboothUrl">Tautan Vendor Photobooth (Opsional)</label>
+          <input type="text" id="nePhotoboothUrl" class="admin-input" placeholder="https://fotoshare.co/... atau link Google Photos">
+        </div>
+
+        <div id="neAlertBox" class="admin-alert-box" style="display: none; margin-bottom: 12px;"></div>
+      </div>
+
+      <div class="admin-card-footer" style="display: flex; justify-content: flex-end; gap: 8px; padding: 12px 16px;">
+        <button type="button" class="btn btn-outline" onclick="closeNewEventModal()" style="font-size: 0.85rem; padding: 8px 16px;">Batal</button>
+        <button type="button" class="btn btn-gold" onclick="confirmAddNewEvent()" style="font-size: 0.85rem; padding: 8px 18px;">
+          <span>+ Buat & Simpan Event</span>
         </button>
       </div>
-    </div>
-  </div>
-
-  <!-- MODAL: TAMBAH AKUN PENGGUNA / OPERATOR KRU -->
-  <div id="modalAddUserAccount" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-brand-surfaceLight border border-brand-surfaceBorder rounded-2xl max-w-xs w-full p-5 text-center shadow-2xl">
-      <div class="w-12 h-12 rounded-full bg-brand-gold/15 text-brand-gold flex items-center justify-center mx-auto mb-3">
-        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/>
-        </svg>
-      </div>
-      <h3 class="font-serif text-base font-bold text-white mb-1">Tambah Akun Pengguna</h3>
-      <p class="text-xs text-zinc-400 mb-4">Buat akun untuk operator kru atau panitia meja.</p>
-
-      <form id="formAddUserAccount" class="space-y-3 mb-2 text-left">
-        <div>
-          <label class="block text-[11px] font-semibold text-zinc-300 mb-1">Username Akun</label>
-          <input type="text" id="inputNewUserUsername" required placeholder="Contoh: kru_meja1" class="w-full bg-[#111116] border border-white/15 focus:border-brand-gold rounded-xl px-3 py-2 text-xs text-white outline-none" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-zinc-300 mb-1">Password</label>
-          <input type="password" id="inputNewUserPassword" required placeholder="Minimal 4 karakter" class="w-full bg-[#111116] border border-white/15 focus:border-brand-gold rounded-xl px-3 py-2 text-xs text-white outline-none" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-zinc-300 mb-1">Peran / Hak Akses</label>
-          <select id="selectNewUserRole" class="w-full bg-[#111116] border border-white/15 focus:border-brand-gold rounded-xl px-3 py-2 text-xs text-white outline-none">
-            <option value="operator">Operator Kru (Kelola Foto & Event)</option>
-            <option value="admin">Administrator Penuh</option>
-          </select>
-        </div>
-        <div class="flex items-center gap-2 pt-2">
-          <button type="button" id="btnCancelAddUserModal" class="flex-1 py-2 rounded-xl bg-white/10 text-zinc-300 text-xs font-semibold hover:bg-white/15 transition">Batal</button>
-          <button type="submit" id="btnSaveNewUserAccount" class="flex-1 py-2 rounded-xl gold-gradient-bg text-black text-xs font-bold shadow-md hover:brightness-110 transition">Simpan</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL: GANTI PASSWORD PENGGUNA -->
-  <div id="modalChangePassword" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-brand-surfaceLight border border-brand-surfaceBorder rounded-2xl max-w-xs w-full p-5 text-center shadow-2xl">
-      <div class="w-12 h-12 rounded-full bg-brand-gold/15 text-brand-gold flex items-center justify-center mx-auto mb-3">
-        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/>
-        </svg>
-      </div>
-      <h3 class="font-serif text-base font-bold text-white mb-1">Ganti Password Akun</h3>
-      <p class="text-xs text-zinc-400 mb-4">Perbarui kata sandi akun login Anda.</p>
-
-      <form id="formChangePassword" class="space-y-3 mb-2 text-left">
-        <div>
-          <label class="block text-[11px] font-semibold text-zinc-300 mb-1">Password Saat Ini (Lama)</label>
-          <input type="password" id="inputOldPassword" required placeholder="Masukkan password lama" class="w-full bg-[#111116] border border-white/15 focus:border-brand-gold rounded-xl px-3 py-2 text-xs text-white outline-none" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-zinc-300 mb-1">Password Baru</label>
-          <input type="password" id="inputNewPassword1" required placeholder="Minimal 4 karakter" class="w-full bg-[#111116] border border-white/15 focus:border-brand-gold rounded-xl px-3 py-2 text-xs text-white outline-none" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-zinc-300 mb-1">Konfirmasi Password Baru</label>
-          <input type="password" id="inputNewPassword2" required placeholder="Ulangi password baru" class="w-full bg-[#111116] border border-white/15 focus:border-brand-gold rounded-xl px-3 py-2 text-xs text-white outline-none" />
-        </div>
-        <div class="flex items-center gap-2 pt-2">
-          <button type="button" id="btnCancelChangePassword" class="flex-1 py-2 rounded-xl bg-white/10 text-zinc-300 text-xs font-semibold hover:bg-white/15 transition">Batal</button>
-          <button type="submit" id="btnSubmitChangePassword" class="flex-1 py-2 rounded-xl gold-gradient-bg text-black text-xs font-bold shadow-md hover:brightness-110 transition">Perbarui</button>
-        </div>
-      </form>
     </div>
   </div>
 

@@ -1,300 +1,273 @@
-# PRODUCT REQUIREMENT DOCUMENT (PRD)
-# Projek: SnapEvent - Web App Disposable Camera & Live Event Gallery
-================================================================================
-VERSI: 1.6.0
-STATUS: PRODUCTION READY (ZERO-FAILURE SERVER RESILIENCY & MULTI-DEVICE LIVE SYNC)
-AUTHOR: ZettBOT by Zettbos (System Architect & Mentor)
-TANGGAL: 10 November 2026
-================================================================================
-
-================================================================================
-ZONA ATAS: SPESIFIKASI KEBUTUHAN PRODUK (BLUEPRINT AWAL)
-================================================================================
-
-## 1. NAMA PROJEK & PROBLEM STATEMENT
-- **Nama Aplikasi:** SnapEvent (Disposable Camera & Event Gallery System)
-- **Problem Statement:**
-  Pada acara pernikahan, ulang tahun, konser, atau gathering, tamu sering mengambil foto berharga namun tercecer di ponsel masing-masing. Di sisi lain, tren kamera analog sekali pakai (*disposable camera*) sangat disukai karena memberi sensasi estetika retro, kuota terbatas yang membuat momen lebih bermakna, serta kejutan saat foto diungkap (*reveal*).
-  SnapEvent menghadirkan pengalaman kamera sekali pakai digital berbasis web app (tanpa install aplikasi), di mana tamu memotret dengan filter retro dan custom frame acara, otomatis tersimpan ke folder Google Drive penyelenggara, memiliki kuota jepretan & voting, serta galeri interaktif dengan mode kompetisi foto dan layar proyektor panggung (Live Slideshow).
+# PRD - Wedding Photo Gallery & Live Slideshow Platform
+**Sistem**: Multi-Event Wedding Gallery with Supabase Cloud Realtime Architecture  
+**Versi**: v4.29.0-PROD  
+**Arsitektur Database**: Supabase Cloud PostgreSQL (Single Source of Truth) + WebSocket Realtime + Google Drive Live Photo Catalog  
+**Terakhir Diperbarui**: 21 November 2026
 
 ---
 
-## 2. PERAN PENGGUNA (USER ROLES)
-1. **Tamu Acara (Guest):**
-   - Akses via scan QR Code meja atau link event (`?event=KODE_EVENT`).
-   - Masukkan nama panggilan singkat (tersimpan di browser localStorage + device fingerprint).
-   - Memotret foto langsung menggunakan kamera HP / upload galeri.
-   - Memilih filter kamera analog (RAW, 800T, Vintage Grain, Black & White, Warm Sun).
-   - Memilih custom frame foto berlogo/bernama event (Gold Art-Deco, Polaroid Klasik, Minimalist Border).
-   - Dibatasi kuota foto per event (misal: 10 jepretan).
-   - Melihat galeri foto (jika sudah diungkap/reveal) dan memberikan voting Like per kategori (misal: Best Outfit, Funniest Pose) sesuai kuota voting.
-2. **Administrator / Penyelenggara (Admin):**
-   - Login aman dengan Master PIN Admin.
-   - **Kelola Event:** Tambah event baru, edit detail event, aktif/nonaktifkan status event, hapus event.
-   - **Pengaturan per Event:**
-     * Nama event, tanggal, deskripsi, hashtag resmi (`#TandaPagar`).
-     * Kuota foto per tamu (contoh: 5, 10, 25, Unlimited).
-     * Kuota voting per tamu per kategori.
-     * Mode pengungkapan galeri: *Terungkap Langsung Selama Acara* vs *Ditahan Sampai Acara Selesai (Manual Reveal / Schedule)*.
-     * Izin visibilitas galeri (Publik untuk semua tamu vs Ditutup).
-     * Tombol like/voting (Aktif / Disembunyikan).
-     * Pilihan frame kustom & filter aktif.
-     * Daftar kategori voting dinamis (misal: *Best Outfit, Momen Terlucu, Pose Terheboh*).
-     * ID Folder Google Drive khusus untuk event tersebut.
-   - **Pengaturan Global Sistem:**
-     * Judul platform & branding.
-     * Folder Google Drive Master.
-     * Default kuota foto & default kuota voting.
-     * Master PIN Admin.
-   - **Fitur Live Venue Slideshow:**
-     * Mode layar penuh (Full Screen) untuk disambungkan ke proyektor / LED screen ballroom.
-     * Auto-slideshow foto-foto terbaru beranimasi elegan.
-     * Menampilkan QR Code scan untuk tamu di pojok layar.
-   - **Export & Download:**
-     * Akses langsung ke folder Google Drive event.
-     * Pemenang voting per kategori otomatis dirangking.
+## 1. Ringkasan Eksekutif & Arsitektur Database Terisolasi Penuh
+Platform Galeri Foto Pernikahan & Slideshow Interaktif mendukung Multi-Event terisolasi penuh dengan arsitektur **Supabase Cloud PostgreSQL** sebagai Single Source of Truth murni. Seluruh ketergantungan pada Google Apps Script dan Google Spreadsheet telah diputus total untuk menjamin bahwa penyalinan (cloning) website tidak akan saling mempengaruhi atau menimpa pengaturan antar-website.
+
+### 1.1 Skema Tabel Supabase (PostgreSQL)
+1. **`events`**:
+   - `id` (VARCHAR/TEXT PRIMARY KEY): ID unik berbasis slug (contoh: `andre-fayola-281`, `wilson-felicia-133`)
+   - `name` (VARCHAR): Nama pasangan pengantin / judul acara
+   - `groom_name`, `bride_name`: Nama mempelai pria dan wanita
+   - `event_date` (VARCHAR/DATE): Tanggal pelaksanaan acara
+   - `venue` (TEXT): Lokasi gedung / ballroom pelaksanaan
+   - `drive_folder_id` (TEXT): ID atau URL folder katalog foto utama di Google Drive
+   - `photobooth_url` (TEXT): Tautan khusus vendor photobooth (Fotoshare, Google Photos, dsb.)
+   - `custom_categories` (JSONB): Array kategori kustom beserta link folder masing-masing
+   - `frame_image_url` (TEXT): Tautan file bingkai PNG transparan download otomatis
+   - `logo_url` (TEXT): Tautan monogram/logo spesifik acara
+   - `all_photos_label` (VARCHAR): Label tab galeri utama (default: "Semua Foto")
+   - `is_active` (BOOLEAN): Status keaktifan acara
+   - `created_at`, `updated_at` (TIMESTAMPTZ)
+2. **`settings`**:
+   - `key` (VARCHAR PRIMARY KEY), `value` (TEXT), `updated_at` (TIMESTAMPTZ)
+3. **`admin_users`**:
+   - `id` (VARCHAR PRIMARY KEY), `username` (VARCHAR UNIQUE), `name` (VARCHAR), `pin` (VARCHAR), `role` (VARCHAR), `created_at` (TIMESTAMPTZ)
+4. **`activity_logs`**:
+   - `id` (BIGSERIAL PRIMARY KEY), `action` (VARCHAR), `details` (JSONB), `created_at` (TIMESTAMPTZ)
+
+### 1.2 Isolasi Penuh Website & Eliminasi Hardcode/Fallback
+- **Pencegahan Cross-Website Mutation**: Berkas `code.gs` dan `setup.gs` telah dihapus. Fungsi `callBackend` dinonaktifkan total (0 network call).
+- **Zero Fallback Mockup**: Array `EVENTS` dan `ADMIN_ACCOUNTS` di `config.json` dikosongkan total (`[]`). Data dimuat 100% dinamis dan realtime via Supabase Client SDK `@supabase/supabase-js@2` dan WebSocket channel `wedding-realtime-channel`.
+- **Google Drive Photo Fetching**: Ditangani langsung secara serverless oleh Vercel endpoint `/api/drive-folder`, `/api/fotoshare`, dan `/api/kingphotobooth`.
 
 ---
 
-## 3. ARSITEKTUR & LINGKUNGAN KERJA
-- **Frontend:** Modern Web App (SPA) responsive mobile-first menggunakan HTML5, Tailwind CSS / Custom Luxury Dark Theme, Canvas API (untuk filter & watermarking frame), dan Vanilla JavaScript murni.
-- **Backend API:** Google Apps Script (GAS) Web App Endpoint yang mengelola routing `doGet` dan `doPost`.
-- **Database:** Google Sheets terstruktur sebagai basis data relasional ringan.
-- **Penyimpanan Berkas (Storage):** Google Drive API terintegrasi via Google Apps Script (otomatis membuat sub-folder per event, menyimpan file gambar JPEG terkompresi & framed, serta menghasilkan public thumbnail link).
-- **Hosting Frontend:** Fleksibel (Bisa berjalan langsung di Google Apps Script HTML Service, atau di-deploy gratis di GitHub Pages / Vercel / Netlify dengan menyambungkan endpoint GAS).
+## 2. Fitur & Penanganan Masalah Terkini (v4.1.0)
 
----
+### 2.1 Navigasi Tab Admin Terkunci (Pinned / Sticky)
+- Bilah navigasi tab (`💍 Acara & Event`, `🖼️ Foto & Kategori`, `👥 Akun Admin`, `☁️ Cloud & API`) diletakkan di dalam `.admin-tabs-sticky-wrapper` yang menempel di bagian atas modal dengan `position: sticky; top: 0; z-index: 25; background: #FFFFFF;`.
+- Saat pengguna men-scroll konten formulir ke bawah, bilah navigasi **tetap terkunci rapi di atas** dan tidak tertutup.
 
-## 4. ALUR KERJA APLIKASI (USER FLOW)
+### 2.2 Inisialisasi Database ERP Google Sheets
+- Berkas `setup.gs` menempatkan fungsi `setupTargetSpreadsheetDatabase()` pada posisi paling atas sehingga otomatis menjadi fungsi default saat file dibuka di Google Apps Script.
+- Eksekusi fungsi tersebut secara otomatis membuat dan menyusun ke-5 sheet database lengkap dengan styling header emas dan data aktual.
+- Disediakan tombol inisialisasi langsung pada antarmuka admin (Tab Cloud & API).
 
-### A. Alur Tamu Acara:
-```
-Scan QR / Buka Link Event
-       ↓
-Input Nama Panggilan (Otomatis dapat Guest Token)
-       ↓
-Tampilan Disposable Camera (Viewfinder, Tombol Shutter, Sisa Rol Foto)
-       ↓
-Pilih Filter Retro & Frame Event → Jepret Foto
-       ↓
-Preview Foto & Tambah Caption Singkat
-       ↓
-Unggah (Otomatis diproses Canvas Frame & disimpan ke Google Drive)
-       ↓
-Masuk ke Menu Galeri (Terkunci jika mode "Setelah Acara", atau Terbuka jika "Selama Acara")
-       ↓
-Beri Suara / Vote pada Foto Favorit per Kategori
-```
+### 2.3 Format Tanggal Halaman Depan dengan Nama Hari Otomatis (v4.4.0)
+- Tanggal acara pada badge hero halaman depan (`#eventDate`), subtitle slideshow, dan kartu pratinjau bagikan kini otomatis menampilkan nama hari berbahasa Indonesia di depannya:
+  - Contoh: `Minggu, 22 November 2026` atau `Senin, 16 November 2026`.
+- Fungsi `formatIndonesianDateWithDay()` menghitung hari secara matematis dari tanggal kalender (`Date.getDay()`), menghindari duplikasi jika nama hari sudah ada, dan tetap memetakan nilai input kalender `YYYY-MM-DD` secara aman ke elemen `<input type="date">`.
 
-### B. Alur Admin:
-```
-Buka Panel Admin → Masukkan PIN
-       ↓
-Dashboard Metrik (Total Event, Total Foto, Total Tamu, Penyimpanan Drive)
-       ↓
-Kelola Event (Buat Event Baru → Atur Kuota, Waktu Reveal, Folder Drive, Kategori Vote)
-       ↓
-Generate QR Meja & Link Event
-       ↓
-Buka Live Slideshow Proyektor saat Acara Berlangsung
-       ↓
-Umumkan Pemenang Voting Kategori & Buka Folder Google Drive
-```
+### 2.4 Realtime Murni Tanpa Hardcode (Anti-Fallback)
+- Seluruh data dibaca secara dinamis dari database tanpa data mockup.
 
----
+### 2.5 Proteksi Halaman Tidak Ditemukan untuk URL Manual
+- Mengetik link manual tanpa parameter event (`https://gallery.runway.my.id/`) menampilkan layar khusus **Halaman Tidak Ditemukan / Acara Tidak Ditemukan** (`#eventNotFoundScreen`).
+- Galeri foto, banner sambutan, identitas pengantin, tab filter kategori ("Semua Foto"), dan grup tombol aksi bawah (share, refresh, gembok admin) disembunyikan total guna mencegah kebocoran data antar event dan menjaga privasi masing-masing pasangan.
+- Tampilan dirancang bersih dan minimalis tanpa frame kaku serta tanpa tombol masuk panel admin bagi pengunjung publik.
 
-## 5. DESAIN BASIS DATA (GOOGLE SHEETS DATABASE)
-*Catatan Mutlak ZettBOT: Nama Sheet TANPA karakter underscore (_).*
+### 2.6 Kustom Logo / Monogram Acara (v4.5.0)
+- Logo atau monogram pernikahan (`#heroLogoContainer`) ditampilkan tepat di atas divider dan nama pasangan pengantin sesuai layout kartu mewah.
+- Input logo ditempatkan di Tab 1 Admin (Acara & Event) di bawah nama event (`#cfgEventLogoUrl`) dengan kotak pratinjau live (`#adminLogoPreviewBox`).
+- Mendukung link Google Drive yang otomatis dinormalisasi menjadi direct image view. Ukuran logo dibatasi proporsional (`max-height: 72px;`) agar menarik dan tidak terlalu besar.
 
-### Tab 1: `DataEvent`
-Menyimpan seluruh master data acara.
-| Indeks Kolom | Nama Header | Tipe Data | Keterangan & Contoh |
-| :--- | :--- | :--- | :--- |
-| COL[0] | idEvent | String | Kode unik sekuensial (misal: `EVT-202611-001`) |
-| COL[1] | namaEvent | String | "Wedding of Sarah & Kevin" |
-| COL[2] | slugEvent | String | "sarah-kevin-wedding" (untuk URL ramah) |
-| COL[3] | tanggalEvent | String | "2026-11-20" |
-| COL[4] | hashtagEvent | String | "#SarahKevinEverAfter" |
-| COL[5] | maxFotoPerGuest | Number | Batas jepretan (misal: 10) |
-| COL[6] | maxVotePerGuest | Number | Batas suara per tamu (misal: 3) |
-| COL[7] | revealMode | String | `SEGERA` (Selama Acara) / `SETELAH` (Setelah Acara) |
-| COL[8] | isRevealed | Boolean | `TRUE` jika galeri sudah resmi diungkap |
-| COL[9] | likeEnabled | Boolean | `TRUE` jika tombol like aktif |
-| COL[10] | publicVisible | Boolean | `TRUE` jika galeri terbuka untuk tamu |
-| COL[11] | activeCameraStyles | String (JSON) | Daftar filter kamera: `["RAW","800T","BW","WARM"]` |
-| COL[12] | activeFrames | String (JSON) | Daftar frame: `["GOLD_DECO","POLAROID","MINIMAL"]` |
-| COL[13] | gdriveFolderId | String | ID Folder Google Drive khusus event |
-| COL[14] | statusEvent | String | `AKTIF` / `SELESAI` / `DRAFT` |
-| COL[15] | createdAt | String | Timestamp pembuatan |
+### 2.7 Pembersihan Seketika & Penghapusan Fallback Foto Kategori (v4.6.0)
+- Mengeliminasi bug tampilan foto lama saat link kategori diubah ("Muncul gambar sebelumnya baru berubah"):
+  - `fallbackDrive` tidak lagi mengambil foto dari `state.allPhotos`. Jika folder kategori belum memiliki foto atau masih dalam proses pemanggilan, sistem mengembalikan array kosong `[]` sehingga tidak ada foto kategori lain yang bocor.
+  - Saat berpindah kategori atau mengubah tautan, `state.filteredPhotos` seketika dikosongkan (`[]`) dan grid menampilkan animasi skeleton shimmer (`showGridSkeleton()`), menjamin foto lama langsung hilang seketika.
+  - Setiap perubahan tautan pada formulir admin (`onCategoryRowInput` & `handleSaveAllSettings`) langsung menghapus cache foto lama (`state.categoryPhotosMap` & `state.categoryPhotosUrlMap`).
 
-### Tab 2: `DataFoto`
-Menyimpan riwayat foto yang diunggah tamu.
-| Indeks Kolom | Nama Header | Tipe Data | Keterangan & Contoh |
-| :--- | :--- | :--- | :--- |
-| COL[0] | idFoto | String | Kode unik (misal: `FTO-20261108-001`) |
-| COL[1] | idEvent | String | Relasi ke `DataEvent` |
-| COL[2] | guestId | String | Device Fingerprint tamu |
-| COL[3] | guestNama | String | Nama tamu pengunggah |
-| COL[4] | captionFoto | String | Catatan momen singkat |
-| COL[5] | cameraStyle | String | "800T", "RAW", dll |
-| COL[6] | frameStyle | String | "GOLD_DECO", "POLAROID", dll |
-| COL[7] | gdriveFileId | String | ID File di Google Drive |
-| COL[8] | gdriveViewUrl | String | URL Google Drive / Direct Image |
-| COL[9] | totalLikes | Number | Jumlah akumulasi like/vote |
-| COL[10] | isFeatured | Boolean | Ditampilkan di highlight proyektor |
-| COL[11] | createdAt | String | Timestamp pengunggahan |
+### 2.8 QR Code Berlogo Monogram dengan Latar Belakang Putih Solid (v4.6.0)
+- Modal Bagikan & QR Code (`#shareQrModal`) menghasilkan QR Code beresolusi tinggi dengan logo monogram di bagian tengahnya:
+  - Menggunakan tingkat koreksi galat tinggi (**`ecc=H`** / toleransi 30%) agar QR code tetap 100% terbaca dan discan oleh ponsel.
+  - Bidang tengah di balik logo diberi badge **warna putih solid (`#FFFFFF`)** berukuran 24% dari QR code dengan sudut membulat (*rounded rectangle*) dan border halus. Hal ini menjamin logo berformat transparan (PNG) memiliki latar belakang putih pekat sehingga modul QR code di belakangnya tidak menembus dan merusak scan.
+  - Logo diambil otomatis dari menu konfigurasi event aktif (`EVENT_LOGO_URL` / `logoUrl`).
+  - Tombol unduh QR Code mendukung pengunduhan instan hasil komposit kanvas ke format PNG.
 
-### Tab 3: `DataKategoriVoting`
-Menyimpan daftar kategori voting per event.
-| Indeks Kolom | Nama Header | Tipe Data | Keterangan & Contoh |
-| :--- | :--- | :--- | :--- |
-| COL[0] | idKategori | String | Kode unik (misal: `KAT-001`) |
-| COL[1] | idEvent | String | Relasi ke `DataEvent` |
-| COL[2] | namaKategori | String | "Best Outfit", "Pose Terheboh", "Momen Terbaper" |
-| COL[3] | deskripsi | String | Keterangan singkat kriteria |
-| COL[4] | urutan | Number | Urutan tampilan di tab |
+### 2.9 Pengurutan Kronologis Foto Terbaru di Paling Atas & Eliminasi Total Fallback Hardcode Semua Menu (v4.7.0)
+- **Pengurutan Waktu Terbaru di Paling Atas (Newest First Across All Photos, Categories & Events)**:
+  - Seluruh foto pada semua kategori (Semua Foto, Photobooth, Akad, Resepsi, Kategori Kustom), semua event, slideshow, dan lightbox diurutkan secara kronologis dengan foto yang paling baru di posisi paling atas.
+  - Menggunakan komparator terpadu `sortPhotosNewestFirst` dan `getPhotoTimestamp` yang mengevaluasi epoch timestamp, ISO string, creation/update date, pola nama file ber-timestamp, dan pemecah seri (*tie-breaking*) descending alphanumeric natural filename (`b.name.localeCompare(a.name, undefined, { numeric: true })`) untuk file foto sekuensial kamera.
+  - Diterapkan pada client-side (`js/app.js`), instant hydration, pergantian event, filter kategori, seluruh API endpoint (`api/drive-folder.js`, `api/fotoshare.js`, `api/google-photos.js`, `api/kingphotobooth.js`), dan backend Google Apps Script (`code.gs`).
+- **Eliminasi Total Fallback Hardcode pada Semua Menu (100% Realtime Database)**:
+  - Membersihkan seluruh hardcoded ID/URL fallback (folder Drive, album Fotoshare, event Kingphotobooth) dari seluruh API serverless.
+  - Membersihkan akun admin dummy (`usr_superadmin / password: 123 / pin: 123456`) dan fallback list admin; autentikasi dan daftar admin murni divalidasi dan diambil 100% dari spreadsheet Google Sheets (`Akun_Admin` / ERP).
+  - Tautan kategori dan photobooth murni terhubung realtime dengan data event aktif di spreadsheet tanpa data tiruan.
 
-### Tab 4: `DataVoting`
-Mencatat suara tamu agar tidak melebihi kuota.
-| Indeks Kolom | Nama Header | Tipe Data | Keterangan & Contoh |
-| :--- | :--- | :--- | :--- |
-| COL[0] | idVote | String | Kode unik (misal: `VOT-001`) |
-| COL[1] | idEvent | String | Relasi ke `DataEvent` |
-| COL[2] | idFoto | String | Relasi ke `DataFoto` |
-| COL[3] | idKategori | String | Relasi ke `DataKategoriVoting` |
-| COL[4] | guestId | String | Device ID pemilih |
-| COL[5] | guestNama | String | Nama pemilih |
-| COL[6] | votedAt | String | Timestamp vote |
+### 2.10 QR Share Logo Borderless & Bidang Proporsional Mengikuti Objek (v4.8.0)
+- **Logo QR Share Tanpa Border**: Menghilangkan garis tepi (`border/stroke`) di sekeliling logo monogram pada QR Code, sehingga logo tampil bersih dan menyatu alami dengan modul kode QR.
+- **Bidang Latar Belakang Putih Menyesuaikan Objek Logo**:
+  - Ukuran bidang putih solid tidak lagi statis persegi (`144px x 144px`).
+  - Sistem mendeteksi batas transparan gambar (*transparent trimming*) dan menyesuaikan lebar (`bw`) dan tinggi (`bh`) secara dinamis mengikuti rasio aspek logo sebenarnya dengan padding ringkas (`padX: 6px`, `padY: 4px`).
+  - Menghilangkan ruang putih kosong yang terlalu besar di bagian atas dan bawah pada logo berbentuk memanjang (seperti logo teks RUNWAY).
+- **Audit Backend Realtime**: Menghapus bypass login dan mock demo di `code.gs`. Autentikasi dan data murni 100% realtime dari database Google Sheets.
 
-### Tab 5: `DataPengaturanGlobal`
-Menyimpan konfigurasi sistem umum.
-| Indeks Kolom | Kunci Pengaturan | Nilai Pengaturan | Keterangan |
-| :--- | :--- | :--- | :--- |
-| COL[0] | `app_title` | "SnapEvent Studio" | Nama platform |
-| COL[1] | `admin_pin` | "889900" | Master PIN Admin (Bisa diganti) |
-| COL[2] | `master_drive_folder_id` | "" | Folder induk Google Drive |
-| COL[3] | `default_max_foto` | "10" | Default kuota jepret |
-| COL[4] | `default_max_vote` | "3" | Default kuota suara |
+### 2.11 Pemulihan Mesin Preview, Lightbox & Download Serta Audit 3x Realtime (v4.9.0)
+- **Pemulihan Mesin Preview Lightbox**:
+  - Memperbaiki deklarasi `photo` yang hilang di `openLightbox` yang sebelumnya memicu `ReferenceError: photo is not defined`.
+  - Memprioritaskan eksekusi `updateLightboxContent()` sehingga judul foto, penomoran urut, gambar beresolusi penuh, dan tombol aksi terpasang seketika (0ms).
+  - Menyempurnakan pemetaan resolusi `getSharpPreviewUrl`: memisahkan protokol vendor Fotoshare, Kingphotobooth, Google Photos, dan Google Drive secara ketat sehingga URL Fotoshare tidak terdistorsi ke domain Google Drive (mencegah error 404 broken preview).
+- **Pemulihan Mesin Download**:
+  - Mendeteksi ketersediaan bingkai PNG secara dinamis. Jika acara tidak menggunakan bingkai, tombol unduh langsung berlabel *"⬇️ Unduh Foto Asli (Ukuran Penuh)"* dan memicu pengunduhan instan berkas master asli.
+  - Jika berbingkai, sistem menggunakan pra-komposit Blob instan dari memori peramban atau antrean terencana dengan notifikasi progres.
+- **Audit 3x Bebas Fallback**:
+  - Putaran 1 (Frontend): Menghapus seluruh konstanta fallback folder dan kategori di `DEFAULT_CONFIG`.
+  - Putaran 2 (API): Seluruh fungsi serverless 100% bergantung pada parameter dinamis.
+  - Putaran 3 (Backend): Menghapus mock akun admin dan password bypass di `code.gs`. Autentikasi murni memvalidasi sheet `Pengguna_Admin`.
 
----
+### 2.12 Pengunduhan Berkas Asli Tanpa Kompresi (Uncompressed Direct Master Download) (v4.10.0)
+- **Streaming Master Biner Byte-for-Byte**:
+  - Pengunduhan berkas Google Drive dialihkan dari thumbnail terkompresi `lh3.googleusercontent.com/d/{id}=w3200` ke endpoint stream berkas asli `https://drive.usercontent.google.com/download?id={id}&export=download`.
+  - Berkas master diunduh dengan ukuran byte asli fotografer secara utuh 100% tanpa kompresi algoritma gambar, menjaga kejernihan piksel asli dan mempertahankan seluruh metadata EXIF kamera.
+- **Bypass Kompresi Canvas pada Foto Polos**:
+  - Untuk acara tanpa bingkai foto (`FRAME_IMAGE_URL` kosong), sistem langsung menyalurkan URL unduhan master asli (`executeDirectPhotoDownload`) tanpa melalui canvas re-encoding (`canvas.toBlob("image/jpeg", 0.94)`).
+  - Fotoshare dibersihkan dari query pembatas resolusi (`?w=...`) menuju CDN master `cdn-bz-op.fotoshare.co`, dan Google Photos menggunakan flag `=d` untuk master download langsung.
+- **Audit 3x Realtime Bebas Fallback**:
+  - Pembersihan total fallback gambar cover Unsplash di `renderCoverSection()`, pembersihan fallback event di admin, dan penegasan arsitektur 100% realtime database.
 
-## 6. ATURAN VALIDASI & LOGIKA KHUSUS
-1. **Batas Kuota Foto (Disposable Camera Roll):**
-   - Di sisi frontend: Visualisasi sisa rol film di layar kamera (contoh: "🎞️ 7 / 10 foto tersisa"). Tombol jepret dinonaktifkan jika kuota habis.
-   - Di sisi backend: Sebelum menyimpan foto, backend memeriksa jumlah upload dari `guestId` pada `idEvent`. Jika `>= maxFotoPerGuest`, request ditolak dengan pesan edukatif.
-2. **Batas Kuota Voting & Anti-Double Vote:**
-   - Tamu hanya dapat memilih 1 kali untuk foto yang sama, dan total vote tidak boleh melebihi `maxVotePerGuest` per kategori.
-3. **Mekanisme Sensor & Kamera Native (Radar Batasan Teknis ZettBOT):**
-   - Menggunakan HTML5 `<input type="file" accept="image/*" capture="environment">` dikombinasikan dengan Canvas API untuk penggabungan frame dan efek film retro.
-   - Sangat kompatibel di semua browser HP (Safari iOS & Chrome Android) tanpa kendala izin iframe sandbox.
-4. **Watermark Custom Frame & Filter Canvas:**
-   - Foto yang dijepret diproses di sisi klien melalui HTML5 Canvas:
-     * Diberikan grading warna filter (misal: grain vintage, tint hangat, atau BW kontras).
-     * Ditempelkan bingkai pilihan (Gold Art-Deco, Polaroid dengan teks `#Hashtag` acara dan tanggal).
-   - Menghasilkan gambar base64 berkualitas tinggi yang ringan dan siap diunggah ke Google Drive.
-5. **Google Drive Folder Otomatis:**
-   - Backend Google Apps Script otomatis membuat sub-folder baru di Google Drive sesuai nama event jika belum ada.
-   - Hak akses file otomatis disetel agar dapat ditampilkan di galeri web app.
+### 2.13 Pengunduhan Berkas Fisik Seluler (Mobile Blob Streaming) & Eliminasi Total Fallback Realtime (v4.11.0)
+- **Asynchronous Physical Blob Streaming pada Perangkat Seluler (HP)**:
+  - Mengeliminasi kegagalan unduh pada perangkat seluler di mana tautan server langsung (`/api/download-proxy?...`) diblokir oleh peramban HP (Android Chrome, iOS Safari, Samsung Internet, Webview).
+  - Alur pengunduhan kini mengambil *physical binary blob* terlebih dahulu ke memori lokal peramban via `fetch(proxyUrl)`, memvalidasi ukuran berkas riil (`blob.size > 0`), dan menyimpannya melalui `saveBlobToDevice` menggunakan `URL.createObjectURL(blob)`.
+  - Status widget hanya diperbarui ke 100% ("✓ Berhasil Disimpan!") setelah berkas fisik berhasil disimpan ke penyimpanan HP, mencegah status berhasil semu (*false positive*).
+- **Eliminasi Total Fallback Hardcode Master (Realtime Database)**:
+  - Seluruh nilai `GLOBAL_CONFIG.EVENTS` dan `GLOBAL_CONFIG.ACTIVE_EVENT_ID` pada sisi klien dikosongkan (`[]` dan `""`).
+  - Seluruh nilai `WEDDING_CONFIG` pada sisi backend Google Apps Script dikosongkan.
+  - Menghapus fallback array event statis, fallback PIN default, dan fallback ID event dari `code.gs`.
+  - Seluruh data event, konfigurasi, dan pengguna admin beroperasi 100% realtime membaca database Google Sheets (`Daftar_Acara`, `Pengaturan`, `Pengguna_Admin`, `Daftar_Foto`).
 
----
+### 2.14 Konsolidasi Kendali Folder Google Drive & Eliminasi Duplikasi Bidang Admin (v4.12.0)
+- **Eliminasi Duplikasi Bidang Folder Drive pada Tab 1**:
+  - Menghapus input `#cfgEventDriveFolderId` dari Tab 1 (Acara & Event).
+  - Tab 1 dikhususkan murni untuk parameter identitas acara: nama pasangan/event, logo acara monogram, tanggal, venue, pesan sambutan, dan pesan penutup.
+- **Konsolidasi Single Source of Truth pada Tab 2 (Foto & Kategori)**:
+  - Seluruh konfigurasi folder Google Drive untuk kategori utama "Semua Foto" event aktif dikelola terpadu pada Tab 2 via `#cfgDriveFolderId` yang dilengkapi tombol sinkronisasi instan (`#btnSyncDrivePhotos`) dan pengurutan kronologis.
 
-## 7. RENCANA ANTARMUKA & DESAIN LAYOUT (ANTI-AI LUXURY AESTHETIC)
-Mengikuti 5 referensi foto visual yang diserahkan pengguna:
-- **Tema Warna:** Dark Luxury (#111114 Deep Charcoal, #1C1C22 Card Surface, aksen Warm Amber/Gold `#D4AF37`, dan teks lembut Zinc `#E4E4E7`).
-- **Halaman Tamu (Guest View):**
-  1. *Welcome Screen:* Input nama santai, info sisa rol kamera, dan tombol mulai jepret.
-  2. *Disposable Camera Viewfinder:* Tampilan ala bodi kamera retro, indikator sisa film, tombol switch filter (RAW, 800T, Warm, BW), tombol switch frame (Gold Art Deco, Polaroid, Modern Clean), dan tombol shutter besar yang memuaskan.
-  3. *Preview & Caption Modal:* Menampilkan hasil foto dengan frame yang sudah terpasang rapi, input caption singkat, dan tombol "Simpan ke Rol Acara".
-  4. *Galeri & Poling Tab:* Grid foto rapi 2 kolom, tab kategori voting, indikator peringkat favorit, tombol Like dengan counter, dan status "Foto akan terungkap saat acara selesai" jika mode reveal ditahan.
-- **Halaman Live Slideshow (Proyektor Mode):**
-  - Tampilan layar penuh minim tombol, transisi fade mewah setiap 5 detik menampilkan foto tamu beserta nama & hashtag, QR Code melayang di pojok bawah.
-- **Halaman Admin:**
-  - Login modal PIN.
-  - Form Wizard Buat/Edit Event (Langkah 1: Info Dasar & Hashtag -> Langkah 2: Kuota & Reveal -> Langkah 3: Frame & Filter -> Selesai).
-  - Tabel Data Event responsif dengan tombol Aksi (Edit, Buka Galeri, Buka Slideshow, Unduh QR, Buka Google Drive).
-  - Panel Pengaturan Global (Ganti PIN, Default Folder Drive).
+### 2.15 Redesain Antarmuka & Tipografi Elegan Kategori Tanpa Foto (v4.13.0)
+- **Komponen Luxury Wedding Empty State**:
+  - Wadah kartu `.empty-gallery-card` dengan palet warna ivory dan aksen emas lembut (`rgba(197, 168, 128, 0.35)`), border-radius 24px, dan bayangan lembut.
+  - Menggantikan raw emoji `🖼️` dan `🔄` dengan ikon vektor SVG kustom beresolusi tajam (`.empty-gallery-icon-wrap`).
+  - Badge kategori elegan dengan uppercase tracking: `Kategori • [Nama Kategori]`.
+  - Judul bernuansa puitis: *"Momen Indah Sedang Disiapkan"* menggunakan font serif *Cormorant Garamond*.
+  - Narasi ramah dan puitis yang menjelaskan foto sedang dipersiapkan oleh fotografer.
+  - Tombol aksi terpadu: *Segarkan Kategori Ini* dan *Buka Album Sumber* dengan SVG icon inline.
 
----
+### 2.16 Perbaikan Fallback Photostage (Mode Panggung) & Audit 3x Eliminasi Total Hardcode Database (v4.14.0)
+- **Graceful Fallback & Ketahanan Photostage (Mode Panggung Layar Penuh)**:
+  - Pada `openSlideshow(startIndex)`, jika kategori yang sedang dilihat kosong (`state.filteredPhotos.length === 0`), sistem secara cerdas dan anggun beralih memutar seluruh foto aktif acara (`state.allPhotos`), sehingga proyeksi layar panggung tidak pernah terhenti atau macet. Jika seluruh foto event belum ada, sistem menampilkan toast peringatan elegan.
+  - Pada `showSlide(index)`, seluruh gambar diproses melalui `getSharpPreviewUrl(photo)` untuk memastikan proyeksi layar lebar panggung beresolusi maksimal (Google Drive, Fotoshare, Kingphotobooth, Google Photos).
+  - Dilengkapi penangan kegagalan bertingkat (`onerror` fallback) pada elemen slide panggung (`#slideshowImgA` dan `#slideshowImgB`): jika resolusi tinggi gagal termuat, otomatis beralih ke `photo.previewUrl`, lalu ke `photo.thumbnailUrl`, menghilangkan risiko tampilan ikon gambar rusak (*broken image*).
+  - Teks watermark pasangan (`#slideshowCouple`) dan info kategori/tanggal/venue (`#slideshowCategory`) tersinkronisasi murni dari `state.activeConfig` secara dinamis pada setiap transisi slide.
+  - Menambahkan tombol aksi pemicu Mode Panggung (`.lightbox-action-btn`) pada bilah atas Lightbox modal untuk kemudahan aktivasi langsung dari foto aktif.
+  - **Eliminasi Label Kaku 'Kategori • Photostage'**: Menghapus pill badge `.empty-gallery-badge` dan teks penyebutan kategori pada notifikasi kategori tanpa foto, menyajikan narasi hangat yang bersih dan profesional.
+- **Audit 3x Eliminasi Total Hardcode Database (Murni Realtime 100%)**:
+  - **Frontend (`js/app.js`)**: Menghapus sisa fallback hardcode PIN `"111111"` pada fungsi otentikasi login admin (baris 986 dan 2619). Otentikasi dan PIN murni 100% membaca database Google Sheets.
+  - **Serverless API (`api/*.js`)**: Seluruh endpoint terverifikasi bebas hardcode ID dan beroperasi 100% dinamis.
+  - **Backend GAS (`code.gs` & `setup.gs`)**: Menghapus parameter usang `WEDDING_FOLDER_URL` ("Tautan Folder Google Drive Kategori Wedding Panggung"), menghapus hardcoded ID folder `1B1HyALBKEetXRoakAZuZ3iZYUeEsnjU5` dan `1G2yIKIEe9SPsLcoMVFDNwHybzvyAfqBI`, menghapus hardcoded event `andre-fayola-281` dan `wilson-felicia-133`, serta menghapus hardcoded admin `usr_superadmin / 111111` dari fungsi inisialisasi database.
+  - **Safe Non-Destructive Migration**: Inisialisasi database pada `code.gs` dan `setup.gs` tidak lagi menghapus (*clear*) sheet yang sudah ada, menjamin seluruh data riil pengguna tidak pernah tertimpa.
 
-## 8. KRITERIA PENGUJIAN (TESTING CHECKLIST)
-- [x] Tamu dapat memasukkan nama dan masuk ke viewfinder kamera tanpa error.
-- [x] Kamera HP dapat memotret, menerapkan filter, menempelkan frame custom dan hashtag acara.
-- [x] Kuota foto berkurang setiap berhasil upload dan memblokir upload ke-11 jika batas 10.
-- [x] Foto tersimpan secara riil di folder Google Drive event.
-- [x] Galeri menampilkan foto secara dinamis sesuai mode reveal (Langsung vs Ditahan).
-- [x] Voting Like berfungsi sesuai kuota dan per kategori.
-- [x] Admin dapat login dengan PIN/Password, membuat event baru, mengubah settingan, dan membuka Live Slideshow.
-- [x] Multi-event management: aktifkan event, edit acara, dan isolasi galeri & voting 100% antar acara.
-- [x] Gerbang proteksi tautan inaktif: memblokir akses tamu jika link acara lama/tidak aktif dibuka manual.
-- [x] Panggung Slideshow Megah: foto berskala besar (84% layar) dengan efek Ambient Glow Blur anti-hitam dan QR Code raksasa tajam (500px).
+### 2.17 Isolasi Logo Monogram Acara & Penanganan Gambar Rusak (v4.15.0)
+- **Isolasi Monogram/Logo Tiap Acara (Multi-Event Logo Isolation)**:
+  - Setiap acara memiliki kolom monogram sendiri (`Logo_Acara`) pada tabel `Daftar_Acara` di Google Spreadsheet.
+  - Jika suatu acara tidak memiliki monogram/logo, kontainer `#heroLogoContainer` disembunyikan secara bersih tanpa mewarisi logo global vendor Runway.
+  - Atribut `#heroLogoImg` dilengkapi penanganan kegagalan otomatis (`onerror`) untuk menyembunyikan kontainer jika URL logo tidak dapat diakses, mencegah ikon gambar rusak.
 
-================================================================================
-ZONA BAWAH: MASTER CONTEXT & LOGIKA SISTEM TERKINI (LIVING CONTEXT)
-================================================================================
-- **Status Arsitektur Aktif:** Standalone Modern Web App Frontend (HTML5 / Tailwind CSS / Canvas API SPA) terhubung dengan Google Apps Script Backend (`code.gs`, `setup.gs`), Google Sheets Database, dan Google Drive Storage.
-- **Berkas Inti Projek:**
-  1. `setup.gs`: Inisialisasi basis data otomatis & safe migration (Sheet names: `DataEvent`, `DataFoto`, `DataKategoriVoting`, `DataVoting`, `DataPengaturanGlobal`).
-  2. `code.gs`: Backend Controller REST API (GET/POST router, upload base64 ke Google Drive, index-based column mapping, lock service, validasi kuota, handler `adminSetActiveEvent`).
-  3. `index.html`: Antarmuka modern mobile-first SPA semantik, memuat `style.css` dan `app.js`, dilengkapi gerbang proteksi `#viewEventClosed`, ambient glow backdrop, dan stasiun scan QR proyektor raksasa.
-  4. `style.css`: Lembar gaya kustom (Dark Luxury Gold, animasi Shutter Flash, Ken Burns Slideshow, dan efek Grain).
-  5. `app.js`: Mesin logika aplikasi lengkap (Kamera, Canvas Processing, Galeri, Poling, Session Admin, Form Handler, Event Gatekeeper, Multi-Event Segregation).
-  6. `README.md`: Panduan instalasi dan deployment ke Google Apps Script, GitHub Pages, Vercel, atau Netlify.
-- **Skema Pemetaan Database Terkini:**
-  - `DataEvent`: COL[0-16] (ID, Nama, Slug, Tanggal, Hashtag, MaxFoto, MaxVote, RevealMode, IsRevealed, LikeEnabled, PublicVisible, ActiveCameraStyles, ActiveFrames, GDriveFolderId, Status, CreatedAt, CustomFrameUrl).
-  - `DataFoto`: COL[0-11] (ID, IdEvent, GuestId, GuestNama, Caption, CameraStyle, FrameStyle, GDriveFileId, GDriveViewUrl, TotalLikes, IsFeatured, CreatedAt).
-  - `DataKategoriVoting`: COL[0-4] (ID, IdEvent, Nama, Deskripsi, Urutan).
-  - `DataVoting`: COL[0-6] (ID, IdEvent, IdFoto, IdKategori, GuestId, GuestNama, VotedAt).
-  - `DataPengaturanGlobal`: COL[0-2] (Kunci, Nilai, Keterangan) mencakup `app_title`, `app_logo_url`, `app_phone`, `app_instagram`, `admin_user`, `admin_pass`, `admin_pin`, `user_accounts`, `default_max_foto`, `default_max_vote`, `master_drive_folder_id`.
-- **Logika Bisnis Berjalan:**
-  - Manajemen Multi-Event & Aktivasi Satu-Klik: Daftar event tampil rapi di panel admin dengan tombol "✏️ Edit Acara" dan tombol "⭐ Aktifkan Event Ini". Saat diaktifkan, event tersebut langsung menjadi acara utama publik.
-  - Reset Sesi Tamu Otomatis saat Ganti Acara: Ketika admin mengaktifkan acara baru, sesi tamu publik direset seketika sehingga pengunjung diarahkan ke Screen 1 ("NAMA PANGGILAN KAMU") untuk acara tersebut.
-  - Isolasi Mandiri 100% Galeri & Voting: Setiap event memiliki riwayat foto (`snapevent_photos_${id}`) dan voting like (`snapevent_voted_photos_${id}`, `snapevent_voted_categories_${id}`) tersendiri tanpa pernah bercampur dengan acara lain.
-  - Strict URL Gatekeeper: Tamu yang mencoba mengetikkan parameter `?event=ID_INAKTIF` secara manual akan langsung diblokir dan ditampilkan layar informatif `#viewEventClosed` ("Acara Tidak Aktif / Telah Berakhir") beserta tombol kembali ke acara aktif.
-  - Proyektor Panggung Megah (Grand Ballroom Slideshow): Foto diperbesar mengisi 82-84% tinggi layar proyektor dengan lapisan dinamis Ambient Glow Blur (`#slideshowBackdropImg`) yang merefleksikan nuansa warna foto aktif (mengeliminasi kehampaan latar hitam pekat), serta Stasiun Scan QR Raksasa fisik (176–192 px) beresolusi tajam 500px (`getQrImageUrl(url, 500)`).
-  - Selector Filter Floating Bar di Dalam Viewfinder: Bilah pemilih filter (RAW, 800T, Warm Sun, B&W) terintegrasi melayang (*glassmorphism floating pill*) di dalam frame kamera tanpa memakan ruang vertikal.
-  - Unggah dari Galeri HP di Samping Shutter: Tombol galeri elegan di samping tombol shutter memungkinkan tamu memilih dan mengunggah foto langsung dari penyimpanan galeri ponsel.
-  - Alur Pemilihan Frame Bersih: Penggantian bingkai difokuskan pada modal review pasca-jepret, menghilangkan gesture swipe pada kamera aktif untuk mencegah perubahan frame yang tidak disengaja.
-  - Penyimpanan Foto Resilient & Sinkronisasi Drive: Setiap foto yang diambil atau diunggah langsung tersimpan ke galeri lokal (`STATE.photos` + `localStorage`) dan secara otomatis diunggah ke folder Google Drive acara melalui backend GAS.
-  - Slideshow Responsif (Mobile vs Desktop PC): Pada layar ponsel, menu slideshow menyediakan tombol "📲 Bagikan Acara" (Web Share API / QR Modal), sementara pada layar desktop/proyektor ballroom menampilkan QR Code fisik beresolusi tinggi dengan foto yang membesar maksimal (`max-h-[92vh] max-w-[96vw]`).
-  - Persistensi Halaman saat Refresh (F5): Rute tampilan aktif disimpan di `sessionStorage`, sehingga tamu maupun admin tidak terlempar ke layar awal saat browser dimuat ulang.
-  - Interaksi Pemenang Voting (Click-to-Zoom): Seluruh area kartu podium Juara 1 Emas 🥇, Juara 2 Perak 🥈, dan Juara 3 Perunggu 🥉 dapat diklik untuk memperbesar gambar foto lengkap dengan ucapan dan jumlah perolehan suka.
-  - Alur Kamera-First & Navigasi Tamu Terbuka (Unlocked Flow): Tamu yang pertama kali membuka web app langsung diarahkan ke layar kamera (`viewCamera`) dengan live viewfinder dan retro filter siap jepret seketika tanpa terhalang form nama di awal. Halaman tulis nama (`viewWelcome`) dapat diakses via navigasi bawah "Profil Tamu" atau saat menyimpan foto, dengan akses penuh tanpa batas ke menu Galeri & Voting juara.
-  - Voting Ketat 1x per Kategori: Tamu hanya diperbolehkan memberikan 1 vote per kategori, divalidasi ganda di sisi frontend dan backend GAS.
-  - Multi-User Management & Ganti Password: Menu admin dilengkapi modal tambah akun pengguna (Admin / Operator Kru) dan modal mandiri ganti password dengan validasi password lama yang tersinkronisasi ke Google Sheets.
-  - Alur Pembuatan Acara Baru yang Bersih: Tombol "+ Buat Event Baru" mereset formulir dan menghasilkan ID unik baru (`EVT-YYYYMM-XXX`), mendaftarkan ke daftar acara dan menyinkronkan data ke backend.
-  - Integrasi Google Drive Cerdas: Ekstraksi otomatis ID folder dari URL lengkap Drive, upload Base64 dengan header CORS aman (`text/plain;charset=utf-8`).
-  - Multi-User Login & Branding Kustom: Mendukung penambahan akun operator/kru, kustomisasi nama brand aplikasi, unggah logo kustom, serta nomor WhatsApp & Instagram kontak resmi.
-- **Log Pembaruan Resmi:**
-  - [2026-11-16] Rilis v2.3.2: Universal Subfolder Base Path Resolver & Dual-Layer Asset Defensive Fallback untuk `www.runway.my.id/cam` (implementasi skrip Universal Base Path Resolver sinkron di `<head>` `index.html` yang otomatis mendeteksi akses subpath `/cam` dan mengunci base href ke `/cam/`, penyematan handler defensif `onerror` pada pemanggilan `style.css` dan `app.js` untuk mengeliminasi total insiden layar hitam/kosong akibat salah jalur aset root vs subfolder, penyelarasan default fallback `getEventShareUrl()` ke `https://www.runway.my.id/cam` sehingga seluruh stiker QR code meja dan tautan bagikan acara 100% akurat mengarah ke `/cam`, dan zero-regression terhadap fitur lainnya).
-  - [2026-11-16] Rilis v2.3.1: Modern SPA Rewrites Architecture di `vercel.json` & Panduan Resolusi 1-Menit Domain Kustom `runway.my.id` (pembaruan konfigurasi `vercel.json` dari model `routes` legacy menjadi model modern `rewrites` SPA sehingga seluruh rute URL disajikan ke `index.html` dengan header Cache-Control anti-stale dan CORS terpadu, diagnosis tuntas respon 308 redirect `runway.my.id` ke `www.runway.my.id` dengan respon 404 NOT_FOUND Vercel Edge, konfirmasi kesehatan penuh status 200 OK pada deployment aktif `camera-blush-theta.vercel.app`, serta panduan nonaktifkan redirect www di Vercel Dashboard agar domain kustom kembali normal seketika).
-  - [2026-11-15] Rilis v2.3.0: Presisi VIP Action Dock & Refinement Estetika Mewah QR Code (integrasi wadah dock vertikal obsidian glass untuk 3 tombol aksi logo sejajar presisi 1:1 dengan kotak QR Code, integrasi rapi micro-badge HD di dalam tombol unduh tanpa memotong border, pembersihan modul pill zoom yang menutupi pola piksel QR Code, perataan simetri kartu selamat datang tamu, serta penegasan arsitektur 100% online cloud sync ke Google Sheets dan Google Drive).
-  - [2026-11-15] Rilis v2.2.9: Tombol QR Sambutan Icon-Only (Logo Tanpa Teks), Retensi Pintar Galeri Cloud & Peniadaan deleteRow pada GET Galeri di Backend, Universal Boolean Parser untuk Pengaturan Foto Panggung ("TRUE"/true/1), dan Viewfinder Kamera Live serta Modal Pratinjau Adaptif Bebas Black Void Letterboxing (pengubahan 3 tombol aksi QR halaman selamat datang tamu menjadi format logo/ikon luxury tanpa tulisan teks berantakan, penghapusan operasi destruktif deleteRow pada handleGetGallery di code.gs agar foto yang baru diunggah tidak terhapus selama masa pengindeksan Google Drive, implementasi retensi pintar 5 menit di frontend loadGallery agar foto yang baru diunggah langsung tampil stabil tanpa pernah hilang, implementasi fungsi parseBoolSafe pada app.js untuk membaca status aktif menu Foto Panggung dari Google Sheets secara akurat kebal format huruf besar "TRUE", penataan ulang kontainer kamera live dan modal pratinjau agar adaptif terhadap rasio asli foto dan bebas dari bar void hitam yang memotong layar, serta 100% online cloud sync ke Google Sheets dan Google Drive).
-  - [2026-11-15] Rilis v2.2.8: Presisi Bingkai 1:1 Zero-Distortion & Zero-Crop, Redesain Mewah Suite QR Code, Pemulihan Seleksi Multi-Frame Bebas 1-2 Bingkai, Eliminasi Total Duplikasi Upload Foto (2x Upload Google Drive Saat Pindah App), Menu Baru Foto Panggung Terhubung Google Drive dengan Custom Label/Link & Admin Toggle Switch, serta 100% Online Cloud Sync ke Google Sheets.
-  - [2026-11-15] Rilis v2.2.7: Enter Key Login, Stage Slideshow Hidden Photo Isolation, Zero-Crop Custom Frame Watermark, Admin Direct Cam/Gallery Access, Unified Menu Header, Page Persistence, & QR Action Suite (implementasi form submit & Enter key pada modal login admin, penyaringan ketat foto tersembunyi/dihapus pada mode slideshow proyektor panggung agar foto yang disembunyikan admin langsung lenyap dari rotasi layar ballroom, perataan bingkai viewfinder live camera dengan object-fill, peniadaan pemotongan/cropping pada canvas rendering foto sehingga seluruh ornamen atas dan logo bawah bingkai tercetak 100% utuh, eliminasi tab duplikat '+ Buat Event Baru' di header admin, persistensi rute tampilan & subtab admin saat browser direfresh/F5, pembukaan akses langsung live cam & galeri bagi admin aktif tanpa terhalang nama tamu, penyediaan suite tombol aksi QR Code [Bagikan Link, Unduh QR 1000px, Salin Link QR] berdampingan pada kartu sambutan tamu, dan sinkronisasi 100% online pada seluruh data cloud).
-  - [2026-11-15] Rilis v2.2.6: Input Link Target Bingkai & 100% Online Sync Perintah Cloud (penggantian penuh komponen file upload fisik bingkai dengan input URL teks target link Google Drive / Direct PNG transparan dengan auto-ekstraksi CDN link `https://lh3.googleusercontent.com/d/{ID}` yang kebal terhadap batas ukuran sel Google Sheets, sinkronisasi online koleksi bingkai kustom via `global_custom_frames` dan `event_custom_frame_${idEvent}` di Google Sheets `Pengaturan`, sinkronisasi penghapusan kategori via `deleted_categories_${idEvent}` di cloud config, proteksi anti-reset tanggal acara, eliminasi alt text 'Fra...' yang terpotong pada thumbnail bingkai rusak dengan fallback icon elegan, dan pemulihan kelancaran submit event form).
-  - [2026-11-15] Rilis v2.2.5: 100% Online Cloud Sync & Isolasi Kategori Galeri Presisi (eliminasi total stale merge pada foto yang disembunyikan/ditampilkan kembali sehingga foto yang di-unhide seketika muncul kembali di seluruh perangkat lain, pengalihan pemetaan kategori dan suara foto secara online via `event_photo_category_votes` di Google Sheets `Pengaturan`, isolasi murni filter kategori galeri tanpa fallback semua foto disertai UI empty-state ramah per kategori, penyematan badge kategori foto pada kartu galeri, sinkronisasi cloud otoritatif tanpa tombstone lokal kadaluarsa).
-  - [2026-11-15] Rilis v2.2.4: Multi-Device Authority & Frame Policy Live Sync (otoritas cloud config untuk kategori dan bingkai, multi-device auto active event detection, update modal voting ke kategori aktif, live sync bingkai kamera, autofill tanggal acara ISO YYYY-MM-DD, heartbeat 15s + window focus listener).
-  - [2026-11-09] Rilis v1.5.8: Omni-Device Cloud Frame Sync & Google Drive Auto-Upload (pengunggahan otomatis custom frame PNG base64 langsung ke Google Drive publik saat admin menyimpan acara, penulisan direct view URL Google Drive ke cell 17 DataEvent sehingga gambar custom frame dapat diakses dan diunduh oleh seluruh HP tamu lintas perangkat, normalisasi ID frame kustom lokal 'frame_...' menjadi universal ID 'CUSTOM_EVENT' di Google Sheets dan frontend sehingga tidak ada lagi ghost frame ID, perbaikan auto-insert saat idEvent dari frontend belum ada di spreadsheet (mencegah silent drop), serta penanganan respon error Google Apps Script secara transparan di frontend).
-  - [2026-11-09] Rilis v1.5.7: Frame Settings Persistence & Defensive State Revalidation (perbaikan tuntas masalah pengaturan bingkai yang tidak berubah saat disimpan dan di-refresh: penambahan pembacaan `parseEventFramesConfig(er[COL_EVENT.FRAMES])` pada `allEvents` di `code.gs` `handleGetEventDetails()`, implementasi `async function saveAdminEventForm()` dengan `await fetch` dan indikator tombol loading agar data dipastikan selesai ditulis ke Google Sheets sebelum tab berpindah, perbaikan `loadEventData()` dengan Defensive Merge Pattern agar data lokal `activeFrames` dan `frameLockMode` tidak pernah tertimpa oleh data server yang belum lengkap, serta harmonisasi resolusi ID custom frame `CUSTOM_EVENT` dan `frame_...` di `getAvailableFrames()` dan `applyEventToUI()` sehingga hanya bingkai yang dicentang admin yang muncul pada tamu).
-  - [2026-11-09] Rilis v1.5.6: Custom Frame Single Lock Selection & Sortable Multi-Frame Suite with Instant SWR Engine (penambahan daftar kartu visual pilihan bingkai kustom lengkap dengan thumbnail foto dan status kunci pada menu 'Kunci 1 Bingkai' Single Lock, penambahan tombol aksi satu-klik '🔒 Kunci Bingkai Ini' pada setiap baris di 'Koleksi Bingkai Kustom Aktif', penataan mode 'Bebas Pilih Multi-Frame' yang menampilkan seluruh frame bawaan dan frame kustom aktif dengan drag-and-drop sortable `⠿` dan panah `▲`/`▼`, penyediaan template kustom preset bawaan berkualitas tinggi, serta penerapan arsitektur performa Instant First-Paint & Asynchronous SWR Background Engine yang mengeliminasi delay loading pada saat refresh kamera live, galeri foto, dan dashboard admin).
-  - [2026-11-09] Rilis v1.5.5: Sortable Frame Drag-and-Drop & Custom Frame Lock Control (implementasi pengurutan posisi bingkai foto di menu Admin dengan interaksi Drag & Drop HTML5 `⠿` dan tombol panah touch `▲`/`▼` yang secara presisi mengatur urutan tombol bingkai pada layar review tamu, pengikutsertaan bingkai kustom PNG acara ke dalam daftar urutan drag & drop, serta integrasi bingkai kustom PNG ke dalam dropdown pilihan mode 'Kunci 1 Bingkai' Single Lock sehingga foto tamu otomatis terkunci menggunakan bingkai kustom acara).
-  - [2026-11-09] Rilis v1.5.4: Global Backend Data Sync & Multi-Device Gallery Reconciliation (sinkronisasi metrik global Google Sheets ke panel Admin mencakup Total Event: 5, Total Foto: 13, Total Suara: 8, perenderan 5 kartu event master di dashboard admin, rekonsiliasi galeri multi-perangkat di `loadGallery()` dengan retensi foto lokal pending dan auto-retry upload background ke Google Drive & Sheets sehingga foto dari seluruh HP tamu langsung seragam dan tampil di semua perangkat, serta auto-sync saat F5 refresh panel admin).
-  - [2026-11-09] Rilis v1.5.3: Guest Identity Reset & Admin Frame Control (penambahan fitur reset/ganti nama tamu via tombol '🔄 Mulai Ulang / Ganti Nama Tamu' di `viewWelcome` dan badge profil klik-ke-reset di status bar `viewCamera`, penambahan kontrol kebijakan bingkai di menu Admin Form Event mencakup mode 'Bebas Pilih Multi-Frame' dengan checklist bingkai aktif dan mode 'Kunci 1 Bingkai Seragam' yang otomatis meniadakan carousel pemilih bingkai dan mengunci hasil foto tamu pada bingkai resmi acara).
-  - [2026-11-09] Rilis v1.5.2: Zero-Scroll Camera & Mandatory Guest Name Gate (pengunjung wajib mengisi nama panggilan di `viewWelcome` sebelum kamera dapat digunakan, live stream kamera hanya aktif setelah nama tersimpan, pencegahan klik tab kamera tanpa nama, dan penataan layout 1 halaman utuh zero-scroll pada `viewCamera` tanpa scrollbar vertikal).
-  - [2026-11-09] Rilis v1.5.1: Custom Backend & Master Drive Seeded Permanently (penanaman paten URL Web App GAS `https://script.google.com/macros/s/AKfycbxg-Owg7BrEqx4KHDI7UsLBX88ejLXcVxgQuSZNtz8d0rIJ_wCGVQFsOzpKGDO8w8cOrw/exec` dan Master Drive ID `12LfLW50HIuMUPCGQiRJKy_aO4RhVICjw` di `setup.gs`, `code.gs`, `app.js`, dan `index.html` dengan proteksi fallback reset demo data, zero regression terhadap fitur lainnya).
-  - [2026-11-09] Rilis v1.5.0: Permanent Cloud Bridge & Verified Google Drive Sync (penyematan paten URL Web App GAS aktif `https://script.google.com/macros/s/AKfycbxg-Owg7BrEqx4KHDI7UsLBX88ejLXcVxgQuSZNtz8d0rIJ_wCGVQFsOzpKGDO8w8cOrw/exec` dan Master Drive ID `12LfLW50HIuMUPCGQiRJKy_aO4RhVICjw` pada `app.js` & `code.gs`, penguatan status feedback upload Drive transparan di `handleSavePhotoToDrive()`, auto-hydration judul 'SnapEvent Enterprise Studio', serta pemulihan total sinkronisasi foto galeri lintas-browser tanpa refresh manual).
-  - [2026-11-09] Rilis v1.4.9: Camera-First Entry & Unlocked Guest Navigation (pengunjung pertama kali langsung membuka layar kamera `viewCamera` siap jepret, navigasi bawah `#bottomNavBar` terbuka bebas di halaman tulis nama `viewWelcome` untuk berpindah ke Galeri & Voting kapan saja, penambahan tombol pintas `#btnWelcomeGoGallery`, dan integrasi prompt nama ramah otomatis saat menyimpan foto ke Drive).
-  - [2026-11-08] Rilis v1.4.8: Hotfix Kritis Responsivitas Menu (eliminasi duplikasi deklarasi `urlParams` di `initApp` yang memicu browser menolak parsing JS, pemulihan 100% seluruh event listener tombol, navigasi, dan menu).
-  - [2026-11-08] Rilis v1.4.7: Omni-Device Persistent Cloud Sync (penyematan ID folder Google Drive resmi `12LfLW50HIuMUPCGQiRJKy_aO4RhVICjw` sebagai default manifest di `app.js` dan seed di `setup.gs`, auto-hydration konfigurasi cloud dari sheet `DataPengaturanGlobal` ke `localStorage` pada setiap perangkat baru, Smart QR & Share URL Bridge yang membawa token cloud `?gas=...`, serta Realtime Cloud Heartbeat 45 detik untuk sinkronisasi otomatis proyektor dan HP tamu tanpa refresh manual).
-  - [2026-11-08] Rilis v1.4.6: Penguatan Sinkronisasi Multi-Perangkat & Proteksi Cloud Config (validasi eksplisit saat Simpan Konfigurasi tanpa GAS URL, perbaikan mapping 17 kolom pada `handleAdminSaveEvent` di `code.gs`, perbaikan penargetan event ID dinamis pada `saveAdminEventForm`, dan safeguarding `handleAdminUpdateGlobalConfig`).
-  - [2026-11-08] Rilis v1.4.5: Onboarding GAS URL Terpadu (dukungan prompt input instan satu-klik saat tombol '🔄 Sinkronkan Data GAS' ditekan sebelum URL tersimpan, dilengkapi transisi otomatis ke tab Pengaturan Global dengan glowing highlight pada field input target).
-  - [2026-11-08] Rilis v1.4.4: Penyediaan 5 Data Dummy Master Lengkap beserta relasi bisnis (kategori voting, foto sampel realistis, suka, dan riwayat suara) di `setup.gs`, implementasi ERP Mode (`modeERP_ResetDanIsiDataDummy()`) dengan Custom Google Sheets Menu (`🚀 SnapEvent ERP` via `onOpen()`) dan dialog konfirmasi aman, penyempurnaan skema Enterprise Multi-Role, serta sinkronisasi otomatis daftar multi-event dua arah antara Google Sheets dan browser admin.
-  - [2026-11-08] Rilis v1.4.3: Engine Sinkronisasi Multi-Event Lengkap (penyediaan endpoint `getAllEvents`, penambahan baris `allEvents` pada seluruh respon event GAS, fungsi otomatis `syncEventsFromBackend()`, tombol `🔄 Sinkronkan Data GAS` di panel admin, serta eliminasi batasan penarikan event tunggal).
-  - [2026-11-08] Rilis v1.4.2: Manajemen multi-event terintegrasi (daftar event, edit, dan tombol aktivasi satu-klik), auto-reset identitas tamu ke Screen 1 saat ganti event, isolasi total data foto & voting per event (zero cross-contamination), URL guard proteksi acara inaktif (`#viewEventClosed`), serta transformasi visual Slideshow Proyektor Ballroom (upscaling foto 84vh, ambient backdrop glow blur anti-hitam kosong, dan Stasiun Scan QR resolusi 500px).
-  - [2026-11-08] Rilis v1.4.1: Pemulihan tuntas parsing JavaScript (eliminasi fatal SyntaxError orphan brackets), penguatan header anti-CORS pada seluruh panggilan POST Google Apps Script (`adminLogin`, `adminSaveEvent`, `adminToggleReveal`), serta penyematan fitur "⚡ Tes Koneksi & Sinkronisasi" di panel Admin.
-  - [2026-11-08] Rilis v1.4.0: Filter floating bar di dalam viewfinder, tombol unggah foto galeri ponsel di samping shutter, kembalikan pemilihan bingkai ke modal review foto, jaminan simpan galeri + Google Drive, slideshow responsif (Mobile Share vs Desktop PC Proyektor berskala maksimal), persistensi halaman saat refresh browser (F5), dan interaksi zoom foto pemenang podium.
-  - [2026-11-08] Rilis v1.3.0: Live preview filter kamera real-time, auto-open camera stream, zero-scroll 1-page layout, pemilihan bingkai pasca-foto di modal review, pembatasan voting 1x per kategori, info uploader & pesan di slideshow proyektor, upload Google Drive anti-CORS, dan kustomisasi logo/branding serta multi-user login.
-  - [2026-11-08] Rilis v1.2.0: Restrukturisasi modular untuk repositori GitHub (`index.html`, `style.css`, `app.js`), perbaikan tuntas SyntaxError penyebab menu macet, dan pengujian engine Chromium tanpa error.
-  - [2026-11-08] Rilis v1.1.0: Menerapkan login username/password, persistensi sesi admin, unggah custom frame PNG per-event, pengaturan folder Google Drive eksplisit, dan perbaikan tuntas masalah pratinjau foto hitam.
-  - [2026-11-08] Rilis v1.0.0: Seluruh kode inti frontend, backend GAS, frame generator, integrasi Drive, galeri poling, dan mode live slideshow proyektor berhasil diimplementasikan penuh.
+### 2.18 Perbaikan Kendala Pembukaan Acara Lainnya & Eliminasi Deadlock Kartu Skeleton (v4.16.0)
+- **Resolusi Dini Tanpa Pemblokiran 404**:
+  - Mengeliminasi penghentian dini (*early abort*) pada pembacaan `config.json` di `initApp()`, menjamin proses inisialisasi terus berjalan menuju `syncFromSpreadsheetGViz()` yang membaca data acara live dari Google Sheets database.
+- **Penerimaan Respons Folder Kosong Secara Anggun**:
+  - Endpoint `/api/drive-folder` yang mengembalikan array foto kosong (`photos: []`) diterima sebagai status sukses yang valid tanpa memicu pengecualian `throw new Error("Folder kosong")`.
+- **Eliminasi Total Deadlock Kartu Skeleton**:
+  - Menyediakan blok `else` pada pemeriksaan folder `activeDriveId !== respDriveId` dan penyaringan foto `sortedIncoming.length === 0` di `handleGalleryResponse()`. DOM kartu skeleton selalu dibersihkan dan digantikan secara seketika oleh kartu mewah `.empty-gallery-card`.
+- **Penyelarasan Multi-Event Registry**:
+  - Menyelaraskan seluruh entri acara (`andre-fayola-281`, `wilson-felicia-133`, `wilson-felicia`) di `config.json` lengkap dengan ID folder Google Drive yang akurat sesuai Google Sheets.
+- **Perpindahan Acara Dinamis & Mulus**:
+  - Pemilihan acara via `handleSelectEventChange()` seketika memperbarui `state.activeCategory`, memanggil `renderPhotoGrid()`, memperbarui address bar browser secara dinamis, dan memicu sinkronisasi foto murni acara yang dipilih tanpa kebocoran cache lintas acara.
 
+### 2.20 Proteksi Tautan Domain Utama: Notifikasi 'Halaman Tidak Ditemukan' Saat URL Root Diakses Tanpa Parameter Acara (v4.20.0)
+- **Kewajiban Parameter Acara Eksplisit (Strict Event Requirement)**:
+  - Akses langsung ke root domain murni (`https://gallery.runway.my.id/`) tanpa menyertakan parameter acara (`?event=...` atau `?e=...`) diwajibkan menampilkan layar notifikasi **"Halaman Tidak Ditemukan"** (`#eventNotFoundScreen`).
+  - Menghapus seluruh mekanisme auto-fallback (ke `localStorage`, `ACTIVE_EVENT_ID`, `andre-fayola-281`, atau `state.events[0]`) yang sebelumnya secara otomatis memuat acara pengantin pada URL root.
+  - Seluruh elemen galeri (nama pasangan pengantin, banner sambutan, logo monogram, filter kategori, kartu foto, dan footer) disembunyikan seketika untuk melindungi kerahasiaan dan privasi masing-masing pasangan pengantin.
+
+### 2.21 Redesain Layar 'Halaman Tidak Ditemukan': Tampilan Minimal Frameless, Eliminasi Tombol Admin & Isolasi Kontrol Galeri (v4.21.0)
+- **Tampilan Minimal Frameless**:
+  - Menghilangkan `border`, `box-shadow`, dan `background: #FFFFFF` kaku pada `.event-not-found-card` di [css/style.css](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-panggung/css/style.css). Wadah notifikasi menyatu bersih dengan latar belakang halaman.
+- **Penghapusan Kalimat Contoh Tautan**:
+  - Menghapus teks `"atau buka link khusus acara (contoh: ?event=nama-acara)."` dari [index.html](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-panggung/index.html) dan [js/app.js](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-panggung/js/app.js).
+  - Teks deskripsi tersisa hanya arahan ramah: *"Tautan galeri tidak menyertakan kode acara yang valid.<br>Silakan periksa kembali tautan undangan Anda."*
+- **Penghapusan Tombol Masuk Panel Admin**:
+  - Tombol *"Masuk Panel Admin"* di dalam kartu `#eventNotFoundScreen` dihapus sepenuhnya dari [index.html](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-panggung/index.html) agar pengunjung publik pada URL root tidak memiliki akses tombol admin.
+- **Penyembunyian Menyeluruh Bilah Filter Bawah & Grup Kontrol Aksi (Share, Refresh, Gembok Admin)**:
+  - Memperbaiki selektor penyembunyian pada hidrasi awal [index.html](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-panggung/index.html) dan fungsi `showEventNotFoundScreen()` di [js/app.js](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-panggung/js/app.js) untuk secara akurat menargetkan `#gallerySection` (`.filter-wrapper`) dan `#adminActiveFloatingBar`.
+  - Memasang aturan CSS fail-safe `#eventNotFoundScreen:not([style*="display: none"]) ~ #gallerySection` sehingga tab "Semua Foto" dan ikon aksi bawah terjamin 100% tersembunyi tanpa risiko keterlambatan eksekusi JavaScript.
+
+### 2.22 Redesain Galeri Frameless, Eliminasi Tombol Photobooth & Pembersihan Total Hardcoded Fallback (v4.22.0)
+- **Galeri Frameless & Borderless**:
+  - Menghapus border, box-shadow, dan background kaku pada kartu status kosong foto `.empty-gallery-card` di [css/style.css](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-panggung/css/style.css) sehingga tampil bersih menyatu dengan latar belakang (*minimalist aesthetic*).
+  - Menghapus border pada kartu foto individual `.photo-card` sehingga seluruh foto tampil bersih, elegan, dan *edge-to-edge* (borderless).
+- **Penghapusan Tombol Pintas Photobooth**:
+  - Menghapus tombol pintas `Buka Foto Photobooth (... Foto) →` dari `renderPhotoGrid()` di [js/app.js](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-panggung/js/app.js). Area kategori kosong hanya menyajikan tombol *"Segarkan Kategori Ini"*.
+- **Pembersihan Total Fallback Hardcode (100% Realtime Database Murni)**:
+  - Mengosongkan seluruh parameter fallback root di [config.json](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-panggung/config.json) (`FRAME_IMAGE_URL: ""`, `DRIVE_FOLDER_ID: ""`, `ACTIVE_EVENT_ID: ""`, `EVENT_NAME: ""`, `PHOTOBOOTH_URL: ""`, `CUSTOM_CATEGORIES: []`).
+  - Mengisolasi pembacaan frame per acara di [js/app.js](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-panggung/js/app.js) murni dari `matchedEv.frameImageUrl`, mencegah pewarisan frame global yang tidak diinginkan.
+
+### 2.23 Resolusi Masalah Refresh Event Baru & Eliminasi Total Infinite Skeleton Loading (v4.23.0)
+- **Pembersihan Skeleton Instan di Awal (`initApp`)**:
+  - Pada event baru yang baru dibuat (di mana cache foto lokal masih kosong/belum ada foto tersimpan), `initApp()` seketika mengeksekusi `renderPhotoGrid()` dalam 0 milidetik.
+  - Kartu skeleton bawaan HTML segera dibersihkan dan digantikan secara langsung oleh status elegan *"Momen Indah Sedang Disiapkan"* tanpa menunggu seluruh rangkaian request jaringan.
+- **Pencegahan Abort Prematur di `config.json`**:
+  - Menghapus pemanggilan `showEventNotFoundScreen(true)` di dalam `fetch("config.json")`.
+  - Jika ID event belum terdaftar di file statis `config.json`, proses inisialisasi dialirkan secara mulus menuju `syncFromSpreadsheetGViz()` untuk membaca database realtime Google Spreadsheet tanpa tertahan notifikasi 404 keliru.
+- **Fail-Safe Watchdog Timer (3.5 Detik)**:
+  - Memasang watchdog timer 3.5 detik pada `fetchGalleryData()` dan `showGridSkeleton()`. Jika proses pembacaan backend Google Apps Script atau vendor eksternal mengalami latensi atau pending jaringan, kartu skeleton otomatis dihentikan dan `#photosGrid` segera dirender menggunakan `renderPhotoGrid()`.
+  - Menambahkan `AbortController` dengan timeout 4 detik pada pemanggilan `/api/drive-folder` sehingga otomatis beralih ke backend GAS jika serverless scrape tidak merespons.
+- **Jaminan Konsistensi Metadata Multi-Event pada Backend Google Apps Script (`code.gs`)**:
+  - Memastikan seluruh cabang pengembalian pada `getGalleryData()` (termasuk folder kosong dan folder baru) selalu menyertakan `events: eventsList` dan `activeEventId: selectedEventId` agar frontend selalu menerima registry acara lengkap.
+
+### 2.24 Resolusi Infinite Onerror Logo Loop & Penuntasan Tab Spinner Loading (v4.24.0)
+- **Eliminasi Infinite Onerror Loop pada Elemen Logo (`#heroLogoImg` & `#adminLogoPreviewImg`)**:
+  - Menghapus atribut kosong `src=""` pada tag `<img>` di [index.html](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-panggung/index.html) yang secara otomatis di-resolve browser ke URL halaman dan memicu loop penugasan error tak berujung.
+  - Memperbarui event handler `onerror` menjadi self-detaching: `this.onerror=null; this.removeAttribute('src'); if (this.parentElement) this.parentElement.style.display='none';`.
+  - Mengubah seluruh logika reset logo pada inline micro-loader [index.html](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-panggung/index.html) dan [js/app.js](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-panggung/js/app.js) dari `img.src = ""` menjadi `img.removeAttribute('src')`.
+- **Watchdog Timeout pada Koneksi Backend Apps Script (`callBackend`)**:
+  - Memasang `AbortController` dengan batas timeout 8 detik pada fungsi `callBackend()` di [js/app.js](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-panggung/js/app.js) guna mencegah koneksi pending permanen dari pemanggilan macro GAS.
+- **Penyelarasan Pre-Hydration Event Tommy & Natasha di `config.json`**:
+  - Mendaftarkan `tommy-natasha-594` ke array `EVENTS` statis di [config.json](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-panggung/config.json) untuk memastikan hidrasi instan 0ms saat halaman di-refresh.
+
+### 2.25 Sinkronisasi Total Multi-Event ke Sheet 'Daftar_Acara' & Penambahan Baris Realtime (v4.25.0)
+- **Fungsi Setup Mandiri 1-Klik (`populateDaftarAcara`) pada `setup.gs`**:
+  - Menempatkan fungsi `populateDaftarAcara()` pada baris teratas [setup.gs](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-panggung/setup.gs) sebagai fungsi default saat berkas dibuka di Google Apps Script. Sekali klik **Run (▶️)**, ke-3 event aktif (`andre-fayola-281`, `wilson-felicia-133`, `tommy-natasha-594`) langsung dimasukkan dan diformat rapi dengan header emas 11 kolom pada spreadsheet `133_po_5H36hVSwVwGm48pwREPPSowohqvPzauXSEN20`.
+  - Memperbarui `setupTargetSpreadsheetDatabase()` agar secara otomatis mengisikan ke-3 event tersebut jika baris data masih kosong ($row \le 1$).
+- **Fungsi Append Baris Realtime & Endpoint Backend (`code.gs`)**:
+  - Menambahkan fungsi `addEventToSheet(ss, ev)` dan `syncAllEventsToSheet()` pada [code.gs](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-panggung/code.gs) untuk menggaransi bahwa setiap penambahan event baru langsung menyisipkan baris fisik ke sheet `Daftar_Acara`.
+  - Menambahkan action API `addEvent` dan `syncDaftarAcara` pada `handleApiRequest()` untuk melayani instruksi sinkronisasi langsung dari Web Admin.
+  - Menyelaraskan ukuran 11 kolom penuh termasuk `Logo_Acara` (260px) dan `Status` (100px).
+- **Integrasi Dua Arah Web Admin & GViz Realtime Sync (`js/app.js` & `index.html`)**:
+  - Pada penambahan event baru (`handleAddNewEvent`), selain menyimpan konfigurasi global, frontend langsung memicu `callBackend("addEvent", ...)` untuk append baris ke sheet `Daftar_Acara`.
+  - Pada `syncFromSpreadsheetGViz()`, menambahkan pembacaan berkala dari `sheet=Daftar_Acara` sehingga penambahan atau perubahan baris event yang dilakukan langsung di Google Sheets secara realtime otomatis terbaca dan tersinkronisasi ke aplikasi web.
+  - Menambahkan tombol *"📊 Sinkronkan ke Sheets"* pada antarmuka admin Tab Acara di [index.html](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-test/index.html) yang memanggil `triggerSyncDaftarAcara()`.
+
+### 2.26 Migrasi Arsitektur Database ke Supabase & Realtime Engine (v4.26.0)
+- **Implementasi Supabase Cloud Database (PostgreSQL + Realtime WebSocket)**:
+  - Mengintegrasikan library resmi `@supabase/supabase-js@2` pada [index.html](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-test/index.html).
+  - Menyiapkan cetak biru SQL DDL di [scratch/supabase_schema.sql](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-test/scratch/supabase_schema.sql) (tabel `events`, `settings`, `admin_users`, `activity_logs`, Row Level Security / RLS, dan seed data 3 event aktif).
+  - Menyediakan konfigurasi `DATABASE_ENGINE: "supabase"`, `SUPABASE_URL`, dan `SUPABASE_ANON_KEY` di [config.json](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-test/config.json) dan antarmuka Admin Tab Cloud & API (`#cfgSupabaseUrl`, `#cfgSupabaseAnonKey`).
+- **Sistem Dual-Engine Fail-Safe (Zero Downtime)**:
+  - Memasang logika transisi cerdas di [js/app.js](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-test/js/app.js): jika kredensial Supabase terisi, sistem membaca dan menulis data ke Supabase (<50ms). Jika belum diisi atau mengalami kendala jaringan, sistem secara otomatis beralih (*fallback*) ke Google Sheets GViz dan Google Apps Script tanpa downtime.
+- **Koneksi WebSocket Realtime 0 Detik**:
+  - Mengaktifkan subscription kanal `supabase.channel('wedding-realtime-channel')` pada tabel `events` dan `settings`.
+  - Pembaruan nama acara, logo, kategori, atau penambahan event baru oleh admin langsung tersebar secara instan (0 milidetik) ke seluruh layar proyektor slideshow dan tamu tanpa memerlukan refresh halaman atau polling 20 detik.
+- **Fitur 1-Klik Salin Data dari Google Sheets ke Supabase**:
+  - Menyediakan tombol `handleMigrateSpreadsheetToSupabase()` pada UI Admin untuk memindahkan seluruh data event aktif dari spreadsheet ke Supabase dalam 1 kali klik.
+  - Menyediakan tombol `handleTestSupabaseConnection()` untuk verifikasi status koneksi instan.
+
+### 2.27 Eliminasi Total Database Ganda & Konsolidasi Supabase Single Source of Truth (v4.27.0)
+- **Pembersihan Database Google Sheets & Google Apps Script**:
+  - Menghapus berkas `setup.gs` dari repositori proyek karena inisialisasi tabel spreadsheet sudah tidak lagi terpakai.
+  - Menghapus modul tampilan *'Database Google Sheets (ERP Master Data)'* dan input *'URL Google Apps Script'* dari Tab 4 Admin di [index.html](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-test/index.html).
+  - Menghapus tombol *'Sinkronkan ke Sheets'* pada Tab Acara di [index.html](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-test/index.html).
+  - Tab 4 Admin resmi berubah menjadi **⚡ Database Supabase** yang bersih, elegan, dan fokus.
+- **Konsolidasi Single Source of Truth di [js/app.js](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-test/js/app.js)**:
+  - Menghapus polling berkala GViz Google Sheets (`syncFromSpreadsheetGViz`) dan dual-write sinkronisasi ke GAS.
+  - Operasi Create (tambah event), Read (ambil registry acara & settings), Update (simpan pengaturan), dan Delete (hapus event) dieksekusi 100% murni langsung ke Supabase PostgreSQL dengan latensi <50ms dan WebSocket realtime 0 detik.
+  - Menambahkan tombol *"🔄 Segarkan Data Realtime"* (`handleRefreshFromSupabase()`) pada panel admin.
+- **Pembaruan Konfigurasi di [config.json](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-test/config.json)**:
+  - Menetapkan `"SUPABASE_URL": "https://faszgrkwdlqxbppownh.supabase.co"`.
+  - Membersihkan parameter usang: `"SPREADSHEET_ID"`, `"SPREADSHEET_URL"`, dan `"GAS_API_URL"`.

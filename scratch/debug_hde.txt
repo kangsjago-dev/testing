@@ -1,0 +1,62 @@
+function isGooglePhotosUrl(url) {
+      if (!url) return false;
+      const s = String(url).toLowerCase().trim();
+      return s.includes("photos.google.com") || s.includes("photos.app.goo.gl");
+    }
+
+    /* ==========================================================================
+       MULTI-DEVICE SYNC & CATEGORY SYNC UTILITIES (v3.3.0)
+       ========================================================================== */
+    function handleAllPhotosLabelChange(newVal) {
+      const val = String(newVal || "").trim() || "Semua Foto";
+      state.allPhotosLabel = val;
+      state.activeConfig.ALL_PHOTOS_LABEL = val;
+      state.lastLocalCategoryEditTime = Date.now();
+      const inp = document.getElementById("cfgMainGalleryLabel");
+      if (inp && inp.value !== newVal) inp.value = newVal;
+      try {
+        localStorage.setItem("WEDDING_ALL_PHOTOS_LABEL", val);
+        const cacheKey = state.currentEventId ? ("WEDDING_EVENT_CFG_" + state.currentEventId) : "WEDDING_ACTIVE_EVENT_CFG";
+        localStorage.setItem(cacheKey, JSON.stringify(state.activeConfig));
+      } catch (e) {}
+      // Prefetch & update badge foto untuk setiap kategori yang disinkronkan
+      (state.customCategories || []).forEach(function(cat) {
+        const catName = String((cat && cat.name) || cat || "").trim();
+        const catUrl = String((cat && cat.url) || "").trim();
+        if (catName && catUrl) {
+          prefetchCategoryPhotos(catName, catUrl);
+        }
+      });
+
+      renderCategoryTabs();
+      applyCategoryFilter(state.activeCategory);
+    }
+
+    /* ==========================================================================
+       AUTO-ROTATE & ORIENTATION SYSTEM
+       Instruksi: Kategori Momen Lainnya = JANGAN DI ROTATE (rotasi 0 derajat normal)
+       ========================================================================== */
+    function getPhotoRotation(photoId, categoryName) {
+      // 1. Kategori Momen Lainnya (seperti Wedding, Akad, Resepsi, dsb): JANGAN DI-ROTATE (rotasi normal 0 derajat)
+      let cat = categoryName || state.activeCategory || "";
+      if (!cat && photoId) {
+        const found = (state.filteredPhotos || []).find(function(x) { return x && x.id === photoId; }) ||
+                      (state.allPhotos || []).find(function(x) { return x && x.id === photoId; });
+        if (found && found.category) cat = found.category;
+      }
+
+      const mainLabel = state.allPhotosLabel || "Semua Foto";
+      const isMain = (cat === mainLabel || cat === "Semua Foto");
+      const isPb = cat.toLowerCase().includes("photobooth");
+
+      if (cat && !isMain && !isPb) {
+        return 0;
+      }
+
+      // 2. Cek langsung objek foto jika memiliki autoRotate eksplisit
+      if (photoId && state.allPhotos) {
+        const p = state.allPhotos.find(function(x) { return x && x.id === photoId; });
+        if (p && p.autoRotate !== undefined && p.autoRotate !== 0) return parseInt(p.autoRotate, 10);
+      }
+      if (photoId && state.filteredPhotos) {
+      
