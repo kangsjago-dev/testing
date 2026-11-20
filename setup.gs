@@ -1,490 +1,559 @@
 /**
  * ================================================================================
- * SNAPEVENT: SETUP.GS - DATABASE INITIALIZATION, SAFE MIGRATION & ERP MODE
- * ================================================================================
- * Engine: ZettBOT Core v4.1 (Standard Google Apps Script Engineering)
- * Aturan Baku:
- * 1. DILARANG menggunakan karakter underscore (_) pada nama tab Google Sheets.
- * 2. Idempoten: Aman dijalankan berulang kali tanpa merusak data pengguna (Safe Migrate).
- * 3. Header baru otomatis disematkan di posisi paling kanan jika belum ada.
- * 4. Mode ERP: Menyediakan fungsi reset terstruktur & pengisian 5 data dummy lengkap.
+ * SETUP & DIAGNOSTIC UTILITY - WEDDING PANGGUNG (v1.3)
+ * Engine: ZettBOT v4.1 by Zettbos
  * ================================================================================
  */
 
-// Konstanta Nama Sheet (Baku & Bersih tanpa underscore)
-const SHEET_NAMES = {
-  EVENT: "DataEvent",
-  FOTO: "DataFoto",
-  KATEGORI: "DataKategoriVoting",
-  VOTING: "DataVoting",
-  PENGATURAN: "DataPengaturanGlobal"
-};
-
-// Definisi Header Baku untuk masing-masing Sheet
-const SCHEMA_HEADERS = {
-  DataEvent: [
-    "idEvent",             // COL[0]
-    "namaEvent",           // COL[1]
-    "slugEvent",           // COL[2]
-    "tanggalEvent",        // COL[3]
-    "hashtagEvent",        // COL[4]
-    "maxFotoPerGuest",     // COL[5]
-    "maxVotePerGuest",     // COL[6]
-    "revealMode",          // COL[7]  (SEGERA / SETELAH)
-    "isRevealed",          // COL[8]  (TRUE / FALSE)
-    "likeEnabled",         // COL[9]  (TRUE / FALSE)
-    "publicVisible",       // COL[10] (TRUE / FALSE)
-    "activeCameraStyles",  // COL[11] JSON Array string
-    "activeFrames",        // COL[12] JSON Array string
-    "gdriveFolderId",      // COL[13] ID Folder Drive Event
-    "statusEvent",         // COL[14] (AKTIF / INAKTIF / SELESAI)
-    "createdAt",           // COL[15] Timestamp
-    "customFrameUrl"       // COL[16] URL / Base64 File Frame PNG Upload Admin
-  ],
-  DataFoto: [
-    "idFoto",              // COL[0]
-    "idEvent",             // COL[1]
-    "guestId",             // COL[2]
-    "guestNama",           // COL[3]
-    "captionFoto",         // COL[4]
-    "cameraStyle",         // COL[5]
-    "frameStyle",          // COL[6]
-    "gdriveFileId",        // COL[7]
-    "gdriveViewUrl",       // COL[8]
-    "totalLikes",          // COL[9]
-    "isFeatured",          // COL[10]
-    "createdAt"            // COL[11]
-  ],
-  DataKategoriVoting: [
-    "idKategori",          // COL[0]
-    "idEvent",             // COL[1]
-    "namaKategori",        // COL[2]
-    "deskripsi",           // COL[3]
-    "urutan"               // COL[4]
-  ],
-  DataVoting: [
-    "idVote",              // COL[0]
-    "idEvent",             // COL[1]
-    "idFoto",              // COL[2]
-    "idKategori",          // COL[3]
-    "guestId",             // COL[4]
-    "guestNama",           // COL[5]
-    "votedAt"              // COL[6]
-  ],
-  DataPengaturanGlobal: [
-    "kunciPengaturan",     // COL[0]
-    "nilaiPengaturan",     // COL[1]
-    "keterangan"           // COL[2]
-  ]
-};
-
-// ================================================================================
-// 5 DATA DUMMY EVENT LENGKAP & RELASI BISNIS (ENTERPRISE MASTER SEED)
-// ================================================================================
-const DUMMY_EVENTS_MASTER = [
-  {
-    event: [
-      "EVT-202611-001",
-      "The Wedding of Sarah & Kevin",
-      "sarah-kevin",
-      "2026-11-20",
-      "#SarahKevinEverAfter",
-      10,
-      3,
-      "SEGERA",
-      true,
-      true,
-      true,
-      JSON.stringify(["RAW", "800T", "WARM", "BW"]),
-      JSON.stringify(["GOLD_DECO", "POLAROID", "MINIMAL"]),
-      "",
-      "AKTIF",
-      "2026-11-08 18:00:00",
-      ""
-    ],
-    categories: [
-      ["KAT-001", "EVT-202611-001", "Best Dressed Guest", "Busana paling menawan malam ini", 1],
-      ["KAT-002", "EVT-202611-001", "Best Outfit", "Gaya busana paling memukau dan serasi", 2],
-      ["KAT-003", "EVT-202611-001", "Pose Terheboh", "Gaya paling kocak dan seru bersama geng", 3]
-    ],
-    photos: [
-      ["FTO-SK-001", "EVT-202611-001", "GUEST-001", "Sarah & Kevin", "Momen terbaik malam ini bersama sahabat tercinta!", "800T", "GOLD_DECO", "", "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80", 18, true, "2026-11-08 19:15:00"],
-      ["FTO-SK-002", "EVT-202611-001", "GUEST-002", "David L.", "Keluarga besar groomsmen siap meriahkan pesta!", "WARM", "POLAROID", "", "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1200&q=80", 12, false, "2026-11-08 19:30:00"],
-      ["FTO-SK-003", "EVT-202611-001", "GUEST-003", "Clara M.", "Cheers untuk cinta abadi pengantin berdua!", "BW", "MINIMAL", "", "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=1200&q=80", 9, false, "2026-11-08 19:45:00"]
-    ],
-    votes: [
-      ["VOT-SK-001", "EVT-202611-001", "FTO-SK-001", "KAT-001", "GUEST-101", "Rina", "2026-11-08 20:00:00"],
-      ["VOT-SK-002", "EVT-202611-001", "FTO-SK-001", "KAT-003", "GUEST-102", "Bima", "2026-11-08 20:05:00"],
-      ["VOT-SK-003", "EVT-202611-001", "FTO-SK-002", "KAT-002", "GUEST-103", "Andi", "2026-11-08 20:10:00"]
-    ]
-  },
-  {
-    event: [
-      "EVT-202611-392",
-      "The Wedding of Hans & Yurike",
-      "hans-yurike",
-      "2026-11-25",
-      "#Hans&Yurike",
-      5,
-      3,
-      "SEGERA",
-      true,
-      true,
-      true,
-      JSON.stringify(["RAW", "800T", "WARM", "BW"]),
-      JSON.stringify(["GOLD_DECO", "POLAROID", "MINIMAL"]),
-      "1FZoLfd0fczTX2N6y-xAI-G4KgVDnEfQk",
-      "INAKTIF",
-      "2026-11-08 18:30:00",
-      ""
-    ],
-    categories: [
-      ["KAT-101", "EVT-202611-392", "Best Dressed Guest", "Gaun & Jas paling elegan malam resepsi", 1],
-      ["KAT-102", "EVT-202611-392", "The Best Groupie", "Wefie rombongan keluarga & kolega terkompak", 2],
-      ["KAT-103", "EVT-202611-392", "Senyum Terhangat", "Senyuman paling manis dan tulus tertangkap lensa", 3]
-    ],
-    photos: [
-      ["FTO-HY-001", "EVT-202611-392", "GUEST-011", "Hans & Yurike", "Bahagia selamanya mengarungi bahtera baru!", "800T", "GOLD_DECO", "", "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=80", 15, true, "2026-11-08 20:15:00"],
-      ["FTO-HY-002", "EVT-202611-392", "GUEST-012", "Raymond", "Sahabat sejak masa SMA akhirnya melepas masa lajang!", "WARM", "POLAROID", "", "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=1200&q=80", 10, false, "2026-11-08 20:25:00"],
-      ["FTO-HY-003", "EVT-202611-392", "GUEST-013", "Jessica", "Bridesmaids squad siap mengawal ratu semalam!", "RAW", "MINIMAL", "", "https://images.unsplash.com/photo-1529636798458-92182e662485?auto=format&fit=crop&w=1200&q=80", 8, false, "2026-11-08 20:35:00"]
-    ],
-    votes: [
-      ["VOT-HY-001", "EVT-202611-392", "FTO-HY-001", "KAT-101", "GUEST-111", "Fanny", "2026-11-08 20:40:00"],
-      ["VOT-HY-002", "EVT-202611-392", "FTO-HY-002", "KAT-102", "GUEST-112", "Dion", "2026-11-08 20:45:00"]
-    ]
-  },
-  {
-    event: [
-      "EVT-202612-105",
-      "Annual Gala Dinner PT Nusantara Tech",
-      "nusantara-gala-2026",
-      "2026-12-15",
-      "#NusantaraGala2026",
-      8,
-      2,
-      "SETELAH",
-      false,
-      true,
-      true,
-      JSON.stringify(["RAW", "800T", "BW"]),
-      JSON.stringify(["MINIMAL", "POLAROID"]),
-      "",
-      "INAKTIF",
-      "2026-11-08 19:00:00",
-      ""
-    ],
-    categories: [
-      ["KAT-201", "EVT-202612-105", "Best Division Squad", "Divisi paling kompak, kreatif, dan inovatif", 1],
-      ["KAT-202", "EVT-202612-105", "Future Leader Look", "Gaya paling profesional, berwibawa, dan kharismatik", 2]
-    ],
-    photos: [
-      ["FTO-NT-001", "EVT-202612-105", "GUEST-021", "Tim Engineering", "Satu tahun penuh sprint, kolaborasi, dan pencapaian spektakuler!", "BW", "MINIMAL", "", "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1200&q=80", 22, true, "2026-11-08 21:00:00"],
-      ["FTO-NT-002", "EVT-202612-105", "GUEST-022", "Tim Marketing", "Creative minds celebrating big milestone together!", "RAW", "POLAROID", "", "https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=1200&q=80", 14, false, "2026-11-08 21:10:00"]
-    ],
-    votes: [
-      ["VOT-NT-001", "EVT-202612-105", "FTO-NT-001", "KAT-201", "GUEST-121", "Manager Joko", "2026-11-08 21:20:00"]
-    ]
-  },
-  {
-    event: [
-      "EVT-202612-210",
-      "Clarissa's Sweet 17: Enchanted Forest",
-      "clarissa-sweet-17",
-      "2026-12-28",
-      "#ClarissaSweet17",
-      12,
-      3,
-      "SEGERA",
-      true,
-      true,
-      true,
-      JSON.stringify(["RAW", "800T", "WARM"]),
-      JSON.stringify(["GOLD_DECO", "POLAROID"]),
-      "",
-      "INAKTIF",
-      "2026-11-08 19:30:00",
-      ""
-    ],
-    categories: [
-      ["KAT-301", "EVT-202612-210", "King & Queen of the Night", "Pasangan sahabat tamu paling memukau dan serasi", 1],
-      ["KAT-302", "EVT-202612-210", "Tergokil & Terlucu", "Aksi foto paling spontan dan mengundang tawa", 2],
-      ["KAT-303", "EVT-202612-210", "Paling Fotogenik", "Potret dengan pencahayaan dan estetika terbaik", 3]
-    ],
-    photos: [
-      ["FTO-CL-001", "EVT-202612-210", "GUEST-031", "Clarissa", "Welcome to chapter 17 with magical souls and best friends forever!", "WARM", "GOLD_DECO", "", "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1200&q=80", 25, true, "2026-11-08 21:30:00"],
-      ["FTO-CL-002", "EVT-202612-210", "GUEST-032", "Bella & Trio", "Happy birthday our sweetest princess Clarissa!", "800T", "POLAROID", "", "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1200&q=80", 17, false, "2026-11-08 21:40:00"]
-    ],
-    votes: [
-      ["VOT-CL-001", "EVT-202612-210", "FTO-CL-001", "KAT-301", "GUEST-131", "Tasya", "2026-11-08 21:50:00"]
-    ]
-  },
-  {
-    event: [
-      "EVT-202701-015",
-      "Alumni Homecoming SMAN 1 Angkatan 2016",
-      "reuni-smansa-2016",
-      "2027-01-10",
-      "#Smansa16Reunited",
-      15,
-      5,
-      "SEGERA",
-      true,
-      true,
-      true,
-      JSON.stringify(["RAW", "800T", "WARM", "BW"]),
-      JSON.stringify(["GOLD_DECO", "POLAROID", "MINIMAL", "NONE"]),
-      "",
-      "INAKTIF",
-      "2026-11-08 20:00:00",
-      ""
-    ],
-    categories: [
-      ["KAT-401", "EVT-202701-015", "Nostalgia Terbaik", "Pose re-create foto masa SMA paling mirip dan seru", 1],
-      ["KAT-402", "EVT-202701-015", "Paling Awet Muda", "Alumni dengan penampilan yang paling segar dan tidak berubah", 2],
-      ["KAT-403", "EVT-202701-015", "Geng Paling Kompak", "Rombongan kelas dengan kehadiran paling banyak dan heboh", 3]
-    ],
-    photos: [
-      ["FTO-AL-001", "EVT-202701-015", "GUEST-041", "Rombongan IPA 2", "Satu dekade berlalu, cerita dan kebersamaan kita tetap hangat!", "BW", "POLAROID", "", "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1200&q=80", 30, true, "2026-11-08 22:00:00"],
-      ["FTO-AL-002", "EVT-202701-015", "GUEST-042", "Budi & Reza", "Dulu sekelas, sekarang saling dukung karier masing-masing!", "RAW", "MINIMAL", "", "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1200&q=80", 19, false, "2026-11-08 22:10:00"]
-    ],
-    votes: [
-      ["VOT-AL-001", "EVT-202701-015", "FTO-AL-001", "KAT-401", "GUEST-141", "Hendro", "2026-11-08 22:15:00"]
-    ]
-  }
-];
-
-// Konfigurasi Enterprise Global Multi-Role
-const ENTERPRISE_CONFIGS = [
-  ["app_title", "SnapEvent Enterprise Studio", "Nama Platform Web App Resmi"],
-  ["app_logo_url", "", "URL atau Gambar Logo Kustom Platform"],
-  ["app_phone", "0812-3456-7890", "Nomor WhatsApp / Layanan Hotline Resmi"],
-  ["app_instagram", "@snapevent", "Akun Media Sosial / Instagram Resmi"],
-  ["admin_user", "admin", "Username Akses Administrator Utama"],
-  ["admin_pass", "admin123", "Password Akses Administrator Utama"],
-  ["admin_pin", "889900", "Master PIN Akses Cepat Ballroom"],
-  [
-    "user_accounts",
-    JSON.stringify([
-      { user: "crew", pass: "crew123", role: "operator" },
-      { user: "spv", pass: "spv123", role: "supervisor" },
-      { user: "photo", pass: "photo123", role: "photographer" }
-    ]),
-    "Daftar Akun Enterprise Operator & Kru Tambahan (JSON)"
-  ],
-  ["default_max_foto", "10", "Default Kuota Jepret per Tamu"],
-  ["default_max_vote", "1", "Default Kuota Suara per Kategori (Strict 1x)"],
-  ["master_drive_folder_id", "12LfLW50HIuMUPCGQiRJKy_aO4RhVICjw", "ID Folder Induk Google Drive Resmi (Master)"],
-  ["gas_webapp_url", "https://script.google.com/macros/s/AKfycbxg-Owg7BrEqx4KHDI7UsLBX88ejLXcVxgQuSZNtz8d0rIJ_wCGVQFsOzpKGDO8w8cOrw/exec", "URL Backend Web App Endpoint Resmi (GAS)"],
-  ["stage_photos_enabled", "false", "Status Aktif Menu Foto Panggung Tamu (true/false)"],
-  ["stage_photos_title", "Foto Panggung", "Nama Label Kustom untuk Menu Foto Panggung"],
-  ["stage_photos_link", "", "Link / Folder ID Google Drive untuk Foto Panggung"]
-];
 
 /**
  * ================================================================================
- * TRIGGER ON-OPEN: MENU DROPDOWN LANGSUNG PADA GOOGLE SHEETS
+ * 1. FUNGSI UTAMA SATU-KLIK: ISI / SINKRONKAN SEMUA EVENT KE SHEET 'Daftar_Acara'
  * ================================================================================
+ * Jalankan fungsi ini langsung dari editor Google Apps Script dengan klik '▶️ Run'
+ * untuk mengisi atau memperbarui ke-3 event ke Google Spreadsheet:
+ * 133_po_5H36hVSwVwGm48pwREPPSowohqvPzauXSEN20
  */
-function onOpen() {
-  const ui = SpreadsheetApp.getUi();
-  ui.createMenu("🚀 SnapEvent ERP")
-    .addItem("⚡ Safe Migration (Cek Kolom Baru)", "inisialisasiDatabase")
-    .addSeparator()
-    .addItem("⚠️ ERP Mode: Reset & Terapkan 5 Data Dummy Lengkap", "konfirmasiERPMode")
-    .addToUi();
-}
-
-/**
- * Dialog Konfirmasi Aman Sebelum Menjalankan ERP Mode
- */
-function konfirmasiERPMode() {
-  const ui = SpreadsheetApp.getUi();
-  const resp = ui.alert(
-    "Konfirmasi ERP Mode (Reset & Terapkan 5 Data Dummy)",
-    "Perhatian: Tindakan ini akan membersihkan lembar kerja dan mengisikan kembali 5 data dummy event lengkap dengan kategori, foto sampel, dan voting.\n\nApakah Anda yakin ingin melanjutkan?",
-    ui.ButtonSet.YES_NO
-  );
-
-  if (resp === ui.Button.YES) {
-    const hasil = modeERP_ResetDanIsiDataDummy();
-    ui.alert("Sukses!", hasil, ui.ButtonSet.OK);
-  } else {
-    ui.alert("Dibatalkan", "Operasi ERP Mode dibatalkan dengan aman.", ui.ButtonSet.OK);
-  }
-}
-
-/**
- * ================================================================================
- * MODUS 1: inisialisasiDatabase() (DEFAULT SAFE MIGRATION MODE)
- * ================================================================================
- * Non-destruktif: Tidak menghapus data yang sudah ada, hanya menambahkan tab/kolom baru.
- */
-function inisialisasiDatabase() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-
-  // 1. Proses setiap sheet sesuai skema resmi
-  Object.keys(SCHEMA_HEADERS).forEach(function(sheetName) {
-    let sheet = ss.getSheetByName(sheetName);
-    const expectedHeaders = SCHEMA_HEADERS[sheetName];
-
-    if (!sheet) {
-      // Buat sheet baru jika belum ada
-      sheet = ss.insertSheet(sheetName);
-      sheet.appendRow(expectedHeaders);
-      formatHeaderRow(sheet, expectedHeaders.length);
-    } else {
-      // Safe Migration: Cek jika ada penambahan header baru di masa depan
-      const lastCol = sheet.getLastColumn();
-      if (lastCol === 0) {
-        sheet.appendRow(expectedHeaders);
-        formatHeaderRow(sheet, expectedHeaders.length);
-      } else {
-        const currentHeaders = sheet.getRange(1, 1, 1, lastCol).getDisplayValues()[0];
-        expectedHeaders.forEach(function(header) {
-          if (currentHeaders.indexOf(header) === -1) {
-            const nextCol = sheet.getLastColumn() + 1;
-            sheet.getRange(1, nextCol).setValue(header).setFontWeight("bold");
-          }
-        });
-      }
-    }
-  });
-
-  // 2. Isi Data Awal / Seed Demo jika tabel DataEvent masih kosong
-  const eventSheet = ss.getSheetByName(SHEET_NAMES.EVENT);
-  if (eventSheet && eventSheet.getLastRow() <= 1) {
-    suntikDataDummyLengkap(ss);
+function populateDaftarAcara() {
+  Logger.log("=== MEMULAI PENGISIAN SEMUA EVENT KE SHEET 'Daftar_Acara' ===");
+  var targetId = "133_po_5H36hVSwVwGm48pwREPPSowohqvPzauXSEN20";
+  var ss = SpreadsheetApp.openById(targetId);
+  var sheet = ss.getSheetByName("Daftar_Acara");
+  if (!sheet) {
+    sheet = ss.insertSheet("Daftar_Acara", 1);
   }
 
-  // 3. Pastikan konfigurasi global tersedia
-  suntikPengaturanGlobal(ss, false);
+  var headers = [
+    ["ID_Event", "Nama_Acara", "Tanggal_Acara", "Venue_Lokasi", "Tautan_Home_Event", "Google_Drive_Folder_ID", "Photobooth_Vendor_URL", "Kategori_JSON", "Bingkai_URL", "Logo_Acara", "Status"]
+  ];
 
-  hapusSheetDefaultJikaAda(ss);
-  SpreadsheetApp.flush();
-  Logger.log("Safe Migration SnapEvent Berhasil!");
-  return "Database SnapEvent berhasil dimigrasikan secara aman.";
-}
+  var defaultEvents = [
+    [
+      "andre-fayola-281",
+      "Andre & Fayola",
+      "22 November 2026",
+      "UPPERHILLS CONVENTION HALLS",
+      "https://gallery.runway.my.id/?event=andre-fayola-281",
+      "1qCHAv1hTfsnUQ5g6iHFCVkM3x60vw4uh",
+      "https://photos.app.goo.gl/QkqewYw4dWfocxfK8",
+      JSON.stringify([{ name: "Photobooth", url: "https://photos.app.goo.gl/QkqewYw4dWfocxfK8", enabled: true, isPhotobooth: true }]),
+      "",
+      "",
+      "Aktif"
+    ],
+    [
+      "wilson-felicia-133",
+      "Wilson & Felicia",
+      "16 November 2026",
+      "UpperHills Convention Hall, Makassar",
+      "https://gallery.runway.my.id/?event=wilson-felicia-133",
+      "1B1HyALBKEetXRoakAZuZ3iZYUeEsnjU5",
+      "https://fotoshare.co/e/ZJGYCfWbttuEG8Q67ocZs",
+      JSON.stringify([{ name: "Photobooth", url: "https://fotoshare.co/e/ZJGYCfWbttuEG8Q67ocZs", enabled: true, isPhotobooth: true }]),
+      "",
+      "",
+      "Aktif"
+    ],
+    [
+      "tommy-natasha-594",
+      "Tommy & Natasha",
+      "Rabu, 25 November 2026",
+      "UpperHills Convention Hall, Makassar",
+      "https://gallery.runway.my.id/?event=tommy-natasha-594",
+      "1qCHAv1hTfsnUQ5g6iHFCVkM3x60vw4uh",
+      "https://photos.google.com/share/AF1QipMagPm7xWB2YANajDr3hx-J4WKyhOgIQ41jUjqQnxv5LSy6392pyWC5hOfsQoz1mA?key=c1BLMDNyRGw4bEJyUWo5b1Y0eFlmTy14X1pESEdR",
+      JSON.stringify([{ id: "special_photobooth", name: "Photobooth", url: "https://photos.google.com/share/AF1QipMagPm7xWB2YANajDr3hx-J4WKyhOgIQ41jUjqQnxv5LSy6392pyWC5hOfsQoz1mA?key=c1BLMDNyRGw4bEJyUWo5b1Y0eFlmTy14X1pESEdR", enabled: true, isPhotobooth: true }]),
+      "",
+      "",
+      "Aktif"
+    ]
+  ];
 
-/**
- * ================================================================================
- * MODUS 2: modeERP_ResetDanIsiDataDummy() (ERASE, RESET & POPULATE MODE)
- * ================================================================================
- * Membersihkan data lama secara terstruktur dan mengisi ulang 5 data dummy lengkap
- * dengan kategori, foto sampel beresolusi tinggi, like, dan data voting.
- */
-function modeERP_ResetDanIsiDataDummy() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-
-  // 1. Inisialisasi ulang seluruh sheet dan pasang header
-  Object.keys(SCHEMA_HEADERS).forEach(function(sheetName) {
-    let sheet = ss.getSheetByName(sheetName);
-    const expectedHeaders = SCHEMA_HEADERS[sheetName];
-
-    if (!sheet) {
-      sheet = ss.insertSheet(sheetName);
-    } else {
-      sheet.clearContents();
-    }
-
-    sheet.appendRow(expectedHeaders);
-    formatHeaderRow(sheet, expectedHeaders.length);
-  });
-
-  // 2. Suntikkan 5 Event Lengkap Beserta Seluruh Relasi Datanya
-  suntikDataDummyLengkap(ss);
-
-  // 3. Suntikkan Konfigurasi Enterprise Global Multi-Role
-  suntikPengaturanGlobal(ss, true);
-
-  hapusSheetDefaultJikaAda(ss);
-  SpreadsheetApp.flush();
-
-  const msg = "ERP Mode Sukses: 5 Data Event Lengkap beserta Kategori, Foto Sampel, dan Voting telah berhasil diisikan ke Google Sheets!";
-  Logger.log(msg);
-  return msg;
-}
-
-/**
- * Helper: Menyuntikkan 5 Data Event, Kategori, Foto, dan Voting Lengkap
- */
-function suntikDataDummyLengkap(ss) {
-  const eventSheet = ss.getSheetByName(SHEET_NAMES.EVENT);
-  const katSheet = ss.getSheetByName(SHEET_NAMES.KATEGORI);
-  const fotoSheet = ss.getSheetByName(SHEET_NAMES.FOTO);
-  const voteSheet = ss.getSheetByName(SHEET_NAMES.VOTING);
-
-  DUMMY_EVENTS_MASTER.forEach(function(item) {
-    // 1. Append Baris Event
-    if (eventSheet && Array.isArray(item.event)) {
-      eventSheet.appendRow(item.event);
-    }
-
-    // 2. Append Baris Kategori
-    if (katSheet && Array.isArray(item.categories)) {
-      item.categories.forEach(function(cat) {
-        katSheet.appendRow(cat);
-      });
-    }
-
-    // 3. Append Baris Foto Sampel
-    if (fotoSheet && Array.isArray(item.photos)) {
-      item.photos.forEach(function(p) {
-        fotoSheet.appendRow(p);
-      });
-    }
-
-    // 4. Append Baris Voting
-    if (voteSheet && Array.isArray(item.votes)) {
-      item.votes.forEach(function(v) {
-        voteSheet.appendRow(v);
-      });
-    }
-  });
-}
-
-/**
- * Helper: Menyuntikkan Konfigurasi Global
- */
-function suntikPengaturanGlobal(ss, isForceReset) {
-  const configSheet = ss.getSheetByName(SHEET_NAMES.PENGATURAN);
-  if (!configSheet) return;
-
-  if (isForceReset || configSheet.getLastRow() <= 1) {
-    ENTERPRISE_CONFIGS.forEach(function(cfg) {
-      configSheet.appendRow(cfg);
-    });
-  } else {
-    const existingKeys = configSheet.getRange(2, 1, configSheet.getLastRow() - 1, 1).getDisplayValues().map(function(r) { return r[0]; });
-    ENTERPRISE_CONFIGS.forEach(function(cfg) {
-      if (existingKeys.indexOf(cfg[0]) === -1) {
-        configSheet.appendRow(cfg);
-      }
-    });
-  }
-}
-
-/**
- * Helper: Styling Header Baris 1 Elegan (Dark Slate Theme)
- */
-function formatHeaderRow(sheet, totalCols) {
-  const headerRange = sheet.getRange(1, 1, 1, totalCols);
-  headerRange.setBackground("#1E293B");
-  headerRange.setFontColor("#F8FAFC");
-  headerRange.setFontWeight("bold");
-  headerRange.setHorizontalAlignment("center");
+  sheet.clear();
+  sheet.getRange(1, 1, 1, headers[0].length).setValues(headers)
+    .setBackground("#C5A880")
+    .setFontColor("#FFFFFF")
+    .setFontWeight("bold")
+    .setHorizontalAlignment("center");
   sheet.setFrozenRows(1);
+
+  sheet.getRange(2, 1, defaultEvents.length, headers[0].length).setValues(defaultEvents);
+
+  sheet.setColumnWidth(1, 180);
+  sheet.setColumnWidth(2, 220);
+  sheet.setColumnWidth(3, 160);
+  sheet.setColumnWidth(4, 250);
+  sheet.setColumnWidth(5, 320);
+  sheet.setColumnWidth(6, 260);
+  sheet.setColumnWidth(7, 300);
+  sheet.setColumnWidth(8, 300);
+  sheet.setColumnWidth(9, 260);
+  sheet.setColumnWidth(10, 260);
+  sheet.setColumnWidth(11, 100);
+
+  SpreadsheetApp.flush();
+  Logger.log("🎉 SUKSES BESAR! Ke-3 event berhasil dimasukkan ke sheet 'Daftar_Acara' pada spreadsheet: " + targetId);
+  return {
+    success: true,
+    message: "Ke-3 event berhasil dimasukkan ke sheet 'Daftar_Acara'!",
+    totalEvents: defaultEvents.length
+  };
 }
 
 /**
- * Helper: Hapus Tab Bawaan "Sheet1" jika Kosong
+ * ================================================================================
+ * PANDUAN CEPAT MEMBUAT & MENGISI DATABASE SPREADSHEET (ERP MASTER DATA)
+ * ================================================================================
+ * 1. Buka Google Apps Script editor di https://script.google.com/
+ * 2. Buka project Web App galeri Anda
+ * 3. Buka file 'setup.gs' (atau buat file baru 'setup.gs' dan paste seluruh isi file ini).
+ * 4. Pastikan dropdown fungsi di toolbar atas memilih: 'populateDaftarAcara' atau 'setupTargetSpreadsheetDatabase'
+ * 5. Klik tombol '▶️ Run' (Jalankan).
+ * 6. Berikan izin akses (Review Permissions -> Lanjutkan) jika Google meminta konfirmasi.
+ * 
+ * HASIL LANGSUNG PADA GOOGLE SPREADSHEET (133_po_5H36hVSwVwGm48pwREPPSowohqvPzauXSEN20):
+ * - Sheet 'Daftar_Acara' : Terformat sebagai ERP Master Table 11 kolom dengan ke-3 data event lengkap.
+ * - Sheet 'Pengaturan'   : Berisi 26 parameter konfigurasi global sistem.
+ * - Sheet 'Pengguna_Admin': Terisi 3 akun admin (Super Admin, ilham, Wanta).
+ * - Sheet 'Daftar_Foto'  : Otomatis membaca & mencatat foto Google Drive Anda.
+ * - Sheet 'Log_Aktivitas': Mencatat audit trail inisialisasi awal.
+ * ================================================================================
  */
-function hapusSheetDefaultJikaAda(ss) {
+
+
+/**
+ * ================================================================================
+ * 2. SETUP LENGKAP SATU KLIK: INISIALISASI SELURUH SHEET DATABASE
+ * Target Spreadsheet: https://docs.google.com/spreadsheets/d/133_po_5H36hVSwVwGm48pwREPPSowohqvPzauXSEN20/edit
+ * ID: 133_po_5H36hVSwVwGm48pwREPPSowohqvPzauXSEN20
+ * ================================================================================
+ */
+function setupTargetSpreadsheetDatabase() {
+  Logger.log("=== MEMULAI INISIALISASI DATABASE PADA SPREADSHEET PENGGUNA ===");
+  var targetId = "133_po_5H36hVSwVwGm48pwREPPSowohqvPzauXSEN20";
+  
+  // 1. Simpan target ID ke Script Properties
+  var props = PropertiesService.getScriptProperties();
+  props.setProperty("SPREADSHEET_ID", targetId);
+
+  // 2. Buka spreadsheet secara langsung berdasarkan ID
+  var ss;
   try {
-    const defaultSheet = ss.getSheetByName("Sheet1") || ss.getSheetByName("Sheet 1");
-    if (defaultSheet && ss.getSheets().length > 1) {
-      ss.deleteSheet(defaultSheet);
+    ss = SpreadsheetApp.openById(targetId);
+  } catch (errOpen) {
+    Logger.log("❌ GAGAL MEMBUKA SPREADSHEET: " + errOpen.toString());
+    Logger.log("Pastikan akun Google Anda memiliki akses Edit pada file: " + targetId);
+    return {
+      success: false,
+      message: "Gagal membuka spreadsheet. Pastikan izin akses disetel 'Anyone with the link can edit' atau akun memiliki akses: " + errOpen.toString()
+    };
+  }
+
+  Logger.log("✅ Berhasil membuka spreadsheet: " + ss.getName() + " (" + ss.getUrl() + ")");
+
+  // --------------------------------------------------------------------------
+  // A. SHEET 1: Pengaturan
+  // --------------------------------------------------------------------------
+  var sheetSettings = ss.getSheetByName("Pengaturan");
+  if (!sheetSettings) {
+    // Jika ada 'Sheet1' default yang kosong, kita gunakan / ubah namanya jadi 'Pengaturan'
+    var sheet1 = ss.getSheetByName("Sheet1");
+    if (sheet1 && sheet1.getLastRow() <= 1 && sheet1.getLastColumn() <= 1) {
+      sheet1.setName("Pengaturan");
+      sheetSettings = sheet1;
+    } else {
+      sheetSettings = ss.insertSheet("Pengaturan", 0);
     }
-  } catch (err) {
-    Logger.log("Note saat hapus sheet default: " + err.message);
+  }
+
+  // Tulis Header Pengaturan
+  sheetSettings.getRange(1, 1, 1, 3).setValues([["Parameter", "Nilai", "Keterangan"]])
+    .setBackground("#C5A880")
+    .setFontColor("#FFFFFF")
+    .setFontWeight("bold")
+    .setHorizontalAlignment("center");
+  sheetSettings.setFrozenRows(1);
+
+  // Parameter Konfigurasi Master (Safe Non-Destructive Init)
+  var defaultParams = [
+    ["EVENT_NAME", "", "Nama Event / Pasangan Pengantin"],
+    ["COUPLE_NAME", "", "Nama Pasangan Pengantin"],
+    ["EVENT_DATE", "", "Tanggal Pelaksanaan Acara"],
+    ["EVENT_VENUE", "", "Venue / Lokasi Gedung Acara"],
+    ["SUBTITLE", "", "Subjudul Galeri Foto"],
+    ["WELCOME_MESSAGE", "", "Pesan Sambutan Hangat untuk Tamu"],
+    ["FOOTER_MESSAGE", "", "Pesan Penutup Footer Galeri"],
+    ["ALL_PHOTOS_LABEL", "Semua Foto", "Label Tab Galeri Utama"],
+    ["ACTIVE_EVENT_ID", "", "ID Event Aktif"],
+    ["ADMIN_USERNAME", "", "Nama Pengguna (Username) Akses Masuk Panel Admin Web"],
+    ["ADMIN_PIN", "", "PIN Akses Masuk Panel Admin Web"],
+    ["SLIDESHOW_INTERVAL_SEC", "4", "Durasi Perpindahan Foto Slideshow (detik)"],
+    ["AUTO_REFRESH_INTERVAL_SEC", "20", "Interval Live Auto-Sync Foto (detik)"],
+    ["NEW_BADGE_MINUTES", "10", "Durasi Lencana '✨ Baru' Aktif (menit)"],
+    ["SPREADSHEET_ID", targetId, "ID File Google Spreadsheet Database Aktif"],
+    ["SPREADSHEET_URL", "https://docs.google.com/spreadsheets/d/" + targetId + "/edit", "Tautan Langsung Google Spreadsheet Database"],
+    ["GAS_API_URL", "", "Tautan Endpoint Google Apps Script Web App"],
+    ["DRIVE_FOLDER_ID", "", "ID Folder Google Drive Galeri Utama"],
+    ["DRIVE_FOLDER_URL", "", "Tautan Folder Google Drive Galeri Utama"],
+    ["FRAME_IMAGE_URL", "", "Tautan File Bingkai PNG Transparan Saat Download"],
+    ["PHOTOBOOTH_URL", "", "Tautan Vendor Kategori Spesial Photobooth"],
+    ["CUSTOM_CATEGORIES", "[]", "Daftar Kategori Kustom & Tautan Tampilan"],
+    ["EVENTS", "[]", "Registry Multi-Event Sistem"],
+    ["COVER_SETTINGS", '{"enabled":false}', "Pengaturan Cover Halaman Depan"],
+    ["ADMIN_ACCOUNTS_INFO", "", "Daftar ID & Username Admin Terdaftar"]
+  ];
+
+  // Safe Migration: Pertahankan nilai database yang sudah ada, hanya tambahkan parameter baru
+  var currentSettingsData = sheetSettings.getDataRange().getValues();
+  var existingSettingsKeys = {};
+  for (var sr = 1; sr < currentSettingsData.length; sr++) {
+    var sk = String(currentSettingsData[sr][0]).trim();
+    if (sk) existingSettingsKeys[sk] = true;
+  }
+  var missingSettingsRows = [];
+  for (var dp = 0; dp < defaultParams.length; dp++) {
+    if (!existingSettingsKeys[defaultParams[dp][0]]) {
+      missingSettingsRows.push(defaultParams[dp]);
+    }
+  }
+  if (missingSettingsRows.length > 0) {
+    var nextSettingsRow = Math.max(sheetSettings.getLastRow() + 1, 2);
+    sheetSettings.getRange(nextSettingsRow, 1, missingSettingsRows.length, 3).setValues(missingSettingsRows);
+  }
+  sheetSettings.setColumnWidth(1, 240);
+  sheetSettings.setColumnWidth(2, 380);
+  sheetSettings.setColumnWidth(3, 300);
+  Logger.log("✅ Sheet 'Pengaturan' siap tanpa menimpa data pengguna.");
+
+  // --------------------------------------------------------------------------
+  // B. SHEET 2: Pengguna_Admin (Multi-User Admin - Safe Non-Destructive)
+  // --------------------------------------------------------------------------
+  var sheetUsers = ss.getSheetByName("Pengguna_Admin");
+  if (!sheetUsers) {
+    sheetUsers = ss.insertSheet("Pengguna_Admin", 1);
+  }
+  if (sheetUsers.getLastRow() === 0) {
+    var userHeaders = [["ID_User", "Username", "Nama_Pengguna", "PIN", "Peran", "Tanggal_Dibuat"]];
+    sheetUsers.getRange(1, 1, 1, 6).setValues(userHeaders)
+      .setBackground("#475569")
+      .setFontColor("#FFFFFF")
+      .setFontWeight("bold")
+      .setHorizontalAlignment("center");
+    sheetUsers.setFrozenRows(1);
+  }
+  sheetUsers.setColumnWidth(1, 160);
+  sheetUsers.setColumnWidth(2, 140);
+  sheetUsers.setColumnWidth(3, 180);
+  sheetUsers.setColumnWidth(4, 100);
+  sheetUsers.setColumnWidth(5, 130);
+  sheetUsers.setColumnWidth(6, 170);
+  Logger.log("✅ Sheet 'Pengguna_Admin' siap.");
+
+  // --------------------------------------------------------------------------
+  // B2. SHEET: Daftar_Acara (Registry Multi-Event Sistem - Safe Non-Destructive)
+  // --------------------------------------------------------------------------
+  var sheetEvents = ss.getSheetByName("Daftar_Acara");
+  if (!sheetEvents) {
+    sheetEvents = ss.insertSheet("Daftar_Acara", 2);
+  }
+  var eventHeaders = [["ID_Event", "Nama_Acara", "Tanggal_Acara", "Venue_Lokasi", "Tautan_Home_Event", "Google_Drive_Folder_ID", "Photobooth_Vendor_URL", "Kategori_JSON", "Bingkai_URL", "Logo_Acara", "Status"]];
+  if (sheetEvents.getLastRow() === 0) {
+    sheetEvents.getRange(1, 1, 1, 11).setValues(eventHeaders)
+      .setBackground("#C5A880")
+      .setFontColor("#FFFFFF")
+      .setFontWeight("bold")
+      .setHorizontalAlignment("center");
+    sheetEvents.setFrozenRows(1);
+  }
+
+  // Jika baris data masih kosong (hanya ada baris header atau row <= 1), otomatis masukkan ke-3 event
+  if (sheetEvents.getLastRow() <= 1) {
+    var defaultEvents = [
+      [
+        "andre-fayola-281",
+        "Andre & Fayola",
+        "22 November 2026",
+        "UPPERHILLS CONVENTION HALLS",
+        "https://gallery.runway.my.id/?event=andre-fayola-281",
+        "1qCHAv1hTfsnUQ5g6iHFCVkM3x60vw4uh",
+        "https://photos.app.goo.gl/QkqewYw4dWfocxfK8",
+        JSON.stringify([{ name: "Photobooth", url: "https://photos.app.goo.gl/QkqewYw4dWfocxfK8", enabled: true, isPhotobooth: true }]),
+        "",
+        "",
+        "Aktif"
+      ],
+      [
+        "wilson-felicia-133",
+        "Wilson & Felicia",
+        "16 November 2026",
+        "UpperHills Convention Hall, Makassar",
+        "https://gallery.runway.my.id/?event=wilson-felicia-133",
+        "1B1HyALBKEetXRoakAZuZ3iZYUeEsnjU5",
+        "https://fotoshare.co/e/ZJGYCfWbttuEG8Q67ocZs",
+        JSON.stringify([{ name: "Photobooth", url: "https://fotoshare.co/e/ZJGYCfWbttuEG8Q67ocZs", enabled: true, isPhotobooth: true }]),
+        "",
+        "",
+        "Aktif"
+      ],
+      [
+        "tommy-natasha-594",
+        "Tommy & Natasha",
+        "Rabu, 25 November 2026",
+        "UpperHills Convention Hall, Makassar",
+        "https://gallery.runway.my.id/?event=tommy-natasha-594",
+        "1qCHAv1hTfsnUQ5g6iHFCVkM3x60vw4uh",
+        "https://photos.google.com/share/AF1QipMagPm7xWB2YANajDr3hx-J4WKyhOgIQ41jUjqQnxv5LSy6392pyWC5hOfsQoz1mA?key=c1BLMDNyRGw4bEJyUWo5b1Y0eFlmTy14X1pESEdR",
+        JSON.stringify([{ id: "special_photobooth", name: "Photobooth", url: "https://photos.google.com/share/AF1QipMagPm7xWB2YANajDr3hx-J4WKyhOgIQ41jUjqQnxv5LSy6392pyWC5hOfsQoz1mA?key=c1BLMDNyRGw4bEJyUWo5b1Y0eFlmTy14X1pESEdR", enabled: true, isPhotobooth: true }]),
+        "",
+        "",
+        "Aktif"
+      ]
+    ];
+    sheetEvents.getRange(2, 1, defaultEvents.length, eventHeaders[0].length).setValues(defaultEvents);
+  }
+
+  sheetEvents.setColumnWidth(1, 180);
+  sheetEvents.setColumnWidth(2, 220);
+  sheetEvents.setColumnWidth(3, 160);
+  sheetEvents.setColumnWidth(4, 250);
+  sheetEvents.setColumnWidth(5, 320);
+  sheetEvents.setColumnWidth(6, 260);
+  sheetEvents.setColumnWidth(7, 300);
+  sheetEvents.setColumnWidth(8, 300);
+  sheetEvents.setColumnWidth(9, 260);
+  sheetEvents.setColumnWidth(10, 260);
+  sheetEvents.setColumnWidth(11, 100);
+  Logger.log("✅ Sheet 'Daftar_Acara' siap dengan data event lengkap.");
+
+  // --------------------------------------------------------------------------
+  // C. SHEET 3: Daftar_Foto (Safe Non-Destructive)
+  // --------------------------------------------------------------------------
+  var sheetPhotos = ss.getSheetByName("Daftar_Foto");
+  if (!sheetPhotos) {
+    sheetPhotos = ss.insertSheet("Daftar_Foto", 3);
+  }
+  if (sheetPhotos.getLastRow() === 0) {
+    var photoHeaders = [["ID_Foto", "Nama_File", "Kategori", "URL_Thumbnail", "URL_Download", "Ukuran_Bytes", "Waktu_Upload", "Status"]];
+    sheetPhotos.getRange(1, 1, 1, 8).setValues(photoHeaders)
+      .setBackground("#C5A880")
+      .setFontColor("#FFFFFF")
+      .setFontWeight("bold")
+      .setHorizontalAlignment("center");
+    sheetPhotos.setFrozenRows(1);
+  }
+  sheetPhotos.setColumnWidth(1, 140);
+  sheetPhotos.setColumnWidth(2, 220);
+  sheetPhotos.setColumnWidth(3, 130);
+  sheetPhotos.setColumnWidth(4, 260);
+  sheetPhotos.setColumnWidth(5, 260);
+  sheetPhotos.setColumnWidth(6, 110);
+  sheetPhotos.setColumnWidth(7, 180);
+  sheetPhotos.setColumnWidth(8, 100);
+
+  // --------------------------------------------------------------------------
+  // D. SHEET 4: Log_Aktivitas
+  // --------------------------------------------------------------------------
+  var sheetLogs = ss.getSheetByName("Log_Aktivitas");
+  if (!sheetLogs) {
+    sheetLogs = ss.insertSheet("Log_Aktivitas", 3);
+  }
+  var logHeaders = [["Timestamp", "Aksi", "Detail", "Pengguna"]];
+  sheetLogs.getRange(1, 1, 1, 4).setValues(logHeaders)
+    .setBackground("#64748B")
+    .setFontColor("#FFFFFF")
+    .setFontWeight("bold")
+    .setHorizontalAlignment("center");
+  sheetLogs.setFrozenRows(1);
+
+  var nowStr = Utilities.formatDate(new Date(), "GMT+7", "yyyy-MM-dd HH:mm:ss");
+  sheetLogs.appendRow([nowStr, "Inisialisasi Database Penuh", "Seluruh postingan foto, ID admin, dan link sistem berhasil diisi ke Google Sheets", "ZettBOT Setup"]);
+  sheetLogs.setColumnWidth(1, 200);
+  sheetLogs.setColumnWidth(2, 180);
+  sheetLogs.setColumnWidth(3, 350);
+  sheetLogs.setColumnWidth(4, 140);
+
+  // --------------------------------------------------------------------------
+  // D. Hapus 'Sheet1' kosong bawaan jika masih ada dan tersisa sheet lain
+  // --------------------------------------------------------------------------
+  try {
+    var residualSheet1 = ss.getSheetByName("Sheet1");
+    if (residualSheet1 && ss.getSheets().length > 1) {
+      ss.deleteSheet(residualSheet1);
+      Logger.log("ℹ️ Lembar kerja kosong bawaan 'Sheet1' berhasil dibersihkan.");
+    }
+  } catch (eDel) {}
+
+  // --------------------------------------------------------------------------
+  // E. FLUSH SEMUA PERUBAHAN KE SERVER GOOGLE SPREADSHEETS
+  // --------------------------------------------------------------------------
+  SpreadsheetApp.flush();
+  Logger.log("🎉 SUKSES BESAR! Seluruh data & tabel berhasil di-flush ke Google Sheets.");
+  Logger.log("Buka Spreadsheet Anda: " + ss.getUrl());
+
+  return {
+    success: true,
+    message: "Database & seluruh postingan foto berhasil dibuat 100% lengkap pada spreadsheet Anda!",
+    spreadsheetUrl: ss.getUrl(),
+    spreadsheetId: ss.getId(),
+    totalPhotos: (sheetPhotos && sheetPhotos.getLastRow() > 1) ? (sheetPhotos.getLastRow() - 1) : 0
+  };
+}
+
+/**
+ * 1. Menguji koneksi Google Drive
+ */
+function testDriveConnection() {
+  Logger.log("=== MEMULAI PENGUJIAN KONEKSI GOOGLE DRIVE ===");
+  var config = getEffectiveConfig();
+  var folderId = config.DRIVE_FOLDER_ID ? config.DRIVE_FOLDER_ID.trim() : "";
+
+  if (!folderId) {
+    Logger.log("⚠️ PERINGATAN: DRIVE_FOLDER_ID masih kosong.");
+    Logger.log("Aplikasi saat ini berjalan dalam Mode Demo dengan foto sampel.");
+    return;
+  }
+
+  try {
+    var folder = DriveApp.getFolderById(folderId);
+    Logger.log("✅ SUKSES: Folder utama ditemukan: " + folder.getName());
+
+    var subFolders = folder.getFolders();
+    var subCount = 0;
+    while (subFolders.hasNext()) {
+      var sub = subFolders.next();
+      subCount++;
+      Logger.log("  " + subCount + ". Subfolder: " + sub.getName());
+    }
+
+    var files = folder.getFiles();
+    var fileCount = 0;
+    var validImgCount = 0;
+    while (files.hasNext()) {
+      var f = files.next();
+      fileCount++;
+      if (f.getSize() >= 20480 && f.getMimeType().indexOf('image/') === 0) {
+        validImgCount++;
+      }
+    }
+    Logger.log("\nTotal berkas di folder utama: " + fileCount);
+    Logger.log("Foto valid (> 20KB): " + validImgCount);
+    Logger.log("Berkas corrupt/thumbnail diabaikan: " + (fileCount - validImgCount));
+    Logger.log("\n🎉 KONEKSI SIAP & BERSIH!");
+
+  } catch (e) {
+    Logger.log("❌ GAGAL: " + e.toString());
+  }
+}
+
+/**
+ * 2. Menguji Tautan Bingkai Foto Kustom
+ */
+function testFrameConnection() {
+  Logger.log("=== PENGUJIAN TAUTAN BINGKAI FOTO KUSTOM ===");
+  var config = getEffectiveConfig();
+  var frameUrl = config.FRAME_IMAGE_URL;
+
+  if (!frameUrl) {
+    Logger.log("ℹ️ Belum ada tautan bingkai yang diatur. Foto akan diunduh tanpa bingkai.");
+    return;
+  }
+
+  Logger.log("Tautan Bingkai Aktif: " + frameUrl);
+  try {
+    var response = UrlFetchApp.fetch(frameUrl, { muteHttpExceptions: true });
+    var code = response.getResponseCode();
+    var contentType = response.getHeaders()['Content-Type'] || '';
+    Logger.log("Status Kode HTTP: " + code);
+    Logger.log("Tipe Konten: " + contentType);
+
+    if (code === 200) {
+      Logger.log("✅ SUKSES: Tautan bingkai foto valid dan siap digabungkan saat tamu menekan tombol download!");
+    } else {
+      Logger.log("⚠️ Tautan merespon dengan kode: " + code + ". Pastikan izin file Google Drive disetel 'Anyone with the link can view'.");
+    }
+  } catch (e) {
+    Logger.log("❌ Gagal menjangkau file bingkai: " + e.toString());
+  }
+}
+
+/**
+ * 3. Membuatkan Struktur Folder Pernikahan Siap Pakai di Google Drive
+ */
+function createSampleFolderStructure() {
+  try {
+    var config = getEffectiveConfig();
+    var mainFolderName = "Galeri Foto Pernikahan - " + config.COUPLE_NAME;
+    var mainFolder = DriveApp.createFolder(mainFolderName);
+    mainFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    
+    var subNames = ["01. Prewedding", "02. Akad Nikah", "03. Resepsi", "04. Photobooth"];
+    for (var i = 0; i < subNames.length; i++) {
+      mainFolder.createFolder(subNames[i]);
+    }
+
+    Logger.log("✅ BERHASIL MEMBUAT FOLDER! ID: " + mainFolder.getId());
+    return mainFolder.getId();
+  } catch (e) {
+    Logger.log("❌ Gagal: " + e.toString());
+  }
+}
+
+/**
+ * 4. Reset PIN Admin
+ */
+function resetAdminPin(newPin) {
+  if (!newPin) {
+    Logger.log("⚠️ Masukkan PIN baru sebagai parameter fungsi resetAdminPin(newPin).");
+    return;
+  }
+  var pin = String(newPin).trim();
+  PropertiesService.getScriptProperties().setProperty("ADMIN_PIN", pin);
+  Logger.log("✅ SUKSES: PIN Admin direset ke: " + pin);
+}
+
+/**
+ * 5. Bersihkan Pengaturan
+ */
+function clearCustomSettings() {
+  PropertiesService.getScriptProperties().deleteAllProperties();
+  Logger.log("✅ SUKSES: Seluruh pengaturan kustom telah dibersihkan.");
+}
+
+
+/**
+ * 7. Alias: setupDemoSystemWithDummyFiles
+ */
+function setupDemoSystemWithDummyFiles() {
+  return setupTargetSpreadsheetDatabase();
+}
+
+/**
+ * 8. Alias: setupDatabaseSpreadsheetTool
+ */
+function setupDatabaseSpreadsheetTool() {
+  return setupTargetSpreadsheetDatabase();
+}
+
+/**
+ * 9. Menguji Koneksi ke Database Spreadsheet
+ */
+function testSpreadsheetDatabaseConnection() {
+  Logger.log("=== PENGUJIAN DATABASE SPREADSHEET ===");
+  var targetId = "133_po_5H36hVSwVwGm48pwREPPSowohqvPzauXSEN20";
+  var ss;
+  try {
+    ss = SpreadsheetApp.openById(targetId);
+  } catch (e) {
+    Logger.log("❌ Gagal membuka spreadsheet: " + e.toString());
+    return setupTargetSpreadsheetDatabase();
+  }
+
+  Logger.log("✅ SUKSES TERHUBUNG KE SPREADSHEET: " + ss.getName());
+  Logger.log("URL: " + ss.getUrl());
+  
+  var sheets = ss.getSheets();
+  Logger.log("Daftar Lembar Kerja (Sheets):");
+  for (var i = 0; i < sheets.length; i++) {
+    Logger.log("  " + (i + 1) + ". " + sheets[i].getName() + " (" + sheets[i].getLastRow() + " baris)");
   }
 }
