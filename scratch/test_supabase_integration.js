@@ -42,7 +42,7 @@ it("index.html bersih dari komponen database ganda Google Sheets di Tab 4", () =
 it("config.json memiliki konfigurasi Supabase murni tanpa parameter spreadsheet lama", () => {
   const cfg = JSON.parse(fs.readFileSync('config.json', 'utf8'));
   assert.strictEqual(cfg.DATABASE_ENGINE, "supabase");
-  assert.strictEqual(cfg.SUPABASE_URL, "https://faszgrkwdlqxbppownh.supabase.co");
+  assert.strictEqual(cfg.SUPABASE_URL, "https://faszgrkwdlqxsbppownh.supabase.co");
   assert(!cfg.hasOwnProperty('SPREADSHEET_ID'), "SPREADSHEET_ID harus dibersihkan");
   assert(!cfg.hasOwnProperty('SPREADSHEET_URL'), "SPREADSHEET_URL harus dibersihkan");
   assert(!cfg.hasOwnProperty('GAS_API_URL'), "GAS_API_URL harus dibersihkan");

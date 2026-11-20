@@ -58,7 +58,7 @@ Platform Galeri Foto Pernikahan & Slideshow Interaktif mendukung Multi-Event ter
 - Seluruh data dibaca secara dinamis dari database tanpa data mockup.
 
 ### 2.5 Proteksi Halaman Tidak Ditemukan untuk URL Manual
-- Mengetik link manual tanpa parameter event (`https://gallery.runway.my.id/`) menampilkan layar khusus **Halaman Tidak Ditemukan / Acara Tidak Ditemukan** (`#eventNotFoundScreen`).
+- Mengetik link manual tanpa parameter event (`https://testing.runway.my.id/`) menampilkan layar khusus **Halaman Tidak Ditemukan / Acara Tidak Ditemukan** (`#eventNotFoundScreen`).
 - Galeri foto, banner sambutan, identitas pengantin, tab filter kategori ("Semua Foto"), dan grup tombol aksi bawah (share, refresh, gembok admin) disembunyikan total guna mencegah kebocoran data antar event dan menjaga privasi masing-masing pasangan.
 - Tampilan dirancang bersih dan minimalis tanpa frame kaku serta tanpa tombol masuk panel admin bagi pengunjung publik.
 
@@ -182,7 +182,7 @@ Platform Galeri Foto Pernikahan & Slideshow Interaktif mendukung Multi-Event ter
 
 ### 2.20 Proteksi Tautan Domain Utama: Notifikasi 'Halaman Tidak Ditemukan' Saat URL Root Diakses Tanpa Parameter Acara (v4.20.0)
 - **Kewajiban Parameter Acara Eksplisit (Strict Event Requirement)**:
-  - Akses langsung ke root domain murni (`https://gallery.runway.my.id/`) tanpa menyertakan parameter acara (`?event=...` atau `?e=...`) diwajibkan menampilkan layar notifikasi **"Halaman Tidak Ditemukan"** (`#eventNotFoundScreen`).
+  - Akses langsung ke root domain murni (`https://testing.runway.my.id/`) tanpa menyertakan parameter acara (`?event=...` atau `?e=...`) diwajibkan menampilkan layar notifikasi **"Halaman Tidak Ditemukan"** (`#eventNotFoundScreen`).
   - Menghapus seluruh mekanisme auto-fallback (ke `localStorage`, `ACTIVE_EVENT_ID`, `andre-fayola-281`, atau `state.events[0]`) yang sebelumnya secara otomatis memuat acara pengantin pada URL root.
   - Seluruh elemen galeri (nama pasangan pengantin, banner sambutan, logo monogram, filter kategori, kartu foto, dan footer) disembunyikan seketika untuk melindungi kerahasiaan dan privasi masing-masing pasangan pengantin.
 
@@ -269,5 +269,19 @@ Platform Galeri Foto Pernikahan & Slideshow Interaktif mendukung Multi-Event ter
   - Operasi Create (tambah event), Read (ambil registry acara & settings), Update (simpan pengaturan), dan Delete (hapus event) dieksekusi 100% murni langsung ke Supabase PostgreSQL dengan latensi <50ms dan WebSocket realtime 0 detik.
   - Menambahkan tombol *"🔄 Segarkan Data Realtime"* (`handleRefreshFromSupabase()`) pada panel admin.
 - **Pembaruan Konfigurasi di [config.json](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-test/config.json)**:
-  - Menetapkan `"SUPABASE_URL": "https://faszgrkwdlqxbppownh.supabase.co"`.
+  - Menetapkan `"SUPABASE_URL": "https://faszgrkwdlqxsbppownh.supabase.co"`.
   - Membersihkan parameter usang: `"SPREADSHEET_ID"`, `"SPREADSHEET_URL"`, dan `"GAS_API_URL"`.
+
+### 2.28 Navigasi Cerdas 'Lihat / Test Galeri', Auto-Hydration Root Domain & Perpanjangan Timeout Scraper (v4.30.0)
+- **Tombol Cerdas `handleTestGallery()` pada Panel Admin**:
+  - Memperbarui tombol *"👁️ Lihat / Test Galeri"* pada header dan footer modal di [index.html](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-test/index.html) agar tidak sekadar menutup popup modal, melainkan memanggil fungsi `handleTestGallery()` di [js/app.js](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-test/js/app.js).
+  - Sistem secara otomatis mengarahkan browser ke event yang sedang aktif: `https://testing.runway.my.id/?event=wilson-felicia` dan seketika memuat galeri foto (66 foto Photostage + 637 foto Photobooth).
+- **Auto-Hydration Root Domain Murni**:
+  - Mengeliminasi penghentian dini (*early abort*) pada `initApp()` di [js/app.js](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-test/js/app.js) saat membuka domain polos (`https://testing.runway.my.id/`).
+  - Sistem secara cerdas memuat event aktif pertama dari database Supabase (`Wilson & Felicia`), memperbarui URL bar secara rapi via `history.replaceState`, dan langsung menampilkan galeri tanpa layar kosong.
+- **Perpanjangan Timeout Scraper & Watchdog (12 Detik)**:
+  - Menaikkan timeout `AbortController` pada endpoint `/api/drive-folder`, `/api/fotoshare`, `/api/google-photos`, dan `/api/kingphotobooth` dari 4000ms/6000ms menjadi **12000ms (12 detik)**.
+  - Menaikkan timeout watchdog skeleton dari 3500ms menjadi **12000ms (12 detik)** guna menjamin perangkat dengan koneksi seluler lambat tidak pernah membatalkan pengambilan 66 foto Google Drive.
+- **Penguncian Subdomain Resmi**:
+  - Mengunci subdomain resmi proyek pada `https://testing.runway.my.id` dan menyelaraskan kolom `home_url` seluruh event pada database Supabase.
+

@@ -635,21 +635,24 @@ function testAndSyncDriveFolder() {
 
       let urlEventId = getActiveEventIdFromUrl();
       if (!urlEventId) {
-        state.currentEventId = "";
-        showEventNotFoundScreen(true);
-        return;
+        try {
+          const savedLast = localStorage.getItem("WEDDING_LAST_ACTIVE_EVENT");
+          if (savedLast) urlEventId = savedLast.trim();
+        } catch(e) {}
       }
 
-      state.currentEventId = urlEventId;
-      showEventNotFoundScreen(false);
-
-      // Pastikan URL di address bar browser tetap rapi dengan tautan khusus event ini
-      try {
-        const curOrigin = window.location.origin || (window.location.protocol + "//" + window.location.host);
-        const curPath = window.location.pathname || "/";
-        const fullTargetUrl = curOrigin + curPath + "?event=" + encodeURIComponent(state.currentEventId);
-        window.history.replaceState({ eventId: state.currentEventId }, "", fullTargetUrl);
-      } catch(e) {}
+      if (urlEventId) {
+        state.currentEventId = urlEventId;
+        showEventNotFoundScreen(false);
+        try {
+          const curOrigin = window.location.origin || (window.location.protocol + "//" + window.location.host);
+          const curPath = window.location.pathname || "/";
+          const fullTargetUrl = curOrigin + curPath + "?event=" + encodeURIComponent(state.currentEventId);
+          window.history.replaceState({ eventId: state.currentEventId }, "", fullTargetUrl);
+        } catch(e) {}
+      } else {
+        state.currentEventId = "";
+      }
 
       // Muat konfigurasi cache khusus untuk event yang sedang aktif
       try {
@@ -720,46 +723,38 @@ function testAndSyncDriveFolder() {
               state.events = Array.from(evMap.values());
               try { localStorage.setItem("WEDDING_EVENTS_REGISTRY", JSON.stringify(state.events)); } catch(eReg) {}
 
-              const explicitUrl = getActiveEventIdFromUrl();
-              if (!explicitUrl) {
-                showEventNotFoundScreen(true);
-                return;
-              }
-
-              let matchedEv = state.events.find(function(ev) { 
-                if (!ev || !ev.id) return false;
-                const eId = String(ev.id).toLowerCase().trim();
-                const curId = String(explicitUrl).toLowerCase().trim();
-                return eId === curId || eId.startsWith(curId) || curId.startsWith(eId) || eId.replace(/-\d+$/, '') === curId.replace(/-\d+$/, ''); 
-              });
-              if (!matchedEv) {
-                // Event baru dibuat mungkin belum ada di config.json statis.
-                // Jangan abort ke 404 di sini; biarkan mengalir ke fetchEventsFromSupabase() untuk membaca database live!
-                console.log("Event belum ada di config.json statis, memuat dari database Supabase...");
-              } else {
-                showEventNotFoundScreen(false);
-                state.currentEventId = matchedEv.id;
-                remoteCfg.ACTIVE_EVENT_ID = matchedEv.id;
-                remoteCfg.EVENT_NAME = matchedEv.name;
-                remoteCfg.COUPLE_NAME = matchedEv.name;
-                remoteCfg.EVENT_DATE = matchedEv.date;
-                remoteCfg.EVENT_VENUE = matchedEv.venue;
-                remoteCfg.EVENT_LOGO_URL = matchedEv.logoUrl || matchedEv.EVENT_LOGO_URL || "";
-                remoteCfg.logoUrl = remoteCfg.EVENT_LOGO_URL;
-                remoteCfg.SUBTITLE = matchedEv.subtitle || remoteCfg.SUBTITLE;
-                remoteCfg.WELCOME_MESSAGE = matchedEv.welcomeMessage || remoteCfg.WELCOME_MESSAGE;
-                remoteCfg.FOOTER_MESSAGE = matchedEv.footerMessage || remoteCfg.FOOTER_MESSAGE;
-                remoteCfg.ALL_PHOTOS_LABEL = matchedEv.allPhotosLabel || "Semua Foto";
-                remoteCfg.DRIVE_FOLDER_ID = matchedEv.driveFolderId;
-                remoteCfg.FRAME_IMAGE_URL = matchedEv.frameImageUrl;
-                remoteCfg.PHOTOBOOTH_URL = matchedEv.photoboothUrl;
-                if (Array.isArray(matchedEv.customCategories) && matchedEv.customCategories.length > 0) {
-                  remoteCfg.CUSTOM_CATEGORIES = matchedEv.customCategories;
+              const explicitUrl = getActiveEventIdFromUrl() || state.currentEventId;
+              if (explicitUrl) {
+                let matchedEv = state.events.find(function(ev) { 
+                  if (!ev || !ev.id) return false;
+                  const eId = String(ev.id).toLowerCase().trim();
+                  const curId = String(explicitUrl).toLowerCase().trim();
+                  return eId === curId || eId.startsWith(curId) || curId.startsWith(eId) || eId.replace(/-\d+$/, '') === curId.replace(/-\d+$/, ''); 
+                });
+                if (matchedEv) {
+                  showEventNotFoundScreen(false);
+                  state.currentEventId = matchedEv.id;
+                  remoteCfg.ACTIVE_EVENT_ID = matchedEv.id;
+                  remoteCfg.EVENT_NAME = matchedEv.name;
+                  remoteCfg.COUPLE_NAME = matchedEv.name;
+                  remoteCfg.EVENT_DATE = matchedEv.date;
+                  remoteCfg.EVENT_VENUE = matchedEv.venue;
+                  remoteCfg.EVENT_LOGO_URL = matchedEv.logoUrl || matchedEv.EVENT_LOGO_URL || "";
+                  remoteCfg.logoUrl = remoteCfg.EVENT_LOGO_URL;
+                  remoteCfg.SUBTITLE = matchedEv.subtitle || remoteCfg.SUBTITLE;
+                  remoteCfg.WELCOME_MESSAGE = matchedEv.welcomeMessage || remoteCfg.WELCOME_MESSAGE;
+                  remoteCfg.FOOTER_MESSAGE = matchedEv.footerMessage || remoteCfg.FOOTER_MESSAGE;
+                  remoteCfg.ALL_PHOTOS_LABEL = matchedEv.allPhotosLabel || "Semua Foto";
+                  remoteCfg.DRIVE_FOLDER_ID = matchedEv.driveFolderId;
+                  remoteCfg.FRAME_IMAGE_URL = matchedEv.frameImageUrl;
+                  remoteCfg.PHOTOBOOTH_URL = matchedEv.photoboothUrl;
+                  if (Array.isArray(matchedEv.customCategories) && matchedEv.customCategories.length > 0) {
+                    remoteCfg.CUSTOM_CATEGORIES = matchedEv.customCategories;
+                  }
+                  remoteCfg.COVER_SETTINGS = matchedEv.coverSettings;
+                  state.allPhotosLabel = matchedEv.allPhotosLabel || "Semua Foto";
+                  state.activeCategory = state.allPhotosLabel;
                 }
-                remoteCfg.COVER_SETTINGS = matchedEv.coverSettings;
-
-                state.allPhotosLabel = matchedEv.allPhotosLabel || "Semua Foto";
-                state.activeCategory = state.allPhotosLabel;
               }
             }
             if (remoteCfg.ADMIN_ACCOUNTS) {
@@ -837,7 +832,7 @@ function testAndSyncDriveFolder() {
       const photosGrid = document.getElementById("photosGrid");
       state.isAutoRefreshing = true;
 
-      // Fail-Safe Watchdog: Cegah skeleton cards tergantung lebih dari 3.5 detik pada event baru
+      // Fail-Safe Watchdog: Cegah skeleton cards tergantung lebih dari 12 detik pada event baru
       let watchdogTimer = null;
       if (!isSilent) {
         watchdogTimer = setTimeout(function() {
@@ -848,7 +843,7 @@ function testAndSyncDriveFolder() {
           if (remainingSkeletons.length > 0 && (!state.filteredPhotos || state.filteredPhotos.length === 0)) {
             renderPhotoGrid();
           }
-        }, 3500);
+        }, 12000);
       }
 
       function clearWatchdog() {
@@ -881,7 +876,7 @@ function testAndSyncDriveFolder() {
         if (dfController) {
           dfTimeoutId = setTimeout(function() {
             try { dfController.abort(); } catch(e) {}
-          }, 4000);
+          }, 12000);
         }
         const dfOpts = dfController ? { signal: dfController.signal } : {};
 
@@ -1591,13 +1586,13 @@ function testAndSyncDriveFolder() {
         });
       }
 
-      // 1. Coba lewat API endpoint /api/google-photos dengan timeout 6 detik
+      // 1. Coba lewat API endpoint /api/google-photos dengan timeout 12 detik
       const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
       let timeoutId = null;
       if (controller) {
         timeoutId = setTimeout(function() {
           try { controller.abort(); } catch(e) {}
-        }, 6000);
+        }, 12000);
       }
 
       const fetchOpts = controller ? { signal: controller.signal } : {};
@@ -1681,13 +1676,13 @@ function testAndSyncDriveFolder() {
         if (callback) callback([]);
       }
 
-      // 1. Coba lewat API endpoint /api/kingphotobooth (Vercel) dengan timeout 6 detik
+      // 1. Coba lewat API endpoint /api/kingphotobooth (Vercel) dengan timeout 12 detik
       const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
       let timeoutId = null;
       if (controller) {
         timeoutId = setTimeout(function() {
           try { controller.abort(); } catch(e) {}
-        }, 6000);
+        }, 12000);
       }
       const fetchOpts = controller ? { signal: controller.signal } : {};
 
@@ -1792,11 +1787,11 @@ function testAndSyncDriveFolder() {
       if (controller) {
         timeoutId = setTimeout(function() {
           try { controller.abort(); } catch (e) {}
-        }, 4000);
+        }, 12000);
       }
       const fetchOpts = controller ? { signal: controller.signal } : {};
 
-      // 1. Coba lewat API endpoint /api/fotoshare (Vercel) dengan timeout 4 detik
+      // 1. Coba lewat API endpoint /api/fotoshare (Vercel) dengan timeout 12 detik
       fetch("/api/fotoshare?url=" + encodeURIComponent(url) + "&category=" + encodeURIComponent(cat), fetchOpts)
         .then(function(res) {
           if (timeoutId) clearTimeout(timeoutId);
@@ -1926,13 +1921,13 @@ function testAndSyncDriveFolder() {
         if (callback) callback([]);
       }
 
-      // 1. Coba lewat API endpoint /api/drive-folder (Vercel / Node) dengan timeout 6 detik
+      // 1. Coba lewat API endpoint /api/drive-folder (Vercel / Node) dengan timeout 12 detik
       const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
       let timeoutId = null;
       if (controller) {
         timeoutId = setTimeout(function() {
           try { controller.abort(); } catch(e) {}
-        }, 6000);
+        }, 12000);
       }
       const fetchOpts = controller ? { signal: controller.signal } : {};
 
@@ -2059,7 +2054,7 @@ function testAndSyncDriveFolder() {
             if (grid && grid.querySelector(".skeleton-card") && (!state.filteredPhotos || state.filteredPhotos.length === 0)) {
               renderPhotoGrid(targetUrl, effectiveCat);
             }
-          }, 3500);
+          }, 12000);
         }
       }
 
@@ -2694,7 +2689,19 @@ function testAndSyncDriveFolder() {
             try { localStorage.setItem("WEDDING_EVENTS_REGISTRY", JSON.stringify(mappedEvents)); } catch(e) {}
 
             // Cari event yang aktif
-            const curSlug = state.currentEventId || getActiveEventIdFromUrl();
+            let curSlug = state.currentEventId || getActiveEventIdFromUrl();
+            if (!curSlug && state.events && state.events.length > 0 && state.events[0].id) {
+              // Otomatis aktifkan event pertama dari Supabase jika membuka domain polos
+              curSlug = state.events[0].id;
+              state.currentEventId = curSlug;
+              try {
+                localStorage.setItem("WEDDING_LAST_ACTIVE_EVENT", curSlug);
+                const curOrigin = window.location.origin || (window.location.protocol + "//" + window.location.host);
+                const curPath = window.location.pathname || "/";
+                const fullTargetUrl = curOrigin + curPath + "?event=" + encodeURIComponent(state.currentEventId);
+                window.history.replaceState({ eventId: state.currentEventId }, "", fullTargetUrl);
+              } catch(e) {}
+            }
             if (curSlug) {
               const matched = state.events.find(function(ev) {
                 if (!ev || !ev.id) return false;
@@ -3491,6 +3498,22 @@ function testAndSyncDriveFolder() {
         if (nameEl) nameEl.innerText = (state.currentAdminUser && state.currentAdminUser.name) ? state.currentAdminUser.name : "Admin";
       }
     }
+
+    function handleTestGallery() {
+      const targetId = state.currentEventId || (state.events && state.events[0] && state.events[0].id) || "wilson-felicia";
+      closeAdminSettingsModal();
+      try { localStorage.setItem("WEDDING_LAST_ACTIVE_EVENT", targetId); } catch(e) {}
+      const curOrigin = window.location.origin || (window.location.protocol + "//" + window.location.host);
+      const curPath = window.location.pathname || "/";
+      const targetUrl = curOrigin + curPath + "?event=" + encodeURIComponent(targetId);
+      if (window.location.search.indexOf(targetId) === -1) {
+        window.location.href = targetUrl;
+      } else {
+        showEventNotFoundScreen(false);
+        fetchGalleryData(true);
+      }
+    }
+    window.handleTestGallery = handleTestGallery;
 
 
     /* ==========================================================================

@@ -118,18 +118,14 @@
           var params = new URLSearchParams(window.location.search);
           var targetEventId = (params.get("event") || params.get("e") || "").trim();
           if (!targetEventId) {
-            var nf = document.getElementById("eventNotFoundScreen");
-            var hr = document.getElementById("heroSection");
-            var filterWrap = document.getElementById("gallerySection") || document.querySelector(".filter-wrapper");
-            var galMain = document.querySelector(".gallery-container");
-            var footer = document.querySelector(".footer");
-            var floatBar = document.getElementById("adminActiveFloatingBar");
-            if (nf) nf.style.display = "flex";
-            if (hr) hr.style.display = "none";
-            if (filterWrap) filterWrap.style.display = "none";
-            if (galMain) galMain.style.display = "none";
-            if (footer) footer.style.display = "none";
-            if (floatBar) floatBar.style.display = "none";
+            try {
+              var lastEvent = localStorage.getItem("WEDDING_LAST_ACTIVE_EVENT");
+              if (lastEvent) targetEventId = lastEvent.trim();
+            } catch(e) {}
+          }
+          if (!targetEventId) {
+            // Biarkan js/app.js menginisialisasi dari database Supabase secara realtime
+            var _gs = document.getElementById("gallerySection");
             return;
           }
           var cacheKey = "WEDDING_EVENT_CFG_" + targetEventId;
@@ -489,7 +485,7 @@
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
-          <button type="button" class="btn btn-outline" onclick="closeAdminSettingsModal()" style="font-size: 0.78rem; padding: 5px 12px; border-color: #CBD5E1; color: #334155; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;" title="Lihat dan uji coba galeri tanpa keluar dari mode admin">
+          <button type="button" class="btn btn-outline" onclick="handleTestGallery()" style="font-size: 0.78rem; padding: 5px 12px; border-color: #CBD5E1; color: #334155; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;" title="Lihat dan uji coba galeri tanpa keluar dari mode admin">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             <span>Lihat / Test Galeri</span>
           </button>
@@ -738,7 +734,7 @@
           <span>Keluar</span>
         </button>
 
-        <button type="button" class="btn btn-outline" onclick="closeAdminSettingsModal()" style="font-size: 0.84rem; padding: 8px 16px; border-color: var(--gold-dark); color: var(--gold-dark); font-weight: 600;" title="Tutup jendela pengaturan untuk melihat & menguji coba menu galeri">
+        <button type="button" class="btn btn-outline" onclick="handleTestGallery()" style="font-size: 0.84rem; padding: 8px 16px; border-color: var(--gold-dark); color: var(--gold-dark); font-weight: 600;" title="Tutup jendela pengaturan untuk melihat & menguji coba menu galeri">
           <span>👁️ Lihat / Test Galeri</span>
         </button>
 
