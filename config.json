@@ -1,6 +1,6 @@
 {
-  "DATABASE_ENGINE": "wedding-gallery",
-  "SUPABASE_URL": "https://faszgrkwdlqxbppownh.supabase.co",
+  "DATABASE_ENGINE": "supabase",
+  "SUPABASE_URL": "https://faszgrkwdlqxsbppownh.supabase.co",
   "SUPABASE_ANON_KEY": "sb_publishable_fnPfL0cZdJfsW8CdIwn4IQ_fkbJ61sA",
   "ACTIVE_EVENT_ID": "",
   "ALL_PHOTOS_LABEL": "Semua Foto",
