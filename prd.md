@@ -285,3 +285,24 @@ Platform Galeri Foto Pernikahan & Slideshow Interaktif mendukung Multi-Event ter
 - **Penguncian Subdomain Resmi**:
   - Mengunci subdomain resmi proyek pada `https://testing.runway.my.id` dan menyelaraskan kolom `home_url` seluruh event pada database Supabase.
 
+### 2.29 Perbaikan Universal Tombol Simpan Perubahan, Multi-Tab Admin & Proteksi Kredensial Supabase (v4.31.0)
+- **Resolusi Typo Hostname Supabase & Eliminasi NetworkError**:
+  - Memperbaiki URL Supabase pada `GLOBAL_CONFIG` di [js/app.js](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-test/js/app.js) dari `https://faszgrkwdlqxbppownh.supabase.co` (kurang huruf `'s'`) menjadi `https://faszgrkwdlqxsbppownh.supabase.co`.
+  - Menetapkan `GLOBAL_CONFIG.SUPABASE_ANON_KEY` dengan kunci API aktif `sb_publishable_fnPfL0cZdJfsW8CdIwn4IQ_fkbJ61sA`.
+  - Menambahkan sanitasi otomatis pada saat startup aplikasi di `DOMContentLoaded` dan `getSupabaseConfig()` untuk mengoreksi cache browser yang masih menyimpan URL typo lama tanpa memerlukan clear-cache manual dari pengguna.
+  - Memperbarui pencarian akun admin pada `handleAdminLogin()` menggunakan operator `.ilike('username', username)` agar proses autentikasi bersifat *case-insensitive*.
+- **Universal Asynchronous Save System (`handleSaveAllSettings`)**:
+  - Mengonversi fungsi `handleSaveAllSettings()` menjadi fungsi `async` dengan umpan balik visual langsung: status tombol berubah menjadi *"Menyimpan ke Supabase..."* dan didisable selama proses berlangsung.
+  - Menggunakan `Promise.all` untuk menyimpan serentak ke database Supabase:
+    1. Objek Event ke tabel `events` melalui fungsi `saveEventToSupabase` yang mengembalikan `Promise` dan dilengkapi proteksi kolom non-null.
+    2. Konfigurasi global ke tabel `settings` dengan strategi konflik `onConflict: 'key'`.
+    3. Pembaruan PIN/Password admin ke tabel `admin_users` jika input `#cfgNewAdminPassword` diisi minimal 4 karakter.
+    4. Penambahan akun admin baru ke tabel `admin_users` jika form input username dan password baru diisi.
+  - Melindungi integritas data: modal hanya ditutup jika respon HTTP Supabase berstatus 200/201 (sukses). Apabila terjadi gangguan jaringan atau database, modal tetap terbuka dan pesan kesalahan ditampilkan secara transparan di `#saveAlertBox`.
+- **Proteksi Kredensial Supabase Anti-Reset**:
+  - Memasang rantai fallback protektif pada `handleSaveAllSettings()` agar penyimpanan dari tab manapun (Acara, Foto & Kategori, atau Akun Admin) tidak pernah menimpa konfigurasi `SUPABASE_URL` atau `SUPABASE_ANON_KEY` dengan string kosong.
+- **Pembersihan Redundansi & Keselarasan Skema Database**:
+  - Menghapus blok deklarasi fungsi ganda `loadAdminUsers`, `renderAdminUsersList`, dan `handleAddAdminUser` yang usang.
+  - Menyesuaikan mutasi data `admin_users` dengan skema riil Supabase (`id`, `username`, `name`, `pin`, `role`, `created_at`) tanpa menyertakan kolom yang tidak ada (`updated_at`), mencegah galat `PGRST204`.
+
+
