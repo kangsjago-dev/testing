@@ -1,38 +1,34 @@
-# STATUS REVISI SISTEM (revisi.md) - v4.26.0
+# RENCANA REVISI & PENYEMPURNAAN SISTEM (revisi.md)
+# Projek: SnapEvent - Web App Disposable Camera & Live Event Gallery
 ================================================================================
-STATUS: SELESAI DITERAPKAN (MERGED TO MASTER CONTEXT & PRD v4.26.0)
-PERMINTAAN: Migrasi Arsitektur Database dari Google Sheets ke Supabase (PostgreSQL + Realtime WebSocket)
-TANGGAL PENGAJUAN: 20 November 2026
-VERSI TARGET: v4.26.0-PROD
-ARSITEK: ZettBOT by Zettbos
+VERSI TARGET: v2.3.2
+STATUS: SELESAI DITERAPKAN (VERSION 2.3.2)
+AUTHOR: ZettBOT by Zettbos (Universal Product Architect & Lead Engineering Mentor)
+TANGGAL: 16 November 2026
 ================================================================================
 
-## 1. Ringkasan Implementasi
+## 1. RINGKASAN TINDAKAN v2.3.2 (AKSES RESMI www.runway.my.id/cam)
+1. **Universal Base Path Resolver di `<head>` `index.html`:**
+   - Menambahkan skrip sinkron pada baris teratas `<head>`:
+     ```html
+     <script>
+       (function() {
+         try {
+           var p = window.location.pathname || '';
+           var baseHref = (p.indexOf('/cam') !== -1) ? '/cam/' : '/';
+           document.write('<base href="' + baseHref + '">');
+         } catch (e) {}
+       })();
+     </script>
+     ```
+   - Mengunci resolusi berkas aset `style.css` dan `app.js` ke `/cam/` saat diakses via `https://www.runway.my.id/cam`.
+   - Mengeliminasi total masalah 404 NOT FOUND pada aset CSS & JS peramban.
 
-Sistem Wedding Photo Gallery & Live Slideshow Platform telah resmi ditingkatkan ke arsitektur **Dual-Engine (Supabase PostgreSQL + Realtime Engine dengan Google Sheets Fallback)**.
+2. **Dual-Layer Defensive Asset Loading:**
+   - Menyematkan handler `onerror` defensif pada tag `<link rel="stylesheet">` dan `<script defer>` agar peramban mobile secara otomatis mencoba kembali memuat aset dari `/cam/style.css` dan `/cam/app.js` bila terjadi kendala jaringan.
 
-### Perubahan Utama:
-1. **Pustaka SDK Supabase**:
-   - Pustaka resmi `@supabase/supabase-js@2` disematkan pada [index.html](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-test/index.html).
-2. **Antarmuka Admin (Tab Cloud & API)**:
-   - Ditambahkan modul pengaturan Supabase (`#cfgSupabaseUrl`, `#cfgSupabaseAnonKey`, `#supabaseStatusBadge`).
-   - Ditambahkan tombol *"🔌 Uji Koneksi Supabase"* dan *"🚀 Salin Data Sheets ke Supabase (1-Klik)"*.
-3. **Konfigurasi Sistem**:
-   - Berkas [config.json](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-test/config.json) diperbarui dengan `DATABASE_ENGINE: "supabase"`, `SUPABASE_URL`, dan `SUPABASE_ANON_KEY`.
-4. **Logika Dual-Engine & Realtime**:
-   - Berkas [js/app.js](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-test/js/app.js) mengelola inisialisasi client Supabase, sinkronisasi event, pembacaan settings global, dan channel WebSocket realtime.
-   - Jika kredensial Supabase terisi, pembacaan data berjalan super cepat (<50ms) dan realtime (0 detik).
-   - Jika Supabase belum diisi atau mengalami kendala jaringan, sistem secara otomatis beralih (*fallback*) ke Google Sheets tanpa downtime.
-5. **Cetak Biru Database Supabase**:
-   - Berkas [scratch/supabase_schema.sql](file:///c:/Users/Administrator/.gemini/antigravity-ide/project/wedding-test/scratch/supabase_schema.sql) berisi skrip SQL siap jalan untuk tabel `events`, `settings`, `admin_users`, `activity_logs`, Row Level Security (RLS), dan seed data 3 event aktif.
+3. **Sinkronisasi Tautan & QR Code Acara:**
+   - Menyelaraskan fallback `getEventShareUrl()` di `app.js` ke `https://www.runway.my.id/cam` sehingga seluruh tautan yang digenerate oleh sistem ramah terhadap alamat `/cam`.
 
----
-
-## 2. Hasil Verifikasi & Uji Regresi
-
-- **Test Suite Supabase Integration (`scratch/test_supabase_integration.js`)**: 5/5 PASS (100%)
-- **Test Suite Sinkronisasi Daftar_Acara (`scratch/test_sync_daftar_acara.js`)**: 4/4 PASS (100%)
-- **Test Suite Layar Not Found Minimal Frameless (`scratch/test_frameless_not_found.js`)**: 6/6 PASS (100%)
-- **Test Suite Perbaikan Loading Refresh (`scratch/test_new_event_refresh_fix.js`)**: 7/7 PASS (100%)
-- **Sintaks JavaScript (`node --check js/app.js`)**: 0 Syntax Error (Exit Code 0)
-================================================================================
+4. **Komitmen Zero-Regression:**
+   - Fitur kamera analog live, kontrol zoom 1x-3x, filter grading, kuota jepretan, upload Google Drive, galeri tamu, dan pengaturan admin Google Sheets dipertahankan 100% utuh tanpa gangguan.
