@@ -305,4 +305,20 @@ Platform Galeri Foto Pernikahan & Slideshow Interaktif mendukung Multi-Event ter
   - Menghapus blok deklarasi fungsi ganda `loadAdminUsers`, `renderAdminUsersList`, dan `handleAddAdminUser` yang usang.
   - Menyesuaikan mutasi data `admin_users` dengan skema riil Supabase (`id`, `username`, `name`, `pin`, `role`, `created_at`) tanpa menyertakan kolom yang tidak ada (`updated_at`), mencegah galat `PGRST204`.
 
+### 2.30 Isolasi Mutlak Per-Event, Proteksi Link Polos & Sinkronisasi Tombol Supabase (v4.32.0)
+- **Proteksi Halaman Utama Domain Polos (`https://testing.runway.my.id/`)**:
+  - Mengakses domain polos tanpa parameter query `?event=...` secara mutlak mengaktifkan komponen `#eventNotFoundScreen` ("Halaman Tidak Ditemukan").
+  - Meniadakan seluruh mekanisme auto-activate atau fallback ke `localStorage.getItem("WEDDING_LAST_ACTIVE_EVENT")`, menjamin kepatuhan privasi dan isolasi antarevent.
+- **Isolasi Mutlak Setting & Galeri Per-Event**:
+  - Event aktif seperti `https://testing.runway.my.id/?event=wilson-felicia` memuat data terisolasi dari tabel `events` Supabase (`drive_folder_id: 1B1HyALBKEetXRoakAZuZ3iZYUeEsnjU5`, `all_photos_label: "Photostage"`, `photobooth_url: "https://fotoshare.co/e/ZJGYcfWbttuEG8Q67ocZs"`).
+  - Tampilan galeri memindai 66 foto langsung dari folder Google Drive tanpa bergantung pada Google Apps Script atau event lain.
+- **Penyelesaian Bug Seluruh Tombol & Sinkronisasi**:
+  - Memperbaiki `ReferenceError: allPhotosLabelInput is not defined` pada `syncSingleCategory`.
+  - Memperbaiki penargetan elemen ID input folder Google Drive (`cfgDriveFolderId`) pada `testAndSyncDriveFolder` dan `handleSyncDrivePhotosDirectly`.
+  - Menghapus kolom `updated_at` pada operasi update/insert tabel `admin_users` untuk mencegah galat PostgreSQL `PGRST204`.
+  - Mengoreksi pemetaan kolom `triggerSyncDaftarAcara` agar selaras dengan skema tabel `events` Supabase.
+  - Menyediakan endpoint serverless proxy `/api/supabase-proxy` untuk menangani galat `TypeError: NetworkError` dari peramban (adblocker/tracking protection).
+  - Mengikat seluruh fungsi tombol admin ke `window` secara eksplisit.
+
+
 

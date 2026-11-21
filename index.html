@@ -7,15 +7,19 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
-  <!-- Inline Micro-Loader: Mencegah Kedipan Teks Lama (Zero FOUC) -->
+  <!-- Inline Micro-Loader: Mencegah Kedipan Teks Lama (Zero FOUC) Hanya Jika Ada Parameter Event -->
   <script>
     (function() {
       try {
-        var s = localStorage.getItem("WEDDING_ACTIVE_EVENT_CFG");
-        if (s) {
-          var c = JSON.parse(s);
-          var name = c.EVENT_NAME || c.COUPLE_NAME || "";
-          if (name) document.title = name + " - Wedding Photo Gallery";
+        var params = new URLSearchParams(window.location.search);
+        var targetEventId = (params.get("event") || params.get("e") || "").trim();
+        if (targetEventId) {
+          var s = localStorage.getItem("WEDDING_EVENT_CFG_" + targetEventId) || localStorage.getItem("WEDDING_ACTIVE_EVENT_CFG");
+          if (s) {
+            var c = JSON.parse(s);
+            var name = c.EVENT_NAME || c.COUPLE_NAME || "";
+            if (name) document.title = name + " - Wedding Photo Gallery";
+          }
         }
       } catch(e) {}
     })();
@@ -118,14 +122,7 @@
           var params = new URLSearchParams(window.location.search);
           var targetEventId = (params.get("event") || params.get("e") || "").trim();
           if (!targetEventId) {
-            try {
-              var lastEvent = localStorage.getItem("WEDDING_LAST_ACTIVE_EVENT");
-              if (lastEvent) targetEventId = lastEvent.trim();
-            } catch(e) {}
-          }
-          if (!targetEventId) {
-            // Biarkan js/app.js menginisialisasi dari database Supabase secara realtime
-            var _gs = document.getElementById("gallerySection");
+            // Isolasi Mutlak: Link polos tanpa parameter ?event= tidak menampilkan identitas event apapun
             return;
           }
           var cacheKey = "WEDDING_EVENT_CFG_" + targetEventId;

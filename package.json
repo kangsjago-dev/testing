@@ -1,6 +1,7 @@
 {
   "name": "wedding-panggung",
   "version": "2.5.0",
+  "type": "module",
   "description": "Elegant Google Drive Wedding Photo Gallery Web App deployed on Vercel",
   "scripts": {
     "start": "serve ."
@@ -14,4 +15,3 @@
   "author": "Hans & Yurike",
   "license": "MIT"
 }
-
