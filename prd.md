@@ -320,5 +320,18 @@ Platform Galeri Foto Pernikahan & Slideshow Interaktif mendukung Multi-Event ter
   - Menyediakan endpoint serverless proxy `/api/supabase-proxy` untuk menangani galat `TypeError: NetworkError` dari peramban (adblocker/tracking protection).
   - Mengikat seluruh fungsi tombol admin ke `window` secara eksplisit.
 
+### 2.31 Anti-Reset Konfigurasi, Jaminan Tab Photobooth & Proxy Fallback Terpadu (v4.33.0)
+- **Mitigasi Penimpaan Nilai Kosong `config.json`**:
+  - `DOMContentLoaded` memfilter nilai kosong dari berkas `config.json` agar tidak menghapus `DRIVE_FOLDER_ID`, `EVENT_NAME`, atau `CUSTOM_CATEGORIES` aktif.
+- **Universal Proxy Fallback untuk Operasi Database**:
+  - `fetchEventsFromSupabase`, `saveEventToSupabase`, dan `handleSaveAllSettings` mengintegrasikan *automatic failover* ke `/api/supabase-proxy` ketika koneksi browser mengalami `TypeError: NetworkError`.
+- **Jaminan Tab Kategori Photobooth**:
+  - `renderCategoryTabs` secara aktif memeriksa `state.activeConfig.PHOTOBOOTH_URL` dan `curEv.photoboothUrl` untuk memastikan tab `Photobooth` selalu ditampilkan berdampingan dengan tab utama (`Photostage`).
+- **Resolusi Cadangan Folder Foto Galeri**:
+  - `fetchGalleryData` memiliki fallback membaca `curEv.driveFolderId` jika `activeConfig.DRIVE_FOLDER_ID` belum terisi, memastikan 66 foto Google Drive selalu dimuat dan dirender di grid.
+- **Interaktivitas Tombol Segarkan Kategori**:
+  - Tombol pada kartu kosong langsung memicu pemindaian Google Drive untuk kategori utama atau endpoint Photobooth secara dinamis.
+
+
 
 

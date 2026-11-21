@@ -87,5 +87,30 @@ ARSITEK: ZettBOT by Zettbos (Universal System Architect & Mentor)
 
 ---
 
-## 4. Status Implementasi: SELESAI DITERAPKAN (v4.32.0)
+## 4. Status Implementasi: SELESAI DITERAPKAN (v4.32.0 & v4.33.0)
 Semua fungsi tombol, sinkronisasi Supabase Realtime, penanganan NetworkError dengan proxy fallback, proteksi isolasi link polos (`https://testing.runway.my.id/`), serta isolasi galeri kustom per-event (`?event=wilson-felicia` memuat 66 foto dari Google Drive) telah diuji coba dan **100% lulus verifikasi**.
+
+---
+
+# Catatan Revisi Arsitektur v4.33.0: Solusi Permanen Anti-Reset Konfigurasi, Jaminan Tampilan Galeri & Tab Photobooth
+
+## 1. Latar Belakang & Keluhan Pengguna
+Pengguna melaporkan: *"semua settingan dimasukkan, nanti tereset kembali dan semua tidak ada tampilan, perbaiki semua link dan sync"*.
+Tangkapan layar membuktikan:
+1. Tab `Photobooth` tidak muncul pada daftar pill kategori galeri (hanya muncul pill `Photostage`).
+2. Galeri pada tab `Photostage` menampilkan status kosong *"Momen Indah Sedang Disiapkan. Foto kenangan belum tersedia saat ini."* padahal folder Google Drive `1B1HyALBKEetXRoakAZuZ3iZYUeEsnjU5` memiliki 66 foto.
+3. Konfigurasi ter-reset kembali saat peramban memuat ulang halaman.
+
+## 2. Investigasi Mendalam Akar Masalah
+1. **Penimpaan String Kosong dari `config.json`**: Pada `DOMContentLoaded`, baris `state.activeConfig = Object.assign({}, GLOBAL_CONFIG, remoteCfg)` menimpa `DRIVE_FOLDER_ID` dan `CUSTOM_CATEGORIES` yang sudah ada dengan nilai kosong `""` dan `[]` dari berkas `config.json`.
+2. **Ketiadaan Proxy Fallback pada `fetchEventsFromSupabase` & `saveEventToSupabase`**: Saat peramban mengalami `TypeError: NetworkError` ke domain `supabase.co` (akibat Firefox Tracking Protection atau AdBlocker), pengambilan data event gagal sehingga `DRIVE_FOLDER_ID` tetap kosong, yang memicu `fetchGalleryData` merender kartu kosong 0 foto. Simpan data juga gagal sehingga konfigurasi ter-reset.
+3. **Tab Photobooth Hilang dari `renderCategoryTabs`**: Fungsi `renderCategoryTabs` hanya mengulang `state.customCategories`. Jika `custom_categories` di database belum mencantumkan objek Photobooth, maka tab Photobooth tidak pernah dirender meskipun `photobooth_url` terisi.
+4. **Tombol "Segarkan Kategori Ini"**: Tombol refresh pada kartu kosong tidak memicu pemindaian ulang Google Drive untuk kategori `Photostage`.
+
+## 3. Tindakan Perbaikan yang Telah Diterapkan
+- **Proteksi Nilai Riil pada `DOMContentLoaded`**: Penimpaan dari `config.json` kini memfilter nilai kosong, sehingga konfigurasi aktif tidak pernah tertimpa string kosong.
+- **Proxy Fallback Universal pada Supabase Operations**: `fetchEventsFromSupabase`, `saveEventToSupabase`, dan `handleSaveAllSettings` kini otomatis mengalir ke serverless proxy `/api/supabase-proxy` jika terjadi `NetworkError`.
+- **Jaminan Kemunculan Tab Photobooth**: `renderCategoryTabs` secara eksplisit memeriksa `state.activeConfig.PHOTOBOOTH_URL` dan `curEv.photoboothUrl` untuk memastikan tab `Photobooth` selalu hadir.
+- **Resolusi Folder Cadangan pada `fetchGalleryData`**: Jika `state.activeConfig.DRIVE_FOLDER_ID` kosong sesaat, fungsi otomatis membaca `curEv.driveFolderId` dari registry event.
+- **Penyelarasan Tombol Segarkan Kategori**: Tombol pada kartu kosong dan fungsi `syncSingleCategory` kini langsung memicu pemindaian Google Drive untuk `Photostage` (66 foto) atau API Photobooth sesuai tab aktif.
+- **Status Database Supabase**: Baris `wilson-felicia` telah diperbarui dengan data lengkap (`drive_folder_id: 1B1HyALBKEetXRoakAZuZ3iZYUeEsnjU5`, `all_photos_label: "Photostage"`, `photobooth_url: "https://fotoshare.co/e/ZJGYcfWbttuEG8Q67ocZs"`, `custom_categories` berisi item Photobooth).
